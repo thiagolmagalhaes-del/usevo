@@ -1,7 +1,9 @@
 ---
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
-const ferramenta = getFerramentaByPath(Astro.url.pathname);
+// This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
+// so the lookup must use this tool's canonical path, not the current route's pathname.
+const ferramenta = getFerramentaByPath("/ferramentas/conversor-de-moedas");
 const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
