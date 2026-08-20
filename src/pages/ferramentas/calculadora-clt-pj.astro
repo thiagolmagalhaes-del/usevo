@@ -1,0 +1,625 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — Compare Salário e Valor da Proposta | THIPA</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+    <link rel="canonical" href="https://thipatools.com/ferramentas/calculadora-clt-pj" />
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f7fb;
+        color: #172033;
+      }
+
+      a { text-decoration: none; color: inherit; }
+
+      .container {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid #e8ebf2;
+      }
+
+      .header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 76px;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      .back {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      main {
+        padding: 56px 0 72px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: #315bea;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: clamp(34px, 5vw, 52px);
+        line-height: 1.06;
+        letter-spacing: -1.5px;
+      }
+
+      .intro {
+        max-width: 760px;
+        margin: 0 0 28px;
+        color: #475467;
+        font-size: 18px;
+        line-height: 1.65;
+      }
+
+      .country-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0 0 24px;
+        padding: 12px 14px;
+        background: #ffffff;
+        border: 1px solid #e7ebf3;
+        border-radius: 12px;
+        max-width: 260px;
+      }
+
+      .country-controls label {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #475467;
+      }
+
+      .country-controls select {
+        border: 1px solid #d7dce5;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        background: #fff;
+        color: #172033;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #e7ebf3;
+        border-radius: 18px;
+        box-shadow: 0 10px 35px rgba(20, 29, 52, 0.06);
+      }
+
+      .compare {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .scenario {
+        padding: 24px;
+      }
+
+      .scenario h2 {
+        margin: 0 0 20px;
+        font-size: 22px;
+      }
+
+      .field {
+        margin-bottom: 18px;
+      }
+
+      .field label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #344054;
+      }
+
+      .field input {
+        width: 100%;
+        border: 1px solid #d7dce5;
+        border-radius: 12px;
+        background: #ffffff;
+        padding: 14px 16px;
+        font-size: 16px;
+        outline: none;
+      }
+
+      .field input:focus {
+        border-color: #315bea;
+        box-shadow: 0 0 0 3px rgba(49, 91, 234, 0.12);
+      }
+
+      .results {
+        margin-top: 28px;
+        padding: 24px;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .metric {
+        border: 1px solid #e7ebf3;
+        border-radius: 14px;
+        padding: 18px 16px;
+        background: #f9fafb;
+      }
+
+      .metric-label {
+        color: #667085;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .metric-value {
+        margin-top: 12px;
+        font-size: clamp(20px, 2vw, 30px);
+        font-weight: 800;
+        line-height: 1.2;
+        color: #172033;
+      }
+
+      .comparison-bar {
+        margin-top: 26px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .bar-box {
+        border: 1px solid #e7ebf3;
+        border-radius: 14px;
+        background: #fafbff;
+        padding: 18px;
+      }
+
+      .bar-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        font-weight: 700;
+      }
+
+      .progress {
+        position: relative;
+        height: 14px;
+        border-radius: 999px;
+        background: #edf1f7;
+        overflow: hidden;
+      }
+
+      .progress > span {
+        position: absolute;
+        inset: 0 auto 0 0;
+        display: block;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #315bea, #7aa2ff);
+      }
+
+      .note {
+        margin-top: 28px;
+        padding: 18px 20px;
+        border-left: 4px solid #315bea;
+        background: #eef3ff;
+        color: #172033;
+        border-radius: 12px;
+        line-height: 1.6;
+      }
+
+      .warning-box {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        border: 1px solid #f0b55b;
+        background: #fff7e8;
+        color: #7a4f00;
+        line-height: 1.6;
+      }
+
+      .explanation {
+        margin-top: 28px;
+        padding: 24px;
+      }
+
+      .explanation h3 {
+        margin: 0 0 14px;
+        font-size: 22px;
+      }
+
+      .explanation ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #475467;
+        line-height: 1.75;
+      }
+
+      .privacy {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #667085;
+      }
+
+      @media (max-width: 900px) {
+        .compare,
+        .results-grid,
+        .comparison-bar {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 650px) {
+        .header-inner {
+          flex-direction: column;
+          justify-content: center;
+          padding: 14px 0;
+          gap: 8px;
+        }
+
+        .logo {
+          font-size: 24px;
+        }
+
+        main {
+          padding-top: 32px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container header-inner">
+        <a href="/" class="logo">THIPA TOOLS</a>
+        <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="eyebrow">Finanças</div>
+        <h1>Calculadora CLT vs PJ</h1>
+
+        <p class="intro">
+          Compare rapidamente o valor líquido de uma proposta CLT com uma proposta PJ,
+          incluindo benefícios, custos e impostos estimados. Use como referência para uma decisão inicial,
+          sem substituir análise contábil ou jurídica.
+        </p>
+
+        <div class="country-controls">
+          <label for="countrySelector">País</label>
+          <select id="countrySelector" aria-label="Selecionar país"></select>
+        </div>
+
+        <section class="card compare">
+          <div class="scenario">
+            <h2>Cenário CLT</h2>
+
+            <div class="field">
+              <label for="cltSalario">Salário bruto mensal</label>
+              <input id="cltSalario" type="number" value="7000" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="cltBeneficios">Benefícios mensais</label>
+              <input id="cltBeneficios" type="number" value="1500" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="cltVale">Vale alimentação / refeição</label>
+              <input id="cltVale" type="number" value="500" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="cltPlano">Plano de saúde</label>
+              <input id="cltPlano" type="number" value="300" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="cltOutros">Outros benefícios</label>
+              <input id="cltOutros" type="number" value="200" step="0.01" />
+            </div>
+          </div>
+
+          <div class="scenario">
+            <h2>Cenário PJ</h2>
+
+            <div class="field">
+              <label for="pjNota">Valor mensal da nota</label>
+              <input id="pjNota" type="number" value="6500" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="pjImpostos">Impostos estimados</label>
+              <input id="pjImpostos" type="number" value="1500" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="pjContador">Contador</label>
+              <input id="pjContador" type="number" value="300" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="pjOutros">Outros custos mensais</label>
+              <input id="pjOutros" type="number" value="800" step="0.01" />
+            </div>
+
+            <div class="field">
+              <label for="pjCustosPessoais">Benefícios / custos pessoais</label>
+              <input id="pjCustosPessoais" type="number" value="0" step="0.01" />
+            </div>
+          </div>
+        </section>
+
+        <section class="card results">
+          <div class="results-grid">
+            <div class="metric">
+              <div class="metric-label">CLT líquido</div>
+              <div id="cltLiquido" class="metric-value">R$ 0,00</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">PJ líquido</div>
+              <div id="pjLiquido" class="metric-value">R$ 0,00</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Diferença mensal</div>
+              <div id="diferencaMensal" class="metric-value">R$ 0,00</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Diferença anual</div>
+              <div id="diferencaAnual" class="metric-value">R$ 0,00</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">PJ equivalente</div>
+              <div id="pjEquivalente" class="metric-value">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div class="comparison-bar">
+            <div class="bar-box">
+              <div class="bar-head">
+                <span>CLT</span>
+                <strong id="cltShare">0%</strong>
+              </div>
+              <div class="progress"><span id="cltProgress" style="width: 50%"></span></div>
+            </div>
+
+            <div class="bar-box">
+              <div class="bar-head">
+                <span>PJ</span>
+                <strong id="pjShare">0%</strong>
+              </div>
+              <div class="progress"><span id="pjProgress" style="width: 50%"></span></div>
+            </div>
+          </div>
+
+          <div class="warning-box" id="validationWarnings" aria-live="polite"></div>
+
+          <div class="note">
+            <strong>Como interpretar o resultado:</strong>
+            O salário bruto não deve ser comparado diretamente com o valor da nota PJ.
+            Benefícios e direitos do CLT têm valor econômico real, enquanto impostos, contador e custos do PJ reduzem o valor líquido.
+            O resultado é uma estimativa inicial e não substitui orientação contábil ou jurídica.
+          </div>
+        </section>
+
+        <section class="card explanation">
+          <h3>Como interpretar o resultado</h3>
+          <ul>
+            <li>Salário bruto não deve ser comparado diretamente com o valor de nota PJ.</li>
+            <li>Benefícios e direitos têm valor econômico e devem ser incluídos na comparação.</li>
+            <li>Impostos, contador e custos pessoais impactam o valor líquido do cenário PJ.</li>
+            <li>O resultado é uma estimativa, útil para avaliação inicial da proposta.</li>
+          </ul>
+        </section>
+
+        <div class="privacy">Seus dados são calculados no seu navegador e não são enviados para um servidor.</div>
+      </div>
+    </main>
+
+    <script type="module">
+      import { COUNTRY_REGISTRY } from "../../config/countries";
+      import { getCountryProfile } from "../../lib/country/getCountryProfile";
+      import { getSupportedCountries } from "../../lib/country/getSupportedCountries";
+      import { calculateComparison } from "../../lib/calculators/clt-vs-pj";
+
+      const supportedCountries = getSupportedCountries();
+      const supportedCountrySet = new Set(supportedCountries.map((country) => String(country).toUpperCase()));
+      const countrySelector = document.getElementById("countrySelector");
+
+      const getRequestedCountry = () => {
+        const queryCountry = new URLSearchParams(window.location.search).get("country");
+        const normalized = queryCountry ? String(queryCountry).trim().toUpperCase() : "";
+        return supportedCountrySet.has(normalized) ? normalized : "BR";
+      };
+
+      const syncCountryUrl = (country) => {
+        const params = new URLSearchParams(window.location.search);
+        params.set("country", country);
+        const nextUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, "", nextUrl);
+      };
+
+      const renderCountryOptions = () => {
+        countrySelector.innerHTML = supportedCountries
+          .map((country) => {
+            const label = COUNTRY_REGISTRY[country]?.label ?? country;
+            return `<option value="${country}">${label}</option>`;
+          })
+          .join("");
+      };
+
+      const getDefaultCountry = () => {
+        const fallbackCountry = supportedCountries[0] || "BR";
+        return String(fallbackCountry).toUpperCase();
+      };
+
+      const getActiveCountryProfile = (country) => {
+        const safeCountry = supportedCountrySet.has(String(country || "").toUpperCase())
+          ? String(country).toUpperCase()
+          : getDefaultCountry();
+
+        try {
+          return getCountryProfile(safeCountry);
+        } catch {
+          return getCountryProfile(getDefaultCountry());
+        }
+      };
+
+      const currency = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      });
+
+      const fields = {
+        cltSalario: document.getElementById("cltSalario"),
+        cltBeneficios: document.getElementById("cltBeneficios"),
+        cltVale: document.getElementById("cltVale"),
+        cltPlano: document.getElementById("cltPlano"),
+        cltOutros: document.getElementById("cltOutros"),
+
+        pjNota: document.getElementById("pjNota"),
+        pjImpostos: document.getElementById("pjImpostos"),
+        pjContador: document.getElementById("pjContador"),
+        pjOutros: document.getElementById("pjOutros"),
+        pjCustosPessoais: document.getElementById("pjCustosPessoais"),
+      };
+
+      const outputs = {
+        cltLiquido: document.getElementById("cltLiquido"),
+        pjLiquido: document.getElementById("pjLiquido"),
+        diferencaMensal: document.getElementById("diferencaMensal"),
+        diferencaAnual: document.getElementById("diferencaAnual"),
+        pjEquivalente: document.getElementById("pjEquivalente"),
+        cltShare: document.getElementById("cltShare"),
+        pjShare: document.getElementById("pjShare"),
+        cltProgress: document.getElementById("cltProgress"),
+        pjProgress: document.getElementById("pjProgress"),
+        validationWarnings: document.getElementById("validationWarnings"),
+      };
+
+      const parseNumber = (value) => {
+        const numericValue = Number(value);
+        return Number.isFinite(numericValue) ? numericValue : 0;
+      };
+
+      renderCountryOptions();
+      const selectedCountry = getRequestedCountry();
+      countrySelector.value = selectedCountry;
+      syncCountryUrl(selectedCountry);
+      let activeCountryProfile = getActiveCountryProfile(selectedCountry);
+
+      const update = () => {
+        const selectedValue = countrySelector.value;
+        const normalizedCountry = supportedCountrySet.has(String(selectedValue).toUpperCase())
+          ? String(selectedValue).toUpperCase()
+          : "BR";
+
+        if (normalizedCountry !== selectedValue) {
+          countrySelector.value = normalizedCountry;
+        }
+
+        activeCountryProfile = getActiveCountryProfile(normalizedCountry);
+        syncCountryUrl(normalizedCountry);
+
+        const inputs = {
+          country: normalizedCountry,
+          grossSalary: parseNumber(fields.cltSalario.value),
+          benefits: parseNumber(fields.cltBeneficios.value),
+          mealVoucher: parseNumber(fields.cltVale.value),
+          healthInsurance: parseNumber(fields.cltPlano.value),
+          otherBenefits: parseNumber(fields.cltOutros.value),
+          contractorIncome: parseNumber(fields.pjNota.value),
+          taxes: parseNumber(fields.pjImpostos.value),
+          accountingCosts: parseNumber(fields.pjContador.value),
+          businessCosts: parseNumber(fields.pjOutros.value),
+          professionalCosts: parseNumber(fields.pjCustosPessoais.value),
+        };
+
+        const result = calculateComparison({
+          countryProfile: activeCountryProfile,
+          inputs,
+        });
+
+        outputs.cltLiquido.textContent = currency.format(result.employeeNet);
+        outputs.pjLiquido.textContent = currency.format(result.contractorNet);
+        outputs.diferencaMensal.textContent = currency.format(result.monthlyDifference);
+        outputs.diferencaAnual.textContent = currency.format(result.annualDifference);
+        outputs.pjEquivalente.textContent = currency.format(result.equivalentContractorIncome);
+
+        const cltPercent = Math.min(Math.max(result.employeeShare, 0), 100);
+        const pjPercent = Math.min(Math.max(result.contractorShare, 0), 100);
+
+        outputs.cltProgress.style.width = `${cltPercent}%`;
+        outputs.pjProgress.style.width = `${pjPercent}%`;
+        outputs.cltShare.textContent = `${cltPercent.toFixed(0)}%`;
+        outputs.pjShare.textContent = `${pjPercent.toFixed(0)}%`;
+
+        const validationMessages = [...new Set([...result.validation.issues, ...result.validation.warnings])];
+
+        if (validationMessages.length > 0) {
+          outputs.validationWarnings.style.display = "block";
+          outputs.validationWarnings.innerHTML = validationMessages
+            .map((message) => `<div>${message}</div>`)
+            .join("");
+        } else {
+          outputs.validationWarnings.style.display = "none";
+          outputs.validationWarnings.innerHTML = "";
+        }
+      };
+
+      Object.values(fields).forEach((field) => {
+        field.addEventListener("input", update);
+      });
+
+      countrySelector.addEventListener("change", update);
+      update();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,274 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | THIPA TOOLS</title>
+    <meta name="description" content={description} />
+    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <style>
+      :global(*) {
+        box-sizing: border-box;
+      }
+
+      :global(body) {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        color: #172033;
+      }
+
+      .header {
+        width: 100%;
+        padding: 28px 5%;
+        border-bottom: 1px solid #eeeeee;
+      }
+
+      .logo {
+        font-size: 25px;
+        font-weight: 800;
+        color: #172033;
+        text-decoration: none;
+        letter-spacing: -1px;
+      }
+
+      .back {
+        float: right;
+        color: #555;
+        text-decoration: none;
+        font-size: 15px;
+        margin-top: 5px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 70px auto;
+        padding: 0 25px;
+      }
+
+      .category {
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        font-size: 46px;
+        line-height: 1.1;
+        margin: 0 0 12px;
+        letter-spacing: -1.5px;
+      }
+
+      .description {
+        color: #667085;
+        font-size: 18px;
+        margin-bottom: 38px;
+      }
+
+      .card {
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+      }
+
+      label {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 320px;
+        resize: vertical;
+        border: 1px solid #d9dee8;
+        border-radius: 12px;
+        padding: 18px;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: #2563eb;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 14px 24px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: #2563eb;
+        color: white;
+        flex: 1;
+      }
+
+      .secondary {
+        background: #f1f5f9;
+        color: #172033;
+      }
+
+      .result {
+        margin-top: 22px;
+        padding: 16px;
+        border-radius: 10px;
+        display: none;
+        font-size: 15px;
+      }
+
+      .success {
+        display: block;
+        background: #ecfdf3;
+        color: #087443;
+      }
+
+      .error {
+        display: block;
+        background: #fef2f2;
+        color: #b42318;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          margin: 45px auto;
+        }
+
+        h1 {
+          font-size: 36px;
+        }
+
+        .back {
+          display: none;
+        }
+
+        .card {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <a href="/" class="logo">THIPA TOOLS</a>
+      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+    </header>
+
+    <main class="container">
+      <div class="category">Desenvolvimento</div>
+
+      <h1>Formatador de JSON</h1>
+
+      <p class="description">
+        Formate, valide e organize seus dados JSON de forma rápida e gratuita.
+      </p>
+
+      <section class="card">
+        <label for="jsonInput">JSON</label>
+
+        <textarea
+          id="jsonInput"
+          placeholder='Cole seu JSON aqui...'
+        ></textarea>
+
+        <div class="buttons">
+          <button class="primary" id="formatBtn">
+            Formatar JSON
+          </button>
+
+          <button class="secondary" id="minifyBtn">
+            Compactar
+          </button>
+
+          <button class="secondary" id="clearBtn">
+            Limpar
+          </button>
+        </div>
+
+        <div id="result" class="result"></div>
+      </section>
+    </main>
+
+    <script>
+      const input = document.getElementById("jsonInput");
+      const result = document.getElementById("result");
+      const formatBtn = document.getElementById("formatBtn");
+      const minifyBtn = document.getElementById("minifyBtn");
+      const clearBtn = document.getElementById("clearBtn");
+
+      function showMessage(message, type) {
+        result.textContent = message;
+        result.className = `result ${type}`;
+      }
+
+      formatBtn.addEventListener("click", () => {
+        try {
+          const parsed = JSON.parse(input.value);
+
+          input.value = JSON.stringify(parsed, null, 2);
+
+          showMessage("✓ JSON válido e formatado com sucesso!", "success");
+        } catch (error) {
+          showMessage(
+            "✕ JSON inválido. Verifique a estrutura e tente novamente.",
+            "error"
+          );
+        }
+      });
+
+      minifyBtn.addEventListener("click", () => {
+        try {
+          const parsed = JSON.parse(input.value);
+
+          input.value = JSON.stringify(parsed);
+
+          showMessage("✓ JSON compactado com sucesso!", "success");
+        } catch (error) {
+          showMessage(
+            "✕ JSON inválido. Não foi possível compactar.",
+            "error"
+          );
+        }
+      });
+
+      clearBtn.addEventListener("click", () => {
+        input.value = "";
+        result.textContent = "";
+        result.className = "result";
+      });
+    </script>
+  </body>
+</html>

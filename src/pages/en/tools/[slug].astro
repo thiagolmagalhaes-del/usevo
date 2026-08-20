@@ -1,0 +1,66 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Base64Page from "../../ferramentas/base64.astro";
+import CalculadoraPage from "../../ferramentas/calculadora.astro";
+import CalculadoraDePorcentagemPage from "../../ferramentas/calculadora-de-porcentagem.astro";
+import CalculadoraCltPjPage from "../../ferramentas/calculadora-clt-pj.astro";
+import ComparadorDeTextoPage from "../../ferramentas/comparador-de-texto.astro";
+import ComprimirImagemPage from "../../ferramentas/comprimir-imagem.astro";
+import ComprimirPdfPage from "../../ferramentas/comprimir-pdf.astro";
+import ContadorDePalavrasPage from "../../ferramentas/contador-de-palavras.astro";
+import ConversorDeMoedasPage from "../../ferramentas/conversor-de-moedas.astro";
+import ConversorDeUnidadesPage from "../../ferramentas/conversor-de-unidades.astro";
+import FormatadorDeJsonPage from "../../ferramentas/formatador-de-json.astro";
+import FormatadorSqlPage from "../../ferramentas/formatador-sql/index.astro";
+import GeradorDeQrCodePage from "../../ferramentas/gerador-de-qr-code.astro";
+import GeradorDeSenhasPage from "../../ferramentas/gerador-de-senhas.astro";
+import JpgParaPdfPage from "../../ferramentas/jpg-para-pdf.astro";
+import JsonInspectorPage from "../../ferramentas/json-inspector.astro";
+import JuntarPdfPage from "../../ferramentas/juntar-pdf.astro";
+import UrlEncoderDecoderPage from "../../ferramentas/url-encoder-decoder.astro";
+import UuidGeneratorPage from "../../ferramentas/uuid-generator.astro";
+import { ferramentas, getFerramentaTranslation } from "../../../data/ferramentas";
+import { getSiteAlternates, resolveToolByLocaleSlug } from "../../../data/locale-routes";
+
+export function getStaticPaths() {
+  return ferramentas.map((ferramenta) => ({
+    params: { slug: ferramenta.localeSlugs.en },
+  }));
+}
+
+const { slug } = Astro.params;
+const ferramenta = resolveToolByLocaleSlug(slug, "en");
+if (!ferramenta) {
+  throw new Error(`Tool not found for EN slug: ${slug ?? "(empty)"}`);
+}
+
+const route = `/en/tools/${ferramenta.localeSlugs.en}/`;
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const alternateUrls = getSiteAlternates(route);
+const toolPageMap = {
+  "calculadora-de-porcentagem": CalculadoraDePorcentagemPage,
+  calculadora: CalculadoraPage,
+  "conversor-de-unidades": ConversorDeUnidadesPage,
+  "conversor-de-moedas": ConversorDeMoedasPage,
+  "contador-de-palavras": ContadorDePalavrasPage,
+  "gerador-de-senhas": GeradorDeSenhasPage,
+  "gerador-de-qr-code": GeradorDeQrCodePage,
+  "jpg-para-pdf": JpgParaPdfPage,
+  base64: Base64Page,
+  "formatador-de-json": FormatadorDeJsonPage,
+  "json-inspector": JsonInspectorPage,
+  "url-encoder-decoder": UrlEncoderDecoderPage,
+  "uuid-generator": UuidGeneratorPage,
+  "calculadora-clt-pj": CalculadoraCltPjPage,
+  "comprimir-pdf": ComprimirPdfPage,
+  "juntar-pdf": JuntarPdfPage,
+  "comprimir-imagem": ComprimirImagemPage,
+  "comparador-de-texto": ComparadorDeTextoPage,
+  "formatador-sql": FormatadorSqlPage,
+} as const;
+const PageComponent = toolPageMap[ferramenta.id as keyof typeof toolPageMap];
+---
+
+<Layout title={toolMeta.title} description={toolMeta.description} locale="en" canonical={`https://thipatools.com${route}`} alternateUrls={alternateUrls}>
+  {PageComponent ? <PageComponent /> : <main><h1>{toolMeta.title}</h1></main>}
+</Layout>

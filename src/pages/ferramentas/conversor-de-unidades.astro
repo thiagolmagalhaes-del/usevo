@@ -1,0 +1,404 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title} | THIPA TOOLS</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+  <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+  <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f8f9fc;
+      color: #172033;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e7e9ef;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: auto;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      text-decoration: none;
+      color: #172033;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .back {
+      text-decoration: none;
+      color: #526174;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 70px auto;
+      padding: 0 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: #315bdc;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin: 0 0 12px;
+    }
+
+    .description {
+      color: #687386;
+      font-size: 17px;
+      margin-bottom: 35px;
+    }
+
+    .converter {
+      background: white;
+      border: 1px solid #e5e8ef;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 12px 35px rgba(20, 30, 50, 0.06);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #dfe3ea;
+      border-radius: 12px;
+      font-size: 16px;
+      background: white;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #315bdc;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      background: #315bdc;
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    button:hover {
+      background: #264bc0;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 22px;
+      background: #f7f8fb;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .result-label {
+      color: #687386;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 30px;
+      font-weight: 700;
+      color: #172033;
+      word-break: break-word;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">THIPA TOOLS</a>
+      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+    </div>
+  </header>
+
+  <main>
+
+    <span class="badge">Conversores</span>
+
+    <h1>Conversor de Unidades</h1>
+
+    <p class="description">
+      Converta comprimento, peso, temperatura e outras unidades rapidamente.
+    </p>
+
+    <div class="converter">
+
+      <label for="category">Tipo de conversão</label>
+
+      <select id="category" onchange="updateUnits()">
+        <option value="length">Comprimento</option>
+        <option value="weight">Peso</option>
+        <option value="temperature">Temperatura</option>
+        <option value="volume">Volume</option>
+      </select>
+
+      <div class="row">
+
+        <div>
+          <label for="fromUnit">De</label>
+          <select id="fromUnit"></select>
+        </div>
+
+        <div>
+          <label for="toUnit">Para</label>
+          <select id="toUnit"></select>
+        </div>
+
+      </div>
+
+      <label for="value">Valor</label>
+
+      <input
+        id="value"
+        type="number"
+        placeholder="Digite um valor"
+        step="any"
+      />
+
+      <button onclick="convert()">
+        Converter
+      </button>
+
+      <div class="result">
+        <div class="result-label">
+          Resultado
+        </div>
+
+        <div class="result-value" id="result">
+          0
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const units = {
+      length: {
+        metro: 1,
+        quilometro: 1000,
+        centimetro: 0.01,
+        milimetro: 0.001,
+        milha: 1609.344,
+        jarda: 0.9144,
+        pe: 0.3048,
+        polegada: 0.0254
+      },
+
+      weight: {
+        quilograma: 1,
+        grama: 0.001,
+        miligrama: 0.000001,
+        tonelada: 1000,
+        libra: 0.45359237,
+        onca: 0.028349523125
+      },
+
+      volume: {
+        litro: 1,
+        mililitro: 0.001,
+        metroCubico: 1000,
+        galão: 3.785411784,
+        xicara: 0.2365882365
+      },
+
+      temperature: {
+        celsius: "C",
+        fahrenheit: "F",
+        kelvin: "K"
+      }
+    };
+
+    const labels = {
+      metro: "Metro",
+      quilometro: "Quilômetro",
+      centimetro: "Centímetro",
+      milimetro: "Milímetro",
+      milha: "Milha",
+      jarda: "Jarda",
+      pe: "Pé",
+      polegada: "Polegada",
+
+      quilograma: "Quilograma",
+      grama: "Grama",
+      miligrama: "Miligrama",
+      tonelada: "Tonelada",
+      libra: "Libra",
+      onca: "Onça",
+
+      litro: "Litro",
+      mililitro: "Mililitro",
+      metroCubico: "Metro cúbico",
+      galão: "Galão",
+      xicara: "Xícara",
+
+      celsius: "Celsius",
+      fahrenheit: "Fahrenheit",
+      kelvin: "Kelvin"
+    };
+
+    const category = document.getElementById("category");
+    const fromUnit = document.getElementById("fromUnit");
+    const toUnit = document.getElementById("toUnit");
+    const valueInput = document.getElementById("value");
+    const result = document.getElementById("result");
+
+    function updateUnits() {
+      const selected = category.value;
+      const options = Object.keys(units[selected]);
+
+      fromUnit.innerHTML = "";
+      toUnit.innerHTML = "";
+
+      options.forEach(unit => {
+        const option1 = document.createElement("option");
+        option1.value = unit;
+        option1.textContent = labels[unit];
+
+        const option2 = document.createElement("option");
+        option2.value = unit;
+        option2.textContent = labels[unit];
+
+        fromUnit.appendChild(option1);
+        toUnit.appendChild(option2);
+      });
+
+      if (options.length > 1) {
+        toUnit.selectedIndex = 1;
+      }
+    }
+
+    function convert() {
+      const value = parseFloat(valueInput.value);
+
+      if (isNaN(value)) {
+        result.textContent = "Digite um valor válido";
+        return;
+      }
+
+      const type = category.value;
+      const from = fromUnit.value;
+      const to = toUnit.value;
+
+      let converted;
+
+      if (type === "temperature") {
+        converted = convertTemperature(value, from, to);
+      } else {
+        const baseValue = value * units[type][from];
+        converted = baseValue / units[type][to];
+      }
+
+      result.textContent = `${formatNumber(converted)} ${labels[to]}`;
+    }
+
+    function convertTemperature(value, from, to) {
+      let celsius;
+
+      if (from === "celsius") {
+        celsius = value;
+      } else if (from === "fahrenheit") {
+        celsius = (value - 32) * 5 / 9;
+      } else {
+        celsius = value - 273.15;
+      }
+
+      if (to === "celsius") {
+        return celsius;
+      }
+
+      if (to === "fahrenheit") {
+        return (celsius * 9 / 5) + 32;
+      }
+
+      return celsius + 273.15;
+    }
+
+    function formatNumber(number) {
+      return Number(number.toFixed(8)).toLocaleString("pt-BR");
+    }
+
+    updateUnits();
+  </script>
+
+</body>
+</html>

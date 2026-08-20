@@ -1,0 +1,308 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contador de Palavras Online | THIPA TOOLS</title>
+  <meta
+    name="description"
+    content="Conte palavras, caracteres, frases e linhas em qualquer texto com um contador online rápido e gratuito."
+  />
+  <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+  <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+  <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #172033;
+    }
+
+    header {
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #172033;
+      text-decoration: none;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .back {
+      color: #172033;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 70px 28px 100px;
+    }
+
+    .category {
+      color: #2457d6;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 46px;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+    }
+
+    .subtitle {
+      margin: 14px 0 38px;
+      color: #667085;
+      font-size: 18px;
+    }
+
+    .tool {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(16, 24, 40, 0.05);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      resize: vertical;
+      border: 1px solid #d9dee8;
+      border-radius: 12px;
+      padding: 18px;
+      font-size: 16px;
+      line-height: 1.6;
+      font-family: inherit;
+      outline: none;
+      color: #172033;
+    }
+
+    textarea:focus {
+      border-color: #2474e8;
+      box-shadow: 0 0 0 3px rgba(36, 116, 232, 0.1);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 13px 22px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #1769e0;
+      color: white;
+      flex: 1;
+    }
+
+    .secondary {
+      background: #f2f4f7;
+      color: #344054;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .number {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: #172033;
+      margin-bottom: 5px;
+    }
+
+    .label {
+      color: #667085;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 45px 18px 70px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .primary {
+        flex: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">THIPA TOOLS</a>
+      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="category">Texto</div>
+
+    <h1>Contador de Palavras</h1>
+
+    <p class="subtitle">
+      Conte palavras, caracteres, frases e linhas de qualquer texto.
+    </p>
+
+    <section class="tool">
+      <textarea
+        id="texto"
+        placeholder="Digite ou cole seu texto aqui..."
+      ></textarea>
+
+      <div class="actions">
+        <button class="primary" id="contar">
+          Contar
+        </button>
+
+        <button class="secondary" id="limpar">
+          Limpar
+        </button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="number" id="palavras">0</span>
+          <span class="label">Palavras</span>
+        </div>
+
+        <div class="stat">
+          <span class="number" id="caracteres">0</span>
+          <span class="label">Caracteres</span>
+        </div>
+
+        <div class="stat">
+          <span class="number" id="frases">0</span>
+          <span class="label">Frases</span>
+        </div>
+
+        <div class="stat">
+          <span class="number" id="linhas">0</span>
+          <span class="label">Linhas</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const texto = document.getElementById("texto");
+    const contar = document.getElementById("contar");
+    const limpar = document.getElementById("limpar");
+
+    const palavras = document.getElementById("palavras");
+    const caracteres = document.getElementById("caracteres");
+    const frases = document.getElementById("frases");
+    const linhas = document.getElementById("linhas");
+
+    function atualizarContagem() {
+      const valor = texto.value;
+
+      const quantidadePalavras = valor.trim()
+        ? valor.trim().split(/\s+/).length
+        : 0;
+
+      const quantidadeCaracteres = valor.length;
+
+      const quantidadeFrases = valor.trim()
+        ? (valor.match(/[.!?]+(?=\s|$)/g) || []).length
+        : 0;
+
+      const quantidadeLinhas = valor
+        ? valor.split(/\r?\n/).length
+        : 0;
+
+      palavras.textContent = quantidadePalavras.toLocaleString("pt-BR");
+      caracteres.textContent = quantidadeCaracteres.toLocaleString("pt-BR");
+      frases.textContent = quantidadeFrases.toLocaleString("pt-BR");
+      linhas.textContent = quantidadeLinhas.toLocaleString("pt-BR");
+    }
+
+    contar.addEventListener("click", atualizarContagem);
+
+    texto.addEventListener("input", atualizarContagem);
+
+    limpar.addEventListener("click", () => {
+      texto.value = "";
+
+      palavras.textContent = "0";
+      caracteres.textContent = "0";
+      frases.textContent = "0";
+      linhas.textContent = "0";
+
+      texto.focus();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ToolGrid from "../components/tool/ToolGrid.astro";
+import { ferramentas } from "../data/ferramentas";
+import { getTranslations } from "../data/i18n";
+
+const t = getTranslations("pt-BR");
+---
+
+<Layout
+  title="THIPA TOOLS — Ferramentas online"
+  description="Ferramentas online simples, rápidas e úteis para resolver tarefas do dia a dia."
+>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #172033;
+        background: #ffffff;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .container {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      header {
+        height: 82px;
+        border-bottom: 1px solid #eeeeee;
+        background: #ffffff;
+      }
+
+      .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        font-size: 15px;
+        color: #4b5563;
+      }
+
+      nav a:hover {
+        color: #315bea;
+      }
+
+      .nav-button {
+        background: #172033;
+        color: #ffffff;
+        padding: 13px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      .hero {
+        padding: 105px 0 80px;
+        text-align: center;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 22px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #315bea;
+      }
+
+      h1 {
+        margin: 0 auto;
+        max-width: 800px;
+        font-size: clamp(48px, 7vw, 76px);
+        line-height: 0.98;
+        letter-spacing: -4px;
+        font-weight: 800;
+      }
+
+      h1 span {
+        color: #315bea;
+      }
+
+      .hero-text {
+        max-width: 650px;
+        margin: 28px auto 34px;
+        color: #667085;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .search {
+        max-width: 620px;
+        margin: 0 auto;
+        display: flex;
+        padding: 6px;
+        border: 1px solid #e2e5ea;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        background: #ffffff;
+      }
+
+      .search input {
+        flex: 1;
+        border: 0;
+        outline: 0;
+        padding: 15px;
+        font-size: 16px;
+        min-width: 0;
+      }
+
+      .search button {
+        border: 0;
+        background: #315bea;
+        color: #ffffff;
+        padding: 0 25px;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .tools-section {
+        padding: 30px 0 100px;
+      }
+
+      .section-heading {
+        margin-bottom: 35px;
+      }
+
+      .section-heading h2 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        letter-spacing: -1px;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: #6b7280;
+      }
+
+      .explore {
+        margin-top: 35px;
+        text-align: center;
+      }
+
+      .explore a {
+        display: inline-block;
+        background: #172033;
+        color: #ffffff;
+        padding: 15px 25px;
+        border-radius: 9px;
+        font-weight: 700;
+      }
+
+      footer {
+        border-top: 1px solid #eeeeee;
+        padding: 35px 0;
+        color: #667085;
+        font-size: 14px;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      @media (max-width: 650px) {
+        .container {
+          width: min(100% - 28px, 1180px);
+        }
+
+        header {
+          height: auto;
+          padding: 18px 0;
+        }
+
+        .header-inner {
+          gap: 20px;
+        }
+
+        nav {
+          gap: 12px;
+        }
+
+        nav a:not(.nav-button) {
+          display: none;
+        }
+
+        .hero {
+          padding: 70px 0 55px;
+        }
+
+        h1 {
+          font-size: 48px;
+          letter-spacing: -2px;
+        }
+
+        .search {
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .search button {
+          min-height: 48px;
+        }
+
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+    </style>
+
+  <main>
+      <section class="hero">
+        <div class="container">
+          <div class="eyebrow">✦ {t.freeOnlineTools}</div>
+
+          <h1>
+            Resolva mais.<br />
+            <span>Complicação, menos.</span>
+          </h1>
+
+          <p class="hero-text">
+            A THIPA TOOLS reúne ferramentas simples, rápidas e úteis para transformar
+            tarefas do dia a dia em poucos cliques.
+          </p>
+
+          <form class="search" id="searchForm">
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="O que você precisa fazer?"
+              autocomplete="off"
+            />
+
+            <button type="submit">{t.search}</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="tools-section" id="ferramentas">
+        <div class="container">
+          <div class="section-heading">
+            <h2>{t.popularTools}</h2>
+            <p>Escolha uma ferramenta e resolva sua tarefa rapidamente.</p>
+          </div>
+
+          <ToolGrid items={ferramentas} />
+
+          <div class="explore">
+            <a href="/categorias">{t.allTools}</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  <script>
+    const form = document.getElementById("searchForm");
+    const input = document.getElementById("searchInput");
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const termo = input.value.trim().toLowerCase();
+
+      if (!termo) {
+        window.location.href = "#ferramentas";
+        return;
+      }
+
+      const cards = document.querySelectorAll(".tool-card");
+
+      let encontrou = false;
+
+      cards.forEach((card) => {
+        const nome = card.getAttribute("data-name") || "";
+        const categoria = card.getAttribute("data-category") || "";
+
+        const corresponde = nome.includes(termo) || categoria.includes(termo);
+
+        card.style.display = corresponde ? "block" : "none";
+
+        if (corresponde) {
+          encontrou = true;
+        }
+      });
+
+      document.getElementById("ferramentas")?.scrollIntoView({ behavior: "smooth" });
+
+      if (!encontrou) {
+        alert("Nenhuma ferramenta encontrada.");
+      }
+    });
+  </script>
+</Layout>

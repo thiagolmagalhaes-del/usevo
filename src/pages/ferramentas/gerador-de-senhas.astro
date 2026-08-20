@@ -1,0 +1,401 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de Senhas Seguras | THIPA TOOLS</title>
+  <meta
+    name="description"
+    content="Crie senhas fortes e aleatórias com diferentes níveis de segurança em segundos, de forma rápida e gratuita."
+  />
+  <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+  <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+  <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #172033;
+    }
+
+    header {
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #172033;
+      text-decoration: none;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .back {
+      color: #172033;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 70px 28px 100px;
+    }
+
+    .category {
+      color: #2457d6;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 46px;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+    }
+
+    .subtitle {
+      margin: 14px 0 38px;
+      color: #667085;
+      font-size: 18px;
+    }
+
+    .tool {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 8px 30px rgba(16, 24, 40, 0.05);
+    }
+
+    .password-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    #senha {
+      flex: 1;
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid #d9dee8;
+      border-radius: 10px;
+      font-size: 18px;
+      font-family: monospace;
+      background: #f8fafc;
+      color: #172033;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .copy {
+      background: #f2f4f7;
+      color: #344054;
+    }
+
+    .generate {
+      width: 100%;
+      background: #1769e0;
+      color: white;
+      margin-top: 22px;
+    }
+
+    .length-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .length-label {
+      font-weight: 700;
+    }
+
+    #lengthValue {
+      font-weight: 800;
+      color: #1769e0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #1769e0;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 25px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .option input {
+      width: 17px;
+      height: 17px;
+      accent-color: #1769e0;
+    }
+
+    .strength {
+      margin-top: 22px;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    #strength {
+      color: #1769e0;
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        padding: 45px 18px 70px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .password-box {
+        flex-direction: column;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">THIPA TOOLS</a>
+      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="category">Segurança</div>
+
+    <h1>Gerador de Senhas</h1>
+
+    <p class="subtitle">
+      Crie senhas fortes e aleatórias em poucos segundos.
+    </p>
+
+    <section class="tool">
+      <div class="password-box">
+        <input id="senha" type="text" readonly />
+        <button class="copy" id="copiar">Copiar</button>
+      </div>
+
+      <div class="length-row">
+        <span class="length-label">Tamanho da senha</span>
+        <span id="lengthValue">16</span>
+      </div>
+
+      <input
+        id="length"
+        type="range"
+        min="6"
+        max="40"
+        value="16"
+      />
+
+      <div class="options">
+        <label class="option">
+          <input type="checkbox" id="maiusculas" checked />
+          Letras maiúsculas
+        </label>
+
+        <label class="option">
+          <input type="checkbox" id="minusculas" checked />
+          Letras minúsculas
+        </label>
+
+        <label class="option">
+          <input type="checkbox" id="numeros" checked />
+          Números
+        </label>
+
+        <label class="option">
+          <input type="checkbox" id="simbolos" checked />
+          Símbolos
+        </label>
+      </div>
+
+      <div class="strength">
+        Força: <span id="strength">Forte</span>
+      </div>
+
+      <button class="generate" id="gerar">
+        Gerar nova senha
+      </button>
+    </section>
+  </main>
+
+  <script>
+    const senha = document.getElementById("senha");
+    const copiar = document.getElementById("copiar");
+    const gerar = document.getElementById("gerar");
+
+    const length = document.getElementById("length");
+    const lengthValue = document.getElementById("lengthValue");
+
+    const maiusculas = document.getElementById("maiusculas");
+    const minusculas = document.getElementById("minusculas");
+    const numeros = document.getElementById("numeros");
+    const simbolos = document.getElementById("simbolos");
+
+    const strength = document.getElementById("strength");
+
+    const conjuntos = {
+      maiusculas: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      minusculas: "abcdefghijklmnopqrstuvwxyz",
+      numeros: "0123456789",
+      simbolos: "!@#$%^&*()_+-=[]{}|;:,.<>?"
+    };
+
+    function gerarSenha() {
+      let caracteres = "";
+
+      if (maiusculas.checked) {
+        caracteres += conjuntos.maiusculas;
+      }
+
+      if (minusculas.checked) {
+        caracteres += conjuntos.minusculas;
+      }
+
+      if (numeros.checked) {
+        caracteres += conjuntos.numeros;
+      }
+
+      if (simbolos.checked) {
+        caracteres += conjuntos.simbolos;
+      }
+
+      if (!caracteres) {
+        senha.value = "";
+        strength.textContent = "Selecione pelo menos uma opção";
+        return;
+      }
+
+      const tamanho = Number(length.value);
+
+      const valores = new Uint32Array(tamanho);
+      crypto.getRandomValues(valores);
+
+      let resultado = "";
+
+      for (let i = 0; i < tamanho; i++) {
+        resultado += caracteres[valores[i] % caracteres.length];
+      }
+
+      senha.value = resultado;
+      atualizarForca();
+    }
+
+    function atualizarForca() {
+      const tamanho = Number(length.value);
+
+      let quantidade = 0;
+
+      if (maiusculas.checked) quantidade++;
+      if (minusculas.checked) quantidade++;
+      if (numeros.checked) quantidade++;
+      if (simbolos.checked) quantidade++;
+
+      let resultado = "Fraca";
+
+      if (tamanho >= 12 && quantidade >= 3) {
+        resultado = "Forte";
+      }
+
+      if (tamanho >= 16 && quantidade === 4) {
+        resultado = "Muito forte";
+      }
+
+      strength.textContent = resultado;
+    }
+
+    length.addEventListener("input", () => {
+      lengthValue.textContent = length.value;
+      gerarSenha();
+    });
+
+    gerar.addEventListener("click", gerarSenha);
+
+    maiusculas.addEventListener("change", gerarSenha);
+    minusculas.addEventListener("change", gerarSenha);
+    numeros.addEventListener("change", gerarSenha);
+    simbolos.addEventListener("change", gerarSenha);
+
+    copiar.addEventListener("click", async () => {
+      if (!senha.value) return;
+
+      await navigator.clipboard.writeText(senha.value);
+
+      copiar.textContent = "Copiado!";
+
+      setTimeout(() => {
+        copiar.textContent = "Copiar";
+      }, 1500);
+    });
+
+    gerarSenha();
+  </script>
+</body>
+</html>

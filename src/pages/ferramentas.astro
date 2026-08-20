@@ -1,0 +1,185 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ToolGrid from "../components/tool/ToolGrid.astro";
+import { ferramentas } from "../data/ferramentas";
+import { getTranslations } from "../data/i18n";
+
+const t = getTranslations("pt-BR");
+---
+
+<Layout
+  title="Todas as ferramentas — THIPA TOOLS"
+  description="Explore todas as ferramentas disponíveis na THIPA TOOLS. Ferramentas online simples, rápidas e úteis para resolver tarefas do dia a dia."
+>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #172033;
+        background: #ffffff;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .container {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      header {
+        height: 82px;
+        border-bottom: 1px solid #eeeeee;
+        background: #ffffff;
+      }
+
+      .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        font-size: 15px;
+        color: #4b5563;
+      }
+
+      nav a:hover {
+        color: #315bea;
+      }
+
+      .nav-button {
+        background: #172033;
+        color: #ffffff;
+        padding: 13px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      .page-header {
+        padding: 60px 0 40px;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        margin: 0 auto 15px;
+        font-size: 42px;
+        letter-spacing: -1px;
+        font-weight: 800;
+      }
+
+      .page-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 16px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .tools-section {
+        padding: 40px 0 100px;
+      }
+
+      .section-heading {
+        margin-bottom: 35px;
+      }
+
+      .section-heading h2 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        letter-spacing: -1px;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: #6b7280;
+      }
+
+      footer {
+        border-top: 1px solid #eeeeee;
+        padding: 35px 0;
+        color: #667085;
+        font-size: 14px;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      @media (max-width: 650px) {
+        .container {
+          width: min(100% - 28px, 1180px);
+        }
+
+        header {
+          height: auto;
+          padding: 18px 0;
+        }
+
+        .header-inner {
+          gap: 20px;
+        }
+
+        nav {
+          gap: 12px;
+        }
+
+        nav a:not(.nav-button) {
+          display: none;
+        }
+
+        .page-header {
+          padding: 50px 0 30px;
+        }
+
+        .page-header h1 {
+          font-size: 32px;
+          letter-spacing: -1px;
+        }
+
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+    </style>
+
+  <main>
+      <section class="page-header">
+        <div class="container">
+          <h1>{t.allTools}</h1>
+          <p>Explore nossa coleção completa de ferramentas online. Escolha uma e resolva sua tarefa agora.</p>
+        </div>
+      </section>
+
+      <section class="tools-section">
+        <div class="container">
+          <ToolGrid items={ferramentas} />
+        </div>
+      </section>
+    </main>
+
+</Layout>

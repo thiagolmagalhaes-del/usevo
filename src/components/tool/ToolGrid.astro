@@ -1,0 +1,45 @@
+---
+import ToolCard from "./ToolCard.astro";
+import type { Locale } from "../../data/locales";
+
+interface Ferramenta {
+  nome: string;
+  descricao: string;
+  categoria: string;
+  icone: string;
+  url: string;
+  localeSlugs?: Partial<Record<Locale, string>>;
+  translations?: Partial<Record<Locale, { title: string; description: string }>>;
+}
+
+const { items, locale = "pt-BR" } = Astro.props as {
+  items: Ferramenta[];
+  locale?: Locale;
+};
+---
+
+<div class="tools-grid">
+  {items.map((ferramenta) => (
+    <ToolCard ferramenta={ferramenta} locale={locale} />
+  ))}
+</div>
+
+<style>
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  @media (max-width: 900px) {
+    .tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 650px) {
+    .tools-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

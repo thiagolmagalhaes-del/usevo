@@ -1,0 +1,23 @@
+{
+  "name": "thipa-tools",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^7.2.2",
+    "browser-image-compression": "^2.0.2",
+    "diff": "^9.0.0",
+    "jspdf": "^4.2.1",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
+    "sql-formatter": "^15.8.2"
+  }
+}

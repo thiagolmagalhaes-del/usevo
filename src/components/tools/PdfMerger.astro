@@ -1,0 +1,141 @@
+---
+---
+<div class="tool-card card">
+  <h2>Juntar PDF</h2>
+  <input id="fileInput" type="file" accept="application/pdf" multiple style="display:none" />
+  <div id="dropArea" class="drop">Arraste e solte PDFs aqui ou clique para selecionar</div>
+
+  <ul id="fileList"></ul>
+  <div>
+    <button id="mergeBtn">Juntar PDFs</button>
+    <div id="processing" style="display:none">Processando...</div>
+  </div>
+  <div id="error" class="error" style="display:none"></div>
+  <div id="result" style="display:none">
+    <a id="downloadLink" href="#" download>Baixar PDF unido</a>
+  </div>
+</div>
+
+<style>
+.drop { padding: 18px; border: 2px dashed #d7dce5; border-radius:12px; text-align:center; cursor:pointer; }
+.error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
+#fileList { list-style:none; padding:0; }
+.file-item { padding:8px; border:1px solid #e7ebf3; margin-top:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
+.file-controls button { margin-left:6px; }
+</style>
+
+<script type="module">
+  // lazy import PDF library when needed to avoid large SSR/initial bundles
+  const fileInput = document.getElementById('fileInput');
+  const dropArea = document.getElementById('dropArea');
+  const fileList = document.getElementById('fileList');
+  const mergeBtn = document.getElementById('mergeBtn');
+  const processing = document.getElementById('processing');
+  const errorEl = document.getElementById('error');
+  const result = document.getElementById('result');
+  const downloadLink = document.getElementById('downloadLink');
+
+  let files = [];
+  let mergeObjectUrl = null;
+  let isProcessing = false;
+  const PDF_MERGE_PER_FILE_LIMIT = 25 * 1024 * 1024; // 25 MB per file
+  const PDF_MERGE_TOTAL_LIMIT = 100 * 1024 * 1024; // 100 MB total
+
+  function renderList() {
+    fileList.innerHTML = '';
+    files.forEach((f, idx) => {
+      const li = document.createElement('li');
+      li.className = 'file-item';
+      const left = document.createElement('div');
+      left.textContent = `${idx + 1}. ${f.name} (${Math.round(f.size / 1024)} KB)`;
+      const controls = document.createElement('div');
+      controls.className = 'file-controls';
+      const upBtn = document.createElement('button'); upBtn.textContent = '↑';
+      const downBtn = document.createElement('button'); downBtn.textContent = '↓';
+      const removeBtn = document.createElement('button'); removeBtn.textContent = 'Remover';
+      upBtn.addEventListener('click', () => { if (idx > 0) { const tmp = files[idx-1]; files[idx-1] = files[idx]; files[idx] = tmp; renderList(); } });
+      downBtn.addEventListener('click', () => { if (idx < files.length -1) { const tmp = files[idx+1]; files[idx+1] = files[idx]; files[idx] = tmp; renderList(); } });
+      removeBtn.addEventListener('click', () => { files.splice(idx,1); renderList(); });
+      controls.appendChild(upBtn); controls.appendChild(downBtn); controls.appendChild(removeBtn);
+      li.appendChild(left); li.appendChild(controls);
+      fileList.appendChild(li);
+    });
+  }
+
+  dropArea.addEventListener('click', () => fileInput.click());
+  dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.style.borderColor = '#315bea'; });
+  dropArea.addEventListener('dragleave', () => { dropArea.style.borderColor = '#d7dce5'; });
+  dropArea.addEventListener('drop', (e) => {
+    e.preventDefault(); dropArea.style.borderColor = '#d7dce5';
+    handleFiles(Array.from(e.dataTransfer.files));
+  });
+
+  fileInput.addEventListener('change', (e) => handleFiles(Array.from(e.target.files)));
+
+  function showError(msg) { errorEl.style.display = 'block'; errorEl.textContent = msg; }
+  function clearError() { errorEl.style.display = 'none'; errorEl.textContent = ''; }
+
+  function handleFiles(selected) {
+    clearError();
+    const pdfs = selected.filter(f => f.type === 'application/pdf');
+    if (pdfs.length === 0) { showError('Nenhum PDF válido selecionado.'); return; }
+    files = files.concat(pdfs);
+    renderList();
+    result.style.display = 'none';
+  }
+
+  async function mergePdfs() {
+    if (files.length === 0) return showError('Nenhum PDF carregado.');
+      if (isProcessing) return; // prevent concurrent runs
+      clearError();
+
+      // Check per-file and total size limits
+      let total = 0;
+      for (const f of files) {
+        if (f.size > PDF_MERGE_PER_FILE_LIMIT) return showError(`O arquivo ${f.name} excede o limite por arquivo de ${Math.round(PDF_MERGE_PER_FILE_LIMIT/1024/1024)} MB.`);
+        total += f.size;
+      }
+      if (total > PDF_MERGE_TOTAL_LIMIT) return showError(`Tamanho total dos arquivos excede ${Math.round(PDF_MERGE_TOTAL_LIMIT/1024/1024)} MB.`);
+
+      isProcessing = true;
+      mergeBtn.disabled = true;
+      processing.style.display = 'block';
+      result.style.display = 'none';
+      try {
+        // lazy import pdf-lib
+        const mod = await import('pdf-lib');
+        const PDFDocument = mod.PDFDocument ?? mod.default?.PDFDocument ?? mod.PDFDocument;
+        if (!PDFDocument) throw new Error('pdf-lib não disponível');
+
+        const outPdf = await PDFDocument.create();
+        for (const f of files) {
+          const arrayBuffer = await f.arrayBuffer();
+          const src = await PDFDocument.load(arrayBuffer);
+          const pages = await outPdf.copyPages(src, src.getPageIndices());
+          pages.forEach(p => outPdf.addPage(p));
+        }
+        const bytes = await outPdf.save();
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+
+        // revoke previous
+        if (mergeObjectUrl) { try { URL.revokeObjectURL(mergeObjectUrl); } catch(e){} mergeObjectUrl = null; }
+        mergeObjectUrl = URL.createObjectURL(blob);
+        downloadLink.href = mergeObjectUrl;
+        downloadLink.download = 'merged.pdf';
+        result.style.display = 'block';
+
+        // revoke after user clicks download
+        const onClick = () => { setTimeout(()=>{ if (mergeObjectUrl) { try { URL.revokeObjectURL(mergeObjectUrl); } catch(e){} mergeObjectUrl = null; } }, 1500); };
+        downloadLink.addEventListener('click', onClick, { once: true });
+      } catch (err) {
+        console.error(err);
+        showError('Erro ao unir PDFs. Verifique os arquivos.');
+      } finally {
+        processing.style.display = 'none';
+        mergeBtn.disabled = false;
+        isProcessing = false;
+      }
+    }
+
+    mergeBtn.addEventListener('click', mergePdfs);
+</script>

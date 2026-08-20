@@ -1,0 +1,26 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ToolGrid from "../../../components/tool/ToolGrid.astro";
+import { ferramentas } from "../../../data/ferramentas";
+import { getTranslations } from "../../../data/i18n";
+import { getSiteAlternates } from "../../../data/locale-routes";
+
+const t = getTranslations("en");
+const canonical = "https://thipatools.com/en/tools/";
+const alternateUrls = getSiteAlternates("/en/tools/");
+---
+
+<Layout title={t.allTools} description="Explore all THIPA TOOLS in English." locale="en" canonical={canonical} alternateUrls={alternateUrls}>
+  <main>
+    <section style="padding: 60px 0 40px; text-align:center;">
+      <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;">
+        <h1 style="margin:0 auto 15px;font-size:42px;letter-spacing:-1px;font-weight:800;">{t.allTools}</h1>
+      </div>
+    </section>
+    <section style="padding:40px 0 100px;">
+      <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;">
+        <ToolGrid items={ferramentas} locale="en" />
+      </div>
+    </section>
+  </main>
+</Layout>

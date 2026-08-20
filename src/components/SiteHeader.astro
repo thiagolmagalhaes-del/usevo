@@ -1,0 +1,98 @@
+---
+import { getTranslations } from "../data/i18n";
+
+const t = getTranslations("pt-BR");
+const navItems = [
+  { label: t.tools, href: "/ferramentas" },
+  { label: t.categories, href: "/categorias" },
+];
+---
+
+<header>
+  <div class="container header-inner">
+    <a href="/" class="logo">THIPA TOOLS</a>
+
+    <nav>
+      {navItems.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+      <a href="/ferramentas" class="nav-button">{t.exploreTools}</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    height: 82px;
+    border-bottom: 1px solid #eeeeee;
+    background: #ffffff;
+  }
+
+  .container {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+
+  .header-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 15px;
+    color: #4b5563;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  nav a:hover {
+    color: #315bea;
+  }
+
+  .nav-button {
+    background: #172033;
+    color: #ffffff;
+    padding: 13px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 650px) {
+    .container {
+      width: min(100% - 28px, 1180px);
+    }
+
+    header {
+      height: auto;
+      padding: 18px 0;
+    }
+
+    .header-inner {
+      gap: 20px;
+    }
+
+    nav {
+      gap: 12px;
+    }
+
+    nav a:not(.nav-button) {
+      display: none;
+    }
+  }
+</style>

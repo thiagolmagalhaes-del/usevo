@@ -1,0 +1,18 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import SqlFormatter from "../../../components/tools/SqlFormatter.astro";
+import { getFerramentaByPath, getFerramentaTranslation } from "../../../data/ferramentas";
+import { getSiteAlternates } from "../../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+<Layout title={title} description={description} canonical={new URL(Astro.url.pathname, "https://thipatools.com").href} alternateUrls={alternateUrls}>
+  <div style="padding:28px; max-width:900px; margin:0 auto">
+    <SqlFormatter />
+  </div>
+</Layout>

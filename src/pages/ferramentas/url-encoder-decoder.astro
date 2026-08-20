@@ -1,0 +1,328 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | THIPA TOOLS</title>
+    <meta name="description" content={description} />
+    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+    <link rel="canonical" href={canonicalUrl} />
+  </head>
+
+  <body>
+    <main class="container">
+      <a class="back" href="/ferramentas">← Voltar para ferramentas</a>
+
+      <div class="category">Desenvolvimento</div>
+
+      <h1>{title}</h1>
+
+      <p class="description">{description}</p>
+
+      <section class="tool-card">
+        <label for="input">URL ou texto</label>
+
+        <textarea
+          id="input"
+          placeholder="Cole sua URL ou texto aqui..."
+        ></textarea>
+
+        <div class="buttons">
+          <button id="encodeButton" class="primary" type="button">
+            URL → Codificar
+          </button>
+
+          <button id="decodeButton" class="secondary" type="button">
+            URL → Decodificar
+          </button>
+
+          <button id="clearButton" class="secondary" type="button">
+            Limpar
+          </button>
+        </div>
+
+        <label for="result">Resultado</label>
+
+        <textarea
+          id="result"
+          readonly
+          placeholder="O resultado aparecerá aqui..."
+        ></textarea>
+
+        <button id="copyButton" class="copy" type="button">
+          Copiar resultado
+        </button>
+
+        <div id="message" class="message" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script>
+      const input = document.getElementById("input");
+      const result = document.getElementById("result");
+      const encodeButton = document.getElementById("encodeButton");
+      const decodeButton = document.getElementById("decodeButton");
+      const clearButton = document.getElementById("clearButton");
+      const copyButton = document.getElementById("copyButton");
+      const message = document.getElementById("message");
+
+      function showMessage(text, error = false) {
+        message.textContent = text;
+        message.classList.toggle("error", error);
+
+        setTimeout(() => {
+          message.textContent = "";
+          message.classList.remove("error");
+        }, 2500);
+      }
+
+      encodeButton.addEventListener("click", () => {
+        const value = input.value;
+
+        if (!value.trim()) {
+          showMessage("Digite uma URL ou texto primeiro.", true);
+          return;
+        }
+
+        try {
+          result.value = encodeURIComponent(value);
+          showMessage("✓ URL codificada com sucesso!");
+        } catch {
+          showMessage("Não foi possível codificar o conteúdo.", true);
+        }
+      });
+
+      decodeButton.addEventListener("click", () => {
+        const value = input.value;
+
+        if (!value.trim()) {
+          showMessage("Digite uma URL codificada primeiro.", true);
+          return;
+        }
+
+        try {
+          result.value = decodeURIComponent(value);
+          showMessage("✓ URL decodificada com sucesso!");
+        } catch {
+          result.value = "";
+          showMessage(
+            "O conteúdo não é uma URL codificada válida.",
+            true
+          );
+        }
+      });
+
+      clearButton.addEventListener("click", () => {
+        input.value = "";
+        result.value = "";
+        showMessage("✓ Campos limpos!");
+      });
+
+      copyButton.addEventListener("click", async () => {
+        if (!result.value) {
+          showMessage("Gere um resultado primeiro.", true);
+          return;
+        }
+
+        try {
+          await navigator.clipboard.writeText(result.value);
+          showMessage("✓ Resultado copiado!");
+        } catch {
+          result.select();
+          document.execCommand("copy");
+          showMessage("✓ Resultado copiado!");
+        }
+      });
+    </script>
+
+    <style>
+      :global(*) {
+        box-sizing: border-box;
+      }
+
+      :global(body) {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        color: #172033;
+      }
+
+      .container {
+        width: min(900px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 45px 0 80px;
+      }
+
+      .back {
+        display: block;
+        text-align: right;
+        margin-bottom: 70px;
+        color: #555;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .back:hover {
+        text-decoration: underline;
+      }
+
+      .category {
+        color: #1266d6;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(38px, 6vw, 58px);
+        line-height: 1.05;
+        letter-spacing: -2px;
+      }
+
+      .description {
+        margin: 18px 0 38px;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #666;
+      }
+
+      .tool-card {
+        border: 1px solid #e5e5e5;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      textarea {
+        display: block;
+        width: 100%;
+        min-height: 150px;
+        padding: 16px;
+        border: 1px solid #d9d9d9;
+        border-radius: 10px;
+        background: #fafafa;
+        color: #222;
+        font-family: monospace;
+        font-size: 15px;
+        line-height: 1.5;
+        resize: vertical;
+        outline: none;
+        margin-bottom: 18px;
+      }
+
+      textarea:focus {
+        border-color: #1266d6;
+      }
+
+      #result {
+        background: #f8f8f8;
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      button {
+        min-height: 52px;
+        border: 0;
+        border-radius: 10px;
+        padding: 0 20px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 0.1s ease,
+          opacity 0.2s ease,
+          background 0.2s ease;
+      }
+
+      button:active {
+        transform: scale(0.99);
+      }
+
+      .primary {
+        background: #0878e8;
+        color: white;
+      }
+
+      .primary:hover {
+        opacity: 0.9;
+      }
+
+      .secondary {
+        background: #f1f1f1;
+        color: #222;
+      }
+
+      .secondary:hover {
+        background: #e7e7e7;
+      }
+
+      .copy {
+        width: 100%;
+        background: #0878e8;
+        color: white;
+      }
+
+      .copy:hover {
+        opacity: 0.9;
+      }
+
+      .message {
+        min-height: 24px;
+        margin-top: 18px;
+        color: #198754;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .message.error {
+        color: #dc3545;
+      }
+
+      @media (max-width: 700px) {
+        .container {
+          width: min(100% - 24px, 900px);
+          padding-top: 25px;
+        }
+
+        .back {
+          margin-bottom: 45px;
+        }
+
+        .tool-card {
+          padding: 20px;
+        }
+
+        .buttons {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </body>
+</html>

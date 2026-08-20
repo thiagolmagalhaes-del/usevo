@@ -1,0 +1,288 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | THIPA TOOLS</title>
+    <meta
+      name="description"
+      content={description}
+    />
+
+    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <style>
+      :global(*) {
+        box-sizing: border-box;
+      }
+
+      :global(body) {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f7f7f8;
+        color: #171717;
+      }
+
+      .container {
+        width: min(100% - 32px, 900px);
+        margin: 0 auto;
+      }
+
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .header-inner {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        text-decoration: none;
+        color: #111111;
+      }
+
+      .back {
+        text-decoration: none;
+        color: #555;
+        font-size: 14px;
+      }
+
+      main {
+        padding: 56px 0 80px;
+      }
+
+      .eyebrow {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 48px);
+        line-height: 1.1;
+      }
+
+      .intro {
+        margin-top: 16px;
+        color: #666;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .calculator {
+        margin-top: 40px;
+        background: white;
+        border: 1px solid #e5e5e5;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      .field {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #d8d8d8;
+        border-radius: 10px;
+        font-size: 17px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: #111;
+      }
+
+      button {
+        width: 100%;
+        border: 0;
+        border-radius: 10px;
+        padding: 16px;
+        background: #111;
+        color: white;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+
+      .result {
+        display: none;
+        margin-top: 24px;
+        padding: 22px;
+        border-radius: 14px;
+        background: #f2f2f2;
+      }
+
+      .result.visible {
+        display: block;
+      }
+
+      .result-label {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .result-value {
+        margin-top: 6px;
+        font-size: 34px;
+        font-weight: 800;
+      }
+
+      .formula {
+        margin-top: 12px;
+        color: #666;
+        font-size: 14px;
+      }
+
+      footer {
+        padding: 30px 0;
+        border-top: 1px solid #e5e5e5;
+        color: #777;
+        font-size: 14px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container header-inner">
+        <a href="/" class="logo">THIPA TOOLS</a>
+        <a href="/ferramentas" class="back">← Todas as ferramentas</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="eyebrow">Ferramentas › Finanças</div>
+
+        <h1>Calculadora de Porcentagem</h1>
+
+        <p class="intro">
+          Descubra rapidamente quanto representa uma porcentagem de determinado
+          valor.
+        </p>
+
+        <section class="calculator">
+          <div class="field">
+            <label for="percentage">Porcentagem (%)</label>
+            <input
+              id="percentage"
+              type="number"
+              placeholder="Ex.: 15"
+              step="any"
+            />
+          </div>
+
+          <div class="field">
+            <label for="value">Valor</label>
+            <input
+              id="value"
+              type="number"
+              placeholder="Ex.: 500"
+              step="any"
+            />
+          </div>
+
+          <button id="calculate">Calcular</button>
+
+          <div id="result" class="result">
+            <div class="result-label">Resultado</div>
+            <div id="resultValue" class="result-value">R$ 0,00</div>
+            <div id="formula" class="formula"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      © {new Date().getFullYear()} THIPA TOOLS — Ferramentas online
+    </footer>
+
+    <script>
+      const percentageInput = document.getElementById(
+        "percentage"
+      ) as HTMLInputElement;
+
+      const valueInput = document.getElementById(
+        "value"
+      ) as HTMLInputElement;
+
+      const calculateButton = document.getElementById(
+        "calculate"
+      ) as HTMLButtonElement;
+
+      const result = document.getElementById("result") as HTMLDivElement;
+      const resultValue = document.getElementById(
+        "resultValue"
+      ) as HTMLDivElement;
+
+      const formula = document.getElementById("formula") as HTMLDivElement;
+
+      calculateButton.addEventListener("click", () => {
+        const percentage = Number(percentageInput.value);
+        const value = Number(valueInput.value);
+
+        if (!Number.isFinite(percentage) || !Number.isFinite(value)) {
+          result.classList.remove("visible");
+          return;
+        }
+
+        const calculated = (percentage / 100) * value;
+
+        resultValue.textContent = calculated.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+
+        formula.textContent = `${percentage}% de ${value.toLocaleString(
+          "pt-BR",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }
+        )} = ${calculated.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+
+        result.classList.add("visible");
+      });
+    </script>
+  </body>
+</html>

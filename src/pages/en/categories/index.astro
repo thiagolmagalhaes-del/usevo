@@ -1,0 +1,41 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { ferramentas } from "../../../data/ferramentas";
+import { getTranslations } from "../../../data/i18n";
+import { getSiteAlternates } from "../../../data/locale-routes";
+
+const t = getTranslations("en");
+const categorias = new Map<string, typeof ferramentas>();
+for (const ferramenta of ferramentas) {
+  const current = categorias.get(ferramenta.categoria) ?? [];
+  current.push(ferramenta);
+  categorias.set(ferramenta.categoria, current);
+}
+const canonical = "https://thipatools.com/en/categories/";
+const alternateUrls = getSiteAlternates("/en/categories/");
+const getToolHref = (ferramenta: (typeof ferramentas)[number]) => `/en/tools/${ferramenta.localeSlugs.en}/`;
+---
+
+<Layout title={t.categories} description="Browse THIPA tools by category." locale="en" canonical={canonical} alternateUrls={alternateUrls}>
+  <main>
+    <section style="padding: 60px 0 40px; text-align:center;">
+      <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;">
+        <h1 style="margin:0 auto 15px;font-size:42px;letter-spacing:-1px;font-weight:800;">{t.categories}</h1>
+      </div>
+    </section>
+    <section style="padding:40px 0 100px;">
+      <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;">
+        {Array.from(categorias.entries()).map(([categoria, itens]) => (
+          <div style="padding:32px;border:1px solid #e7e9ee;border-radius:16px;background:#fff;">
+            <h2 style="margin:0 0 8px;font-size:22px;">{categoria}</h2>
+            <ul style="list-style:none;padding:0;margin:0;">
+              {itens.map((ferramenta) => (
+                <li style="margin-bottom:12px;"><a href={getToolHref(ferramenta)} style="display:block;padding:12px;border-radius:8px;background:#f8fafc;color:#315bea;font-size:14px;font-weight:600;">{ferramenta.translations.en?.title ?? ferramenta.nome}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+</Layout>

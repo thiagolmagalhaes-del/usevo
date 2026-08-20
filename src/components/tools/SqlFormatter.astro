@@ -1,0 +1,31 @@
+---
+---
+<div class="tool-card card">
+  <h2>Formatador de SQL</h2>
+  <label>SQL</label>
+  <textarea id="sqlInput" rows="12" style="width:100%"></textarea>
+  <div style="margin-top:8px">
+    <label for="dialect">Dialeto (opcional)</label>
+    <select id="dialect">
+      <option value="sql">Standard SQL</option>
+      <option value="postgresql">PostgreSQL</option>
+      <option value="mysql">MySQL</option>
+      <option value="sqlite">SQLite</option>
+    </select>
+  </div>
+  <div style="margin-top:12px">
+    <button id="formatBtn">Formatar SQL</button>
+    <button id="copyBtn">Copiar</button>
+    <button id="clearBtn">Limpar</button>
+  </div>
+  <div id="result" style="margin-top:12px"><pre id="formatted" style="white-space:pre-wrap"></pre></div>
+  <div id="error" class="error" style="display:none"></div>
+</div>
+
+<style>
+.error { color:#7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
+</style>
+
+<script type="module">
+  import './SqlFormatter.client.js';
+</script>

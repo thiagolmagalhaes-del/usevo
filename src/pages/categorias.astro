@@ -1,0 +1,294 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ferramentas } from "../data/ferramentas";
+import { getTranslations } from "../data/i18n";
+
+const t = getTranslations("pt-BR");
+
+const categorias = {} as Record<string, any[]>;
+ferramentas.forEach((ferramenta) => {
+  if (!categorias[ferramenta.categoria]) {
+    categorias[ferramenta.categoria] = [];
+  }
+  categorias[ferramenta.categoria].push(ferramenta);
+});
+
+const categoriasOrdenadas = Object.keys(categorias).sort();
+---
+
+<Layout
+  title="Categorias — THIPA TOOLS"
+  description="Navegue pelas ferramentas da THIPA TOOLS por categoria. Encontre exatamente o que você precisa."
+>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #172033;
+        background: #ffffff;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .container {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      header {
+        height: 82px;
+        border-bottom: 1px solid #eeeeee;
+        background: #ffffff;
+      }
+
+      .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        font-size: 15px;
+        color: #4b5563;
+      }
+
+      nav a:hover {
+        color: #315bea;
+      }
+
+      .nav-button {
+        background: #172033;
+        color: #ffffff;
+        padding: 13px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      .page-header {
+        padding: 60px 0 40px;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        margin: 0 auto 15px;
+        font-size: 42px;
+        letter-spacing: -1px;
+        font-weight: 800;
+      }
+
+      .page-header p {
+        margin: 0;
+        color: #667085;
+        font-size: 16px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .categories-section {
+        padding: 40px 0 100px;
+      }
+
+      .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .category-card {
+        padding: 32px;
+        border: 1px solid #e7e9ee;
+        border-radius: 16px;
+        background: #ffffff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .category-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+      }
+
+      .category-header {
+        margin-bottom: 20px;
+      }
+
+      .category-name {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 8px;
+        color: #172033;
+      }
+
+      .category-count {
+        font-size: 14px;
+        color: #667085;
+        margin: 0;
+      }
+
+      .tools-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .tools-list li {
+        margin-bottom: 12px;
+      }
+
+      .tools-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      .tools-list a {
+        display: block;
+        padding: 12px;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #315bea;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background 0.2s ease;
+      }
+
+      .tools-list a:hover {
+        background: #eef2ff;
+        color: #172033;
+      }
+
+      footer {
+        border-top: 1px solid #eeeeee;
+        padding: 35px 0;
+        color: #667085;
+        font-size: 14px;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .view-all-link {
+        margin-top: 40px;
+        text-align: center;
+      }
+
+      .view-all-link a {
+        display: inline-block;
+        background: #172033;
+        color: #ffffff;
+        padding: 15px 25px;
+        border-radius: 9px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 900px) {
+        .categories-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 650px) {
+        .container {
+          width: min(100% - 28px, 1180px);
+        }
+
+        header {
+          height: auto;
+          padding: 18px 0;
+        }
+
+        .header-inner {
+          gap: 20px;
+        }
+
+        nav {
+          gap: 12px;
+        }
+
+        nav a:not(.nav-button) {
+          display: none;
+        }
+
+        .page-header {
+          padding: 50px 0 30px;
+        }
+
+        .page-header h1 {
+          font-size: 32px;
+          letter-spacing: -1px;
+        }
+
+        .categories-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+    </style>
+
+  <main>
+      <section class="page-header">
+        <div class="container">
+          <h1>{t.categories}</h1>
+          <p>Explore nossas ferramentas organizadas por tema. Encontre exatamente o que você precisa.</p>
+        </div>
+      </section>
+
+      <section class="categories-section">
+        <div class="container">
+          <div class="categories-grid">
+            {categoriasOrdenadas.map((categoria) => (
+              <div class="category-card">
+                <div class="category-header">
+                  <h3 class="category-name">{categoria}</h3>
+                  <p class="category-count">
+                    {categorias[categoria].length} {categorias[categoria].length === 1 ? 'ferramenta' : 'ferramentas'}
+                  </p>
+                </div>
+
+                <ul class="tools-list">
+                  {categorias[categoria].map((ferramenta) => (
+                    <li>
+                      <a href={ferramenta.url}>
+                        {ferramenta.icone} {ferramenta.nome}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div class="view-all-link">
+            <a href="/ferramentas">{t.allTools}</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+</Layout>

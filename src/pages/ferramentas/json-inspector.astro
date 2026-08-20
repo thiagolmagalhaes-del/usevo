@@ -1,0 +1,745 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const pageTitle = title;
+const pageDescription = description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | THIPA TOOLS</title>
+    <meta
+      name="description"
+      content={pageDescription}
+    />
+    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <style>
+      :global(*) {
+        box-sizing: border-box;
+      }
+
+      :global(body) {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f8fafc;
+        color: #172033;
+      }
+
+      :global(a) {
+        text-decoration: none;
+      }
+
+      .container {
+        width: min(100% - 32px, 980px);
+        margin: 0 auto;
+      }
+
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .header-inner {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #111827;
+      }
+
+      .back {
+        color: #475467;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      main {
+        padding: 56px 0 80px;
+      }
+
+      .eyebrow {
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 48px);
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+      }
+
+      .description {
+        margin: 16px 0 0;
+        color: #667085;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .card {
+        margin-top: 36px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 280px;
+        resize: vertical;
+        padding: 18px 16px;
+        border: 1px solid #d9dee8;
+        border-radius: 12px;
+        background: #ffffff;
+        color: #172033;
+        font-size: 14px;
+        line-height: 1.6;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      .buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+
+      button:hover {
+        opacity: 0.97;
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .primary {
+        background: #2563eb;
+        color: #ffffff;
+        min-width: 190px;
+      }
+
+      .secondary {
+        background: #f1f5f9;
+        color: #172033;
+      }
+
+      .status {
+        display: none;
+        margin-top: 20px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .status.visible {
+        display: block;
+      }
+
+      .status.success {
+        background: #ecfdf3;
+        color: #067647;
+      }
+
+      .status.error {
+        background: #fef2f2;
+        color: #b42318;
+      }
+
+      .summary {
+        display: none;
+        margin-top: 24px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 18px;
+      }
+
+      .summary.visible {
+        display: block;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(120px, 1fr));
+        gap: 12px;
+      }
+
+      .stat {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+
+      .stat-label {
+        display: block;
+        color: #667085;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .tree-section {
+        margin-top: 26px;
+      }
+
+      .tree-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .tree-title {
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .tree-container {
+        display: none;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 18px 16px;
+      }
+
+      .tree-container.visible {
+        display: block;
+      }
+
+      .tree {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 14px;
+        line-height: 1.8;
+        color: #172033;
+      }
+
+      .tree-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 28px;
+      }
+
+      .tree-indent {
+        display: inline-block;
+        width: 18px;
+        color: #94a3b8;
+        flex-shrink: 0;
+      }
+
+      .tree-toggle {
+        background: transparent;
+        color: #475467;
+        padding: 0;
+        margin: 0;
+        width: 18px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 6px;
+        font-size: 12px;
+        line-height: 1;
+      }
+
+      .tree-key {
+        color: #2563eb;
+        font-weight: 700;
+      }
+
+      .tree-colon {
+        color: #64748b;
+      }
+
+      .tree-value {
+        word-break: break-word;
+      }
+
+      .type-string {
+        color: #0f766e;
+      }
+
+      .type-number {
+        color: #7c3aed;
+      }
+
+      .type-boolean {
+        color: #c2410c;
+      }
+
+      .type-null {
+        color: #475467;
+      }
+
+      .type-object,
+      .type-array {
+        color: #0f172a;
+        font-weight: 700;
+      }
+
+      .tree-children {
+        margin-left: 20px;
+        border-left: 1px solid #dfe7f1;
+        padding-left: 12px;
+      }
+
+      .empty {
+        color: #64748b;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 640px) {
+        main {
+          padding-top: 42px;
+        }
+
+        .card {
+          padding: 18px;
+        }
+
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(120px, 1fr));
+        }
+
+        .back {
+          display: none;
+        }
+
+        .buttons {
+          flex-direction: column;
+        }
+
+        .primary,
+        .secondary {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container header-inner">
+        <a href="/" class="logo">THIPA TOOLS</a>
+        <a href="/ferramentas/" class="back">← Todas as ferramentas</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="eyebrow">Ferramentas › Desenvolvimento</div>
+
+        <h1>{pageTitle}</h1>
+
+        <p class="description">
+          {pageDescription}
+        </p>
+
+        <section class="card">
+          <label for="jsonInput">JSON</label>
+
+          <textarea
+            id="jsonInput"
+            placeholder="Cole seu JSON aqui..."
+          ></textarea>
+
+          <div class="buttons">
+            <button type="button" class="primary" id="inspectBtn">
+              Inspecionar JSON
+            </button>
+
+            <button type="button" class="secondary" id="clearBtn">
+              Limpar
+            </button>
+          </div>
+
+          <div id="status" class="status" aria-live="polite"></div>
+
+          <div id="summary" class="summary" aria-live="polite">
+            <div class="summary-grid">
+              <div class="stat">
+                <span class="stat-label">Propriedades</span>
+                <span id="propertyCount" class="stat-value">0</span>
+              </div>
+
+              <div class="stat">
+                <span class="stat-label">Objetos</span>
+                <span id="objectCount" class="stat-value">0</span>
+              </div>
+
+              <div class="stat">
+                <span class="stat-label">Arrays</span>
+                <span id="arrayCount" class="stat-value">0</span>
+              </div>
+
+              <div class="stat">
+                <span class="stat-label">Profundidade</span>
+                <span id="depthCount" class="stat-value">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-section">
+            <div class="tree-header">
+              <div class="tree-title">Visualização em árvore</div>
+              <button type="button" class="secondary hidden" id="copyBtn">
+                Copiar JSON formatado
+              </button>
+            </div>
+
+            <div id="treeContainer" class="tree-container">
+              <div id="tree" class="tree"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const jsonInput = document.getElementById("jsonInput");
+      const inspectBtn = document.getElementById("inspectBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const copyBtn = document.getElementById("copyBtn");
+      const status = document.getElementById("status");
+      const summary = document.getElementById("summary");
+      const treeContainer = document.getElementById("treeContainer");
+      const tree = document.getElementById("tree");
+
+      const propertyCount = document.getElementById("propertyCount");
+      const objectCount = document.getElementById("objectCount");
+      const arrayCount = document.getElementById("arrayCount");
+      const depthCount = document.getElementById("depthCount");
+
+      let currentData = null;
+
+      function setStatus(message, type) {
+        status.textContent = message;
+        status.className = `status visible ${type}`;
+      }
+
+      function clearStatus() {
+        status.textContent = "";
+        status.className = "status";
+      }
+
+      function hideSummary() {
+        summary.classList.remove("visible");
+        treeContainer.classList.remove("visible");
+        copyBtn.classList.add("hidden");
+      }
+
+      function showSummary(stats) {
+        propertyCount.textContent = stats.properties;
+        objectCount.textContent = stats.objects;
+        arrayCount.textContent = stats.arrays;
+        depthCount.textContent = stats.depth;
+        summary.classList.add("visible");
+        treeContainer.classList.add("visible");
+        copyBtn.classList.remove("hidden");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function getTypeLabel(value) {
+        if (value === null) return "null";
+        if (Array.isArray(value)) return "array";
+        if (typeof value === "object") return "object";
+        if (typeof value === "string") return "string";
+        if (typeof value === "number") return "number";
+        if (typeof value === "boolean") return "boolean";
+        return "value";
+      }
+
+      function formatPrimitive(value) {
+        if (value === null) {
+          return "null";
+        }
+
+        if (typeof value === "string") {
+          return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+        }
+
+        if (typeof value === "number") {
+          return String(value);
+        }
+
+        if (typeof value === "boolean") {
+          return String(value);
+        }
+
+        return String(value);
+      }
+
+      function analyzeNode(node, depth = 0) {
+        if (node === null || typeof node !== "object") {
+          return {
+            properties: 0,
+            objects: 0,
+            arrays: 0,
+            depth: depth
+          };
+        }
+
+        let properties = 0;
+        let objects = 0;
+        let arrays = 0;
+        let maxDepth = depth;
+
+        if (Array.isArray(node)) {
+          arrays += 1;
+          properties += node.length;
+
+          node.forEach((item) => {
+            const stats = analyzeNode(item, depth + 1);
+            properties += stats.properties;
+            objects += stats.objects;
+            arrays += stats.arrays;
+            maxDepth = Math.max(maxDepth, stats.depth);
+          });
+
+          return { properties, objects, arrays, depth: maxDepth };
+        }
+
+        objects += 1;
+        const keys = Object.keys(node);
+        properties += keys.length;
+
+        keys.forEach((key) => {
+          const stats = analyzeNode(node[key], depth + 1);
+          properties += stats.properties;
+          objects += stats.objects;
+          arrays += stats.arrays;
+          maxDepth = Math.max(maxDepth, stats.depth);
+        });
+
+        return { properties, objects, arrays, depth: maxDepth };
+      }
+
+      function createToggleButton() {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "tree-toggle";
+        button.textContent = "▾";
+
+        button.addEventListener("click", () => {
+          const item = button.parentElement.parentElement;
+          const children = item.querySelector(":scope > .tree-children");
+          if (!children) return;
+
+          const isHidden = children.classList.toggle("hidden");
+          button.textContent = isHidden ? "▸" : "▾";
+        });
+
+        return button;
+      }
+
+      function renderTreeNode(key, value, depth = 0) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "tree-node";
+
+        const row = document.createElement("div");
+        row.className = "tree-row";
+
+        const indent = document.createElement("span");
+        indent.className = "tree-indent";
+        indent.textContent = "";
+        indent.style.marginLeft = `${depth * 18}px`;
+
+        const isObject = value !== null && typeof value === "object" && !Array.isArray(value);
+        const isArray = Array.isArray(value);
+        const hasChildren = isObject ? Object.keys(value).length > 0 : isArray ? value.length > 0 : false;
+
+        if (hasChildren) {
+          const toggle = createToggleButton();
+          row.appendChild(toggle);
+        } else {
+          const spacer = document.createElement("span");
+          spacer.className = "tree-indent";
+          spacer.textContent = "";
+          row.appendChild(spacer);
+        }
+
+        row.appendChild(indent);
+
+        const keyLabel = document.createElement("span");
+        keyLabel.className = "tree-key";
+        keyLabel.textContent = key;
+
+        row.appendChild(keyLabel);
+
+        const colon = document.createElement("span");
+        colon.className = "tree-colon";
+        colon.textContent = ": ";
+        row.appendChild(colon);
+
+        if (isObject || isArray) {
+          const type = document.createElement("span");
+          type.className = `tree-value type-${isObject ? "object" : "array"}`;
+          type.textContent = isObject ? "{}" : "[]";
+          row.appendChild(type);
+        } else {
+          const valueText = document.createElement("span");
+          const type = getTypeLabel(value);
+          valueText.className = `tree-value type-${type}`;
+          valueText.textContent = formatPrimitive(value);
+          row.appendChild(valueText);
+        }
+
+        wrapper.appendChild(row);
+
+        if (hasChildren) {
+          const children = document.createElement("div");
+          children.className = "tree-children";
+
+          if (isObject) {
+            Object.entries(value).forEach(([childKey, childValue]) => {
+              children.appendChild(renderTreeNode(childKey, childValue, depth + 1));
+            });
+          } else if (isArray) {
+            value.forEach((item, index) => {
+              children.appendChild(renderTreeNode(String(index), item, depth + 1));
+            });
+          }
+
+          wrapper.appendChild(children);
+        }
+
+        return wrapper;
+      }
+
+      function renderTree(data) {
+        tree.innerHTML = "";
+
+        if (data === null || data === undefined) {
+          tree.innerHTML = '<div class="empty">Nenhum dado para exibir.</div>';
+          return;
+        }
+
+        const rootKey = typeof data === "object" && !Array.isArray(data) ? "documento" : "JSON";
+        const rootNode = renderTreeNode(rootKey, data, 0);
+        tree.appendChild(rootNode);
+      }
+
+      function inspectJson() {
+        try {
+          const value = JSON.parse(jsonInput.value);
+          currentData = value;
+
+          const stats = analyzeNode(value, 0);
+          showSummary(stats);
+          renderTree(value);
+          setStatus("✓ JSON válido", "success");
+        } catch (error) {
+          currentData = null;
+          hideSummary();
+          tree.innerHTML = "";
+          setStatus("JSON inválido. Verifique a estrutura e tente novamente.", "error");
+        }
+      }
+
+      function clearAll() {
+        jsonInput.value = "";
+        currentData = null;
+        clearStatus();
+        hideSummary();
+        tree.innerHTML = "";
+      }
+
+      async function copyFormattedJson() {
+        if (!currentData) {
+          setStatus("JSON inválido. Verifique a estrutura e tente novamente.", "error");
+          return;
+        }
+
+        const formatted = JSON.stringify(currentData, null, 2);
+
+        try {
+          await navigator.clipboard.writeText(formatted);
+          setStatus("✓ JSON formatado copiado para a área de transferência.", "success");
+        } catch (error) {
+          const fallback = document.createElement("textarea");
+          fallback.value = formatted;
+          document.body.appendChild(fallback);
+          fallback.select();
+          document.execCommand("copy");
+          fallback.remove();
+          setStatus("✓ JSON formatado copiado para a área de transferência.", "success");
+        }
+      }
+
+      inspectBtn.addEventListener("click", inspectJson);
+      clearBtn.addEventListener("click", clearAll);
+      copyBtn.addEventListener("click", copyFormattedJson);
+
+      jsonInput.addEventListener("keydown", (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+          inspectJson();
+        }
+      });
+    </script>
+  </body>
+</html>

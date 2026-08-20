@@ -1,0 +1,74 @@
+---
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { resolveLocale, type Locale } from "../data/locales";
+
+const {
+  title = "THIPA TOOLS",
+  description = "Ferramentas online simples, rápidas e úteis para resolver tarefas do dia a dia.",
+  locale,
+  canonical,
+  alternateUrls,
+} = Astro.props as {
+  title?: string;
+  description?: string;
+  locale?: string | null;
+  canonical?: string;
+  alternateUrls?: Partial<Record<Locale, string>>;
+};
+
+const resolvedLocale = resolveLocale(locale ?? "pt-BR") as Locale;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://thipatools.com").href;
+const pageTitle = title.includes("THIPA TOOLS") ? title : `${title} | THIPA TOOLS`;
+const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string][];
+---
+
+<!doctype html>
+<html lang={resolvedLocale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {alternateEntries.map(([lang, href]) => (
+      <link rel="alternate" hreflang={lang} href={href} />
+    ))}
+    <link rel="canonical" href={canonicalUrl} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <SiteHeader />
+    <slot />
+    <SiteFooter />
+  </body>
+</html>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172033;
+    background: #ffffff;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+</style>

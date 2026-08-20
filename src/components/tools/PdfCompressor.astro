@@ -1,0 +1,183 @@
+---
+---
+<div class="tool-card card">
+  <h2>Comprimir PDF</h2>
+  <div id="dropArea" class="drop">Arraste e solte um PDF aqui ou clique para selecionar</div>
+  <input id="fileInput" type="file" accept="application/pdf" style="display:none" />
+  <div id="fileInfo" style="display:none">
+    <div>Arquivo: <span id="fileName"></span></div>
+    <div>Tamanho original: <span id="originalSize"></span></div>
+    <button id="compressBtn">Comprimir PDF</button>
+  </div>
+  <div id="processing" style="display:none">Processando...</div>
+  <div id="result" style="display:none">
+    <div>Tamanho final: <span id="finalSize"></span></div>
+    <div>Redução: <span id="reduction"></span></div>
+    <a id="downloadLink" href="#" download>Baixar PDF</a>
+  </div>
+  <div id="error" class="error" style="display:none"></div>
+</div>
+
+<style>
+.tool-card { padding: 18px; border:1px solid #e7ebf3; border-radius:12px; background:#fff; }
+.drop { padding: 18px; border: 2px dashed #d7dce5; border-radius:12px; text-align:center; cursor:pointer; }
+.error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
+</style>
+
+<script type="module">
+  import { PDFDocument } from 'pdf-lib';
+
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileNameEl = document.getElementById('fileName');
+  const originalSizeEl = document.getElementById('originalSize');
+  const compressBtn = document.getElementById('compressBtn');
+  const processing = document.getElementById('processing');
+  const result = document.getElementById('result');
+  const finalSizeEl = document.getElementById('finalSize');
+  const reductionEl = document.getElementById('reduction');
+  const downloadLink = document.getElementById('downloadLink');
+  const errorEl = document.getElementById('error');
+
+  let currentFile = null;
+  let currentArrayBuffer = null;
+  let currentObjectUrl = null;
+  const PDF_MAX_SINGLE = 25 * 1024 * 1024; // 25 MB per file limit (reasonable for client-side)
+
+  function humanSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  dropArea.addEventListener('click', () => fileInput.click());
+  dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.style.borderColor = '#315bea'; });
+  dropArea.addEventListener('dragleave', () => { dropArea.style.borderColor = '#d7dce5'; });
+  dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.style.borderColor = '#d7dce5';
+    const f = e.dataTransfer.files[0];
+    handleFile(f);
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    handleFile(f);
+  });
+
+  function showError(msg) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = msg;
+  }
+
+  function clearError() {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+
+  function handleFile(file) {
+    clearError();
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      showError('Apenas arquivos PDF são aceitos.');
+      return;
+    }
+    currentFile = file;
+    fileNameEl.textContent = file.name;
+    originalSizeEl.textContent = humanSize(file.size);
+    fileInfo.style.display = 'block';
+    result.style.display = 'none';
+    processing.style.display = 'none';
+    const reader = new FileReader();
+    reader.onload = () => {
+      currentArrayBuffer = reader.result;
+    };
+    reader.onerror = () => showError('Erro ao ler o arquivo.');
+    reader.readAsArrayBuffer(file);
+  }
+
+  async function compressPdf() {
+    if (!currentArrayBuffer) return showError('Nenhum arquivo carregado.');
+    clearError();
+
+      // File size protection
+      if (currentFile && currentFile.size > PDF_MAX_SINGLE) {
+        return showError(`Arquivo excede o limite de ${humanSize(PDF_MAX_SINGLE)}. Escolha um arquivo menor.`);
+      }
+
+      // Prevent concurrent runs and disable button
+      compressBtn.disabled = true;
+      processing.style.display = 'block';
+      fileInfo.style.display = 'none';
+      result.style.display = 'none';
+      try {
+        // Lazy import pdf-lib to avoid bundling it in SSR/initial chunk
+        const mod = await import('pdf-lib');
+        const PDFDocument = mod.PDFDocument ?? mod.default?.PDFDocument ?? mod.PDFDocument;
+        if (!PDFDocument) {
+          throw new Error('pdf-lib não disponível');
+        }
+
+        const src = await PDFDocument.load(currentArrayBuffer);
+        const pdfDoc = await PDFDocument.create();
+        const copiedPages = await pdfDoc.copyPages(src, src.getPageIndices());
+        copiedPages.forEach((p) => pdfDoc.addPage(p));
+
+        // Save with default compression — pdf-lib applies some compression, but results vary.
+        const bytes = await pdfDoc.save();
+        const finalBlob = new Blob([bytes], { type: 'application/pdf' });
+        const originalSize = currentFile.size;
+        const finalSize = bytes.length;
+
+        // Revoke previous object URL if any
+        if (currentObjectUrl) {
+          try { URL.revokeObjectURL(currentObjectUrl); } catch (e) { /* ignore */ }
+          currentObjectUrl = null;
+        }
+
+        const setDownload = (blob, name) => {
+          currentObjectUrl = URL.createObjectURL(blob);
+          downloadLink.href = currentObjectUrl;
+          downloadLink.download = name;
+          // Revoke after user clicks (give time to download)
+          const onClick = () => {
+            setTimeout(() => {
+              if (currentObjectUrl) {
+                try { URL.revokeObjectURL(currentObjectUrl); } catch (e) {}
+                currentObjectUrl = null;
+              }
+            }, 1500);
+          };
+          downloadLink.addEventListener('click', onClick, { once: true });
+        };
+
+        if (finalSize >= originalSize) {
+          // No effective reduction
+          processing.style.display = 'none';
+          result.style.display = 'block';
+          finalSizeEl.textContent = humanSize(finalSize);
+          reductionEl.textContent = 'Nenhuma redução efetiva foi obtida.';
+          setDownload(finalBlob, 'compressed-' + currentFile.name);
+          return;
+        }
+
+        const reductionPct = Math.round(((originalSize - finalSize) / originalSize) * 100);
+        processing.style.display = 'none';
+        result.style.display = 'block';
+        finalSizeEl.textContent = humanSize(finalSize);
+        reductionEl.textContent = `${reductionPct}%`;
+        setDownload(finalBlob, 'compressed-' + currentFile.name);
+      } catch (err) {
+        console.error(err);
+        showError('Erro ao processar o PDF. Pode estar corrompido ou não ser suportado.');
+      } finally {
+        processing.style.display = 'none';
+        compressBtn.disabled = false;
+      }
+    }
+
+    compressBtn.addEventListener('click', compressPdf);
+</script>

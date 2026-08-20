@@ -1,0 +1,297 @@
+---
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getSiteAlternates } from "../../data/locale-routes";
+const ferramenta = getFerramentaByPath(Astro.url.pathname);
+const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const title = toolMeta.title;
+const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+---
+
+
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | THIPA TOOLS</title>
+    <meta name="description" content={description} />
+    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
+    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
+    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ffffff;
+        color: #172033;
+      }
+
+      header {
+        border-bottom: 1px solid #e8e8e8;
+        padding: 24px 5%;
+      }
+
+      .header-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        text-decoration: none;
+        color: #172033;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .back {
+        text-decoration: none;
+        color: #667085;
+        font-size: 15px;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 70px auto;
+        padding: 0 24px;
+      }
+
+      .category {
+        display: inline-block;
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 48px;
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+      }
+
+      .description {
+        margin: 0 0 40px;
+        color: #667085;
+        font-size: 18px;
+      }
+
+      .card {
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 32px;
+        background: #ffffff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      }
+
+      label {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 180px;
+        resize: vertical;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        padding: 18px;
+        font-size: 16px;
+        font-family: inherit;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      button {
+        width: 100%;
+        margin-top: 20px;
+        border: 0;
+        border-radius: 10px;
+        padding: 16px;
+        background: #1677e8;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #1268cc;
+      }
+
+      .result {
+        display: none;
+        margin-top: 30px;
+        padding: 30px;
+        border-radius: 16px;
+        background: #f8fafc;
+        text-align: center;
+      }
+
+      .result.show {
+        display: block;
+      }
+
+      .result h2 {
+        margin: 0 0 20px;
+        font-size: 20px;
+      }
+
+      #qrImage {
+        display: block;
+        width: 280px;
+        height: 280px;
+        max-width: 100%;
+        margin: 0 auto 24px;
+        background: white;
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .download {
+        display: inline-block;
+        width: auto;
+        margin: 0;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 10px;
+        background: #172033;
+        color: white;
+        font-weight: 700;
+      }
+
+      .error {
+        display: none;
+        margin-top: 15px;
+        color: #dc2626;
+        font-size: 14px;
+      }
+
+      @media (max-width: 700px) {
+        main {
+          margin: 40px auto;
+        }
+
+        h1 {
+          font-size: 36px;
+        }
+
+        .card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/" class="logo">THIPA TOOLS</a>
+        <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+      </div>
+    </header>
+
+    <main>
+      <span class="category">Utilidades</span>
+
+      <h1>Gerador de QR Code</h1>
+
+      <p class="description">
+        Transforme links e textos em códigos QR rapidamente.
+      </p>
+
+      <div class="card">
+        <label for="qrText">Link ou texto</label>
+
+        <textarea
+          id="qrText"
+          placeholder="Digite um link ou texto..."
+        >https://google.com</textarea>
+
+        <button id="generateBtn" type="button">
+          Gerar QR Code
+        </button>
+
+        <div id="error" class="error">
+          Digite algum texto ou link para gerar o QR Code.
+        </div>
+
+        <div id="result" class="result">
+          <h2>Seu QR Code</h2>
+
+          <img
+            id="qrImage"
+            alt="QR Code gerado"
+          />
+
+          <a
+            id="downloadBtn"
+            class="download"
+            href="#"
+            download="thipa-qrcode.png"
+          >
+            Baixar QR Code
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const textInput = document.getElementById("qrText");
+      const generateBtn = document.getElementById("generateBtn");
+      const qrImage = document.getElementById("qrImage");
+      const result = document.getElementById("result");
+      const error = document.getElementById("error");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      generateBtn.addEventListener("click", () => {
+        const text = textInput.value.trim();
+
+        if (!text) {
+          error.style.display = "block";
+          result.classList.remove("show");
+          return;
+        }
+
+        error.style.display = "none";
+
+        const qrUrl =
+          "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=" +
+          encodeURIComponent(text);
+
+        qrImage.src = qrUrl;
+
+        qrImage.onload = () => {
+          result.classList.add("show");
+          downloadBtn.href = qrUrl;
+        };
+
+        qrImage.onerror = () => {
+          error.textContent =
+            "Não foi possível gerar o QR Code. Tente novamente.";
+          error.style.display = "block";
+          result.classList.remove("show");
+        };
+      });
+    </script>
+  </body>
+</html>
