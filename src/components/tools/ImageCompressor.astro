@@ -1,20 +1,20 @@
 ---
 ---
 <div class="tool-card card">
-  <h2>Comprimir Imagem</h2>
-  <div id="dropArea" class="drop">Arraste e solte uma imagem aqui ou clique para selecionar</div>
+  <h2>Compress Image</h2>
+  <div id="dropArea" class="drop">Drag and drop an image here or click to select</div>
   <input id="fileInput" type="file" accept="image/*" style="display:none" />
   <div id="fileInfo" style="display:none">
-    <div>Arquivo: <span id="fileName"></span></div>
-    <div>Tamanho original: <span id="originalSize"></span></div>
-    <label>Qualidade: <input id="quality" type="range" min="0.1" max="1" step="0.05" value="0.8"></label>
-    <button id="compressBtn">Comprimir Imagem</button>
+    <div>File: <span id="fileName"></span></div>
+    <div>Original size: <span id="originalSize"></span></div>
+    <label>Quality: <input id="quality" type="range" min="0.1" max="1" step="0.05" value="0.8"></label>
+    <button id="compressBtn">Compress Image</button>
   </div>
-  <div id="processing" style="display:none">Processando...</div>
+  <div id="processing" style="display:none">Processing...</div>
   <div id="result" style="display:none">
-    <div>Tamanho final: <span id="finalSize"></span></div>
-    <div>Redução: <span id="reduction"></span></div>
-    <a id="downloadLink" href="#" download>Baixar Imagem</a>
+    <div>Final size: <span id="finalSize"></span></div>
+    <div>Reduction: <span id="reduction"></span></div>
+    <a id="downloadLink" href="#" download>Download Image</a>
   </div>
   <div id="error" class="error" style="display:none"></div>
 </div>
@@ -74,7 +74,7 @@
     clearError();
     if (!file) return;
     const allowed = ['image/jpeg','image/png','image/webp'];
-    if (!allowed.includes(file.type)) { showError('Formatos suportados: JPG, PNG, WebP'); return; }
+    if (!allowed.includes(file.type)) { showError('Supported formats: JPG, PNG, WebP'); return; }
     currentFile = file;
     fileNameEl.textContent = file.name;
     originalSizeEl.textContent = humanSize(file.size);
@@ -83,11 +83,11 @@
   }
 
   async function compressImage() {
-    if (!currentFile) return showError('Nenhum arquivo selecionado.');
+    if (!currentFile) return showError('No file selected.');
     clearError();
 
       if (currentFile.size > IMAGE_MAX_FILE) {
-        return showError(`Arquivo excede o limite de ${Math.round(IMAGE_MAX_FILE/1024/1024)} MB.`);
+        return showError(`File exceeds the limit of ${Math.round(IMAGE_MAX_FILE/1024/1024)} MB.`);
       }
 
       compressBtn.disabled = true;
@@ -116,7 +116,7 @@
           processing.style.display = 'none';
           result.style.display = 'block';
           finalSizeEl.textContent = humanSize(finalSize);
-          reductionEl.textContent = 'Nenhuma redução efetiva foi obtida.';
+          reductionEl.textContent = 'No effective reduction was achieved.';
           setDownload(finalBlob, 'compressed-' + currentFile.name);
           return;
         }
@@ -128,7 +128,7 @@
         setDownload(finalBlob, 'compressed-' + currentFile.name);
       } catch (err) {
         console.error(err);
-        showError('Erro ao comprimir a imagem. Talvez o arquivo seja muito grande ou inválido.');
+        showError('Error compressing the image. The file may be too large or invalid.');
       } finally {
         compressBtn.disabled = false;
         processing.style.display = 'none';

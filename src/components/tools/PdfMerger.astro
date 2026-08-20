@@ -1,18 +1,18 @@
 ---
 ---
 <div class="tool-card card">
-  <h2>Juntar PDF</h2>
+  <h2>Merge PDF</h2>
   <input id="fileInput" type="file" accept="application/pdf" multiple style="display:none" />
-  <div id="dropArea" class="drop">Arraste e solte PDFs aqui ou clique para selecionar</div>
+  <div id="dropArea" class="drop">Drag and drop PDFs here or click to select</div>
 
   <ul id="fileList"></ul>
   <div>
-    <button id="mergeBtn">Juntar PDFs</button>
-    <div id="processing" style="display:none">Processando...</div>
+    <button id="mergeBtn">Merge PDFs</button>
+    <div id="processing" style="display:none">Processing...</div>
   </div>
   <div id="error" class="error" style="display:none"></div>
   <div id="result" style="display:none">
-    <a id="downloadLink" href="#" download>Baixar PDF unido</a>
+    <a id="downloadLink" href="#" download>Download merged PDF</a>
   </div>
 </div>
 
@@ -78,24 +78,24 @@
   function handleFiles(selected) {
     clearError();
     const pdfs = selected.filter(f => f.type === 'application/pdf');
-    if (pdfs.length === 0) { showError('Nenhum PDF válido selecionado.'); return; }
+    if (pdfs.length === 0) { showError('No valid PDF selected.'); return; }
     files = files.concat(pdfs);
     renderList();
     result.style.display = 'none';
   }
 
   async function mergePdfs() {
-    if (files.length === 0) return showError('Nenhum PDF carregado.');
+    if (files.length === 0) return showError('No PDF loaded.');
       if (isProcessing) return; // prevent concurrent runs
       clearError();
 
       // Check per-file and total size limits
       let total = 0;
       for (const f of files) {
-        if (f.size > PDF_MERGE_PER_FILE_LIMIT) return showError(`O arquivo ${f.name} excede o limite por arquivo de ${Math.round(PDF_MERGE_PER_FILE_LIMIT/1024/1024)} MB.`);
+        if (f.size > PDF_MERGE_PER_FILE_LIMIT) return showError(`The file ${f.name} exceeds the per-file limit of ${Math.round(PDF_MERGE_PER_FILE_LIMIT/1024/1024)} MB.`);
         total += f.size;
       }
-      if (total > PDF_MERGE_TOTAL_LIMIT) return showError(`Tamanho total dos arquivos excede ${Math.round(PDF_MERGE_TOTAL_LIMIT/1024/1024)} MB.`);
+      if (total > PDF_MERGE_TOTAL_LIMIT) return showError(`Total file size exceeds ${Math.round(PDF_MERGE_TOTAL_LIMIT/1024/1024)} MB.`);
 
       isProcessing = true;
       mergeBtn.disabled = true;
@@ -105,7 +105,7 @@
         // lazy import pdf-lib
         const mod = await import('pdf-lib');
         const PDFDocument = mod.PDFDocument ?? mod.default?.PDFDocument ?? mod.PDFDocument;
-        if (!PDFDocument) throw new Error('pdf-lib não disponível');
+        if (!PDFDocument) throw new Error('pdf-lib not available');
 
         const outPdf = await PDFDocument.create();
         for (const f of files) {
@@ -129,7 +129,7 @@
         downloadLink.addEventListener('click', onClick, { once: true });
       } catch (err) {
         console.error(err);
-        showError('Erro ao unir PDFs. Verifique os arquivos.');
+        showError('Error merging PDFs. Check the files.');
       } finally {
         processing.style.display = 'none';
         mergeBtn.disabled = false;

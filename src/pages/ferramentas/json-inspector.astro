@@ -2,23 +2,23 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
 const pageTitle = title;
 const pageDescription = description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | THIPA TOOLS</title>
+    <title>{title} | USEVO TOOLS</title>
     <meta
       name="description"
       content={pageDescription}
@@ -377,14 +377,14 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   <body>
     <header>
       <div class="container header-inner">
-        <a href="/" class="logo">THIPA TOOLS</a>
-        <a href="/ferramentas/" class="back">← Todas as ferramentas</a>
+        <a href="/" class="logo">USEVO TOOLS</a>
+        <a href="/ferramentas/" class="back">← All tools</a>
       </div>
     </header>
 
     <main>
       <div class="container">
-        <div class="eyebrow">Ferramentas › Desenvolvimento</div>
+        <div class="eyebrow">Tools › Development</div>
 
         <h1>{pageTitle}</h1>
 
@@ -397,16 +397,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           <textarea
             id="jsonInput"
-            placeholder="Cole seu JSON aqui..."
+            placeholder="Paste your JSON here..."
           ></textarea>
 
           <div class="buttons">
             <button type="button" class="primary" id="inspectBtn">
-              Inspecionar JSON
+              Inspect JSON
             </button>
 
             <button type="button" class="secondary" id="clearBtn">
-              Limpar
+              Clear
             </button>
           </div>
 
@@ -415,12 +415,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           <div id="summary" class="summary" aria-live="polite">
             <div class="summary-grid">
               <div class="stat">
-                <span class="stat-label">Propriedades</span>
+                <span class="stat-label">Properties</span>
                 <span id="propertyCount" class="stat-value">0</span>
               </div>
 
               <div class="stat">
-                <span class="stat-label">Objetos</span>
+                <span class="stat-label">Objects</span>
                 <span id="objectCount" class="stat-value">0</span>
               </div>
 
@@ -430,7 +430,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
               </div>
 
               <div class="stat">
-                <span class="stat-label">Profundidade</span>
+                <span class="stat-label">Depth</span>
                 <span id="depthCount" class="stat-value">0</span>
               </div>
             </div>
@@ -438,9 +438,9 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           <div class="tree-section">
             <div class="tree-header">
-              <div class="tree-title">Visualização em árvore</div>
+              <div class="tree-title">Tree view</div>
               <button type="button" class="secondary hidden" id="copyBtn">
-                Copiar JSON formatado
+                Copy formatted JSON
               </button>
             </div>
 
@@ -675,11 +675,11 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         tree.innerHTML = "";
 
         if (data === null || data === undefined) {
-          tree.innerHTML = '<div class="empty">Nenhum dado para exibir.</div>';
+          tree.innerHTML = '<div class="empty">No data to display.</div>';
           return;
         }
 
-        const rootKey = typeof data === "object" && !Array.isArray(data) ? "documento" : "JSON";
+        const rootKey = typeof data === "object" && !Array.isArray(data) ? "document" : "JSON";
         const rootNode = renderTreeNode(rootKey, data, 0);
         tree.appendChild(rootNode);
       }
@@ -692,12 +692,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           const stats = analyzeNode(value, 0);
           showSummary(stats);
           renderTree(value);
-          setStatus("✓ JSON válido", "success");
+          setStatus("✓ Valid JSON", "success");
         } catch (error) {
           currentData = null;
           hideSummary();
           tree.innerHTML = "";
-          setStatus("JSON inválido. Verifique a estrutura e tente novamente.", "error");
+          setStatus("Invalid JSON. Check the structure and try again.", "error");
         }
       }
 
@@ -711,7 +711,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       async function copyFormattedJson() {
         if (!currentData) {
-          setStatus("JSON inválido. Verifique a estrutura e tente novamente.", "error");
+          setStatus("Invalid JSON. Check the structure and try again.", "error");
           return;
         }
 
@@ -719,7 +719,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
         try {
           await navigator.clipboard.writeText(formatted);
-          setStatus("✓ JSON formatado copiado para a área de transferência.", "success");
+          setStatus("✓ Formatted JSON copied to clipboard.", "success");
         } catch (error) {
           const fallback = document.createElement("textarea");
           fallback.value = formatted;
@@ -727,7 +727,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           fallback.select();
           document.execCommand("copy");
           fallback.remove();
-          setStatus("✓ JSON formatado copiado para a área de transferência.", "success");
+          setStatus("✓ Formatted JSON copied to clipboard.", "success");
         }
       }
 

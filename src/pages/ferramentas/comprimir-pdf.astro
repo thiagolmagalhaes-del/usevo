@@ -3,13 +3,13 @@ import Layout from "../../layouts/Layout.astro";
 import PdfCompressor from "../../components/tools/PdfCompressor.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
 ---
 
 
-<Layout title={title} description={description} canonical={new URL(Astro.url.pathname, "https://thipatools.com").href}>
+<Layout title={title} description={description} canonical={new URL(Astro.url.pathname, "https://usevo.tools").href}>
   <div style="padding:28px; max-width:900px; margin:0 auto">
     <PdfCompressor />
   </div>

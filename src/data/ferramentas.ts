@@ -53,19 +53,19 @@ const buildTranslations = (
   en: {
     title: titleEN,
     description: descriptionEN,
-    seoTitle: `${titleEN} | THIPA TOOLS`,
+    seoTitle: `${titleEN} | USEVO TOOLS`,
     seoDescription: descriptionEN,
   },
   "pt-BR": {
     title: titlePT,
     description: descriptionPT,
-    seoTitle: `${titlePT} | THIPA TOOLS`,
+    seoTitle: `${titlePT} | USEVO TOOLS`,
     seoDescription: descriptionPT,
   },
   es: {
     title: titleES,
     description: descriptionES,
-    seoTitle: `${titleES} | THIPA TOOLS`,
+    seoTitle: `${titleES} | USEVO TOOLS`,
     seoDescription: descriptionES,
   },
 });

@@ -2,21 +2,21 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | THIPA TOOLS</title>
+    <title>{title} | USEVO TOOLS</title>
     <meta name="description" content={description} />
     <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
     <link rel="alternate" hreflang="en" href={alternateUrls.en} />
@@ -183,17 +183,17 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <body>
     <header class="header">
-      <a href="/" class="logo">THIPA TOOLS</a>
-      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+      <a href="/" class="logo">USEVO TOOLS</a>
+      <a href="/ferramentas" class="back">← Back to tools</a>
     </header>
 
     <main class="container">
-      <div class="category">Desenvolvimento</div>
+      <div class="category">Development</div>
 
-      <h1>Formatador de JSON</h1>
+      <h1>JSON Formatter</h1>
 
       <p class="description">
-        Formate, valide e organize seus dados JSON de forma rápida e gratuita.
+        Format, validate, and organize your JSON data quickly and for free.
       </p>
 
       <section class="card">
@@ -201,20 +201,20 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
         <textarea
           id="jsonInput"
-          placeholder='Cole seu JSON aqui...'
+          placeholder='Paste your JSON here...'
         ></textarea>
 
         <div class="buttons">
           <button class="primary" id="formatBtn">
-            Formatar JSON
+            Format JSON
           </button>
 
           <button class="secondary" id="minifyBtn">
-            Compactar
+            Minify
           </button>
 
           <button class="secondary" id="clearBtn">
-            Limpar
+            Clear
           </button>
         </div>
 
@@ -240,10 +240,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           input.value = JSON.stringify(parsed, null, 2);
 
-          showMessage("✓ JSON válido e formatado com sucesso!", "success");
+          showMessage("✓ Valid JSON, formatted successfully!", "success");
         } catch (error) {
           showMessage(
-            "✕ JSON inválido. Verifique a estrutura e tente novamente.",
+            "✕ Invalid JSON. Check the structure and try again.",
             "error"
           );
         }
@@ -255,10 +255,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           input.value = JSON.stringify(parsed);
 
-          showMessage("✓ JSON compactado com sucesso!", "success");
+          showMessage("✓ JSON minified successfully!", "success");
         } catch (error) {
           showMessage(
-            "✕ JSON inválido. Não foi possível compactar.",
+            "✕ Invalid JSON. Could not minify.",
             "error"
           );
         }

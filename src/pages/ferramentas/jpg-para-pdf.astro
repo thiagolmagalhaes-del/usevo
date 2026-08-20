@@ -2,21 +2,21 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | THIPA TOOLS</title>
+    <title>{title} | USEVO TOOLS</title>
     <meta name="description" content={description} />
     <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
     <link rel="alternate" hreflang="en" href={alternateUrls.en} />
@@ -203,21 +203,21 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   <body>
     <header>
       <div class="header-inner">
-        <a href="/" class="logo">THIPA TOOLS</a>
+        <a href="/" class="logo">USEVO TOOLS</a>
 
         <a href="/ferramentas" class="back">
-          ← Voltar para ferramentas
+          ← Back to tools
         </a>
       </div>
     </header>
 
     <main>
-      <span class="category">Arquivos</span>
+      <span class="category">Files</span>
 
-      <h1>JPG para PDF</h1>
+      <h1>JPG to PDF</h1>
 
       <p class="description">
-        Converta imagens JPG em documentos PDF rapidamente.
+        Convert JPG images into PDF documents quickly.
       </p>
 
       <div class="card">
@@ -226,11 +226,11 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           <div class="upload-icon">📄</div>
 
           <div class="upload-title">
-            Clique para selecionar uma imagem
+            Click to select an image
           </div>
 
           <div class="upload-text">
-            JPG, JPEG ou PNG
+            JPG, JPEG or PNG
           </div>
         </label>
 
@@ -242,16 +242,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
         <div id="fileName" class="file-name"></div>
 
-        <img id="preview" alt="Pré-visualização da imagem" />
+        <img id="preview" alt="Image preview" />
 
         <button id="convertBtn" disabled>
-          Converter para PDF
+          Convert to PDF
         </button>
 
         <div id="error" class="error"></div>
 
         <div id="success" class="success">
-          PDF criado com sucesso!
+          PDF created successfully!
         </div>
 
       </div>
@@ -277,7 +277,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         }
 
         if (!file.type.startsWith("image/")) {
-          error.textContent = "Selecione uma imagem JPG, JPEG ou PNG.";
+          error.textContent = "Please select a JPG, JPEG or PNG image.";
           error.style.display = "block";
           convertBtn.disabled = true;
           return;

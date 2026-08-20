@@ -46,7 +46,7 @@ function init() {
     clearError(errorEl);
     try {
       const sql = (sqlInput && sqlInput.value) || '';
-      if (!sql.trim()) { showError(errorEl, 'Nenhum SQL fornecido.'); return; }
+      if (!sql.trim()) { showError(errorEl, 'No SQL provided.'); return; }
       const chosen = dialectEl ? dialectEl.value : 'sql';
       const dialect = supportedDialects.includes(chosen) ? chosen : 'sql';
       try {
@@ -60,12 +60,12 @@ function init() {
           if (formatted) formatted.textContent = fmt(sql);
         } catch (inner) {
           console.error(inner);
-          showError(errorEl, 'Falha ao formatar SQL.');
+          showError(errorEl, 'Failed to format SQL.');
         }
       }
     } catch (err) {
       console.error(err);
-      showError(errorEl, 'Erro ao processar a solicitação.');
+      showError(errorEl, 'Error processing the request.');
     }
   }
 
@@ -77,12 +77,12 @@ function init() {
       await navigator.clipboard.writeText((formatted && formatted.textContent) || '');
       if (errorEl) {
         errorEl.style.display = 'block';
-        errorEl.textContent = 'Copiado para a área de transferência.';
+        errorEl.textContent = 'Copied to clipboard.';
         setTimeout(() => clearError(errorEl), 1800);
       }
     } catch (err) {
       console.error(err);
-      showError(errorEl, 'Não foi possível copiar para a área de transferência.');
+      showError(errorEl, 'Could not copy to clipboard.');
     }
   });
 

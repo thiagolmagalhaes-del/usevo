@@ -1,19 +1,19 @@
 ---
 ---
 <div class="tool-card card">
-  <h2>Comprimir PDF</h2>
-  <div id="dropArea" class="drop">Arraste e solte um PDF aqui ou clique para selecionar</div>
+  <h2>Compress PDF</h2>
+  <div id="dropArea" class="drop">Drag and drop a PDF here or click to select</div>
   <input id="fileInput" type="file" accept="application/pdf" style="display:none" />
   <div id="fileInfo" style="display:none">
-    <div>Arquivo: <span id="fileName"></span></div>
-    <div>Tamanho original: <span id="originalSize"></span></div>
-    <button id="compressBtn">Comprimir PDF</button>
+    <div>File: <span id="fileName"></span></div>
+    <div>Original size: <span id="originalSize"></span></div>
+    <button id="compressBtn">Compress PDF</button>
   </div>
-  <div id="processing" style="display:none">Processando...</div>
+  <div id="processing" style="display:none">Processing...</div>
   <div id="result" style="display:none">
-    <div>Tamanho final: <span id="finalSize"></span></div>
-    <div>Redução: <span id="reduction"></span></div>
-    <a id="downloadLink" href="#" download>Baixar PDF</a>
+    <div>Final size: <span id="finalSize"></span></div>
+    <div>Reduction: <span id="reduction"></span></div>
+    <a id="downloadLink" href="#" download>Download PDF</a>
   </div>
   <div id="error" class="error" style="display:none"></div>
 </div>
@@ -82,7 +82,7 @@
     clearError();
     if (!file) return;
     if (file.type !== 'application/pdf') {
-      showError('Apenas arquivos PDF são aceitos.');
+      showError('Only PDF files are accepted.');
       return;
     }
     currentFile = file;
@@ -95,17 +95,17 @@
     reader.onload = () => {
       currentArrayBuffer = reader.result;
     };
-    reader.onerror = () => showError('Erro ao ler o arquivo.');
+    reader.onerror = () => showError('Error reading the file.');
     reader.readAsArrayBuffer(file);
   }
 
   async function compressPdf() {
-    if (!currentArrayBuffer) return showError('Nenhum arquivo carregado.');
+    if (!currentArrayBuffer) return showError('No file loaded.');
     clearError();
 
       // File size protection
       if (currentFile && currentFile.size > PDF_MAX_SINGLE) {
-        return showError(`Arquivo excede o limite de ${humanSize(PDF_MAX_SINGLE)}. Escolha um arquivo menor.`);
+        return showError(`File exceeds the limit of ${humanSize(PDF_MAX_SINGLE)}. Choose a smaller file.`);
       }
 
       // Prevent concurrent runs and disable button
@@ -118,7 +118,7 @@
         const mod = await import('pdf-lib');
         const PDFDocument = mod.PDFDocument ?? mod.default?.PDFDocument ?? mod.PDFDocument;
         if (!PDFDocument) {
-          throw new Error('pdf-lib não disponível');
+          throw new Error('pdf-lib not available');
         }
 
         const src = await PDFDocument.load(currentArrayBuffer);
@@ -159,7 +159,7 @@
           processing.style.display = 'none';
           result.style.display = 'block';
           finalSizeEl.textContent = humanSize(finalSize);
-          reductionEl.textContent = 'Nenhuma redução efetiva foi obtida.';
+          reductionEl.textContent = 'No effective reduction was achieved.';
           setDownload(finalBlob, 'compressed-' + currentFile.name);
           return;
         }
@@ -172,7 +172,7 @@
         setDownload(finalBlob, 'compressed-' + currentFile.name);
       } catch (err) {
         console.error(err);
-        showError('Erro ao processar o PDF. Pode estar corrompido ou não ser suportado.');
+        showError('Error processing the PDF. It may be corrupted or unsupported.');
       } finally {
         processing.style.display = 'none';
         compressBtn.disabled = false;

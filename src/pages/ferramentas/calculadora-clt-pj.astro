@@ -2,7 +2,7 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
@@ -11,17 +11,17 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} — Compare Salário e Valor da Proposta | THIPA</title>
+    <title>{title} — Compare Employee (CLT) vs Freelance (PJ) Income | USEVO</title>
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
     <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
     <link rel="alternate" hreflang="en" href={alternateUrls.en} />
     <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-    <link rel="canonical" href="https://thipatools.com/ferramentas/calculadora-clt-pj" />
+    <link rel="canonical" href="https://usevo.tools/ferramentas/calculadora-clt-pj" />
     <style>
       * { box-sizing: border-box; }
 
@@ -316,82 +316,82 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   <body>
     <header>
       <div class="container header-inner">
-        <a href="/" class="logo">THIPA TOOLS</a>
-        <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+        <a href="/" class="logo">USEVO TOOLS</a>
+        <a href="/ferramentas" class="back">← Back to tools</a>
       </div>
     </header>
 
     <main>
       <div class="container">
-        <div class="eyebrow">Finanças</div>
-        <h1>Calculadora CLT vs PJ</h1>
+        <div class="eyebrow">Finance</div>
+        <h1>CLT vs Freelance (PJ) Calculator</h1>
 
         <p class="intro">
-          Compare rapidamente o valor líquido de uma proposta CLT com uma proposta PJ,
-          incluindo benefícios, custos e impostos estimados. Use como referência para uma decisão inicial,
-          sem substituir análise contábil ou jurídica.
+          Quickly compare the net income of a CLT (Brazilian formal employment contract) offer
+          with a PJ (freelance/independent contractor) offer, including benefits, costs, and estimated taxes.
+          Use it as a reference for an initial decision — it does not replace accounting or legal advice.
         </p>
 
         <div class="country-controls">
-          <label for="countrySelector">País</label>
-          <select id="countrySelector" aria-label="Selecionar país"></select>
+          <label for="countrySelector">Country</label>
+          <select id="countrySelector" aria-label="Select country"></select>
         </div>
 
         <section class="card compare">
           <div class="scenario">
-            <h2>Cenário CLT</h2>
+            <h2>CLT Scenario (Employee)</h2>
 
             <div class="field">
-              <label for="cltSalario">Salário bruto mensal</label>
+              <label for="cltSalario">Monthly gross salary</label>
               <input id="cltSalario" type="number" value="7000" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="cltBeneficios">Benefícios mensais</label>
+              <label for="cltBeneficios">Monthly benefits</label>
               <input id="cltBeneficios" type="number" value="1500" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="cltVale">Vale alimentação / refeição</label>
+              <label for="cltVale">Meal / food voucher</label>
               <input id="cltVale" type="number" value="500" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="cltPlano">Plano de saúde</label>
+              <label for="cltPlano">Health insurance</label>
               <input id="cltPlano" type="number" value="300" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="cltOutros">Outros benefícios</label>
+              <label for="cltOutros">Other benefits</label>
               <input id="cltOutros" type="number" value="200" step="0.01" />
             </div>
           </div>
 
           <div class="scenario">
-            <h2>Cenário PJ</h2>
+            <h2>PJ Scenario (Freelance)</h2>
 
             <div class="field">
-              <label for="pjNota">Valor mensal da nota</label>
+              <label for="pjNota">Monthly invoice amount</label>
               <input id="pjNota" type="number" value="6500" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="pjImpostos">Impostos estimados</label>
+              <label for="pjImpostos">Estimated taxes</label>
               <input id="pjImpostos" type="number" value="1500" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="pjContador">Contador</label>
+              <label for="pjContador">Accountant</label>
               <input id="pjContador" type="number" value="300" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="pjOutros">Outros custos mensais</label>
+              <label for="pjOutros">Other monthly costs</label>
               <input id="pjOutros" type="number" value="800" step="0.01" />
             </div>
 
             <div class="field">
-              <label for="pjCustosPessoais">Benefícios / custos pessoais</label>
+              <label for="pjCustosPessoais">Personal benefits / costs</label>
               <input id="pjCustosPessoais" type="number" value="0" step="0.01" />
             </div>
           </div>
@@ -400,24 +400,24 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         <section class="card results">
           <div class="results-grid">
             <div class="metric">
-              <div class="metric-label">CLT líquido</div>
-              <div id="cltLiquido" class="metric-value">R$ 0,00</div>
+              <div class="metric-label">CLT net income</div>
+              <div id="cltLiquido" class="metric-value">R$ 0.00</div>
             </div>
             <div class="metric">
-              <div class="metric-label">PJ líquido</div>
-              <div id="pjLiquido" class="metric-value">R$ 0,00</div>
+              <div class="metric-label">PJ net income</div>
+              <div id="pjLiquido" class="metric-value">R$ 0.00</div>
             </div>
             <div class="metric">
-              <div class="metric-label">Diferença mensal</div>
-              <div id="diferencaMensal" class="metric-value">R$ 0,00</div>
+              <div class="metric-label">Monthly difference</div>
+              <div id="diferencaMensal" class="metric-value">R$ 0.00</div>
             </div>
             <div class="metric">
-              <div class="metric-label">Diferença anual</div>
-              <div id="diferencaAnual" class="metric-value">R$ 0,00</div>
+              <div class="metric-label">Annual difference</div>
+              <div id="diferencaAnual" class="metric-value">R$ 0.00</div>
             </div>
             <div class="metric">
-              <div class="metric-label">PJ equivalente</div>
-              <div id="pjEquivalente" class="metric-value">R$ 0,00</div>
+              <div class="metric-label">Equivalent PJ income</div>
+              <div id="pjEquivalente" class="metric-value">R$ 0.00</div>
             </div>
           </div>
 
@@ -442,24 +442,24 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           <div class="warning-box" id="validationWarnings" aria-live="polite"></div>
 
           <div class="note">
-            <strong>Como interpretar o resultado:</strong>
-            O salário bruto não deve ser comparado diretamente com o valor da nota PJ.
-            Benefícios e direitos do CLT têm valor econômico real, enquanto impostos, contador e custos do PJ reduzem o valor líquido.
-            O resultado é uma estimativa inicial e não substitui orientação contábil ou jurídica.
+            <strong>How to read this result:</strong>
+            The gross CLT salary should not be compared directly with the PJ invoice amount.
+            CLT benefits and labor rights have real economic value, while PJ taxes, accounting fees, and costs reduce net income.
+            This result is an initial estimate and does not replace accounting or legal advice.
           </div>
         </section>
 
         <section class="card explanation">
-          <h3>Como interpretar o resultado</h3>
+          <h3>How to read this result</h3>
           <ul>
-            <li>Salário bruto não deve ser comparado diretamente com o valor de nota PJ.</li>
-            <li>Benefícios e direitos têm valor econômico e devem ser incluídos na comparação.</li>
-            <li>Impostos, contador e custos pessoais impactam o valor líquido do cenário PJ.</li>
-            <li>O resultado é uma estimativa, útil para avaliação inicial da proposta.</li>
+            <li>Gross salary should not be compared directly with the PJ invoice amount.</li>
+            <li>Benefits and labor rights have economic value and should be included in the comparison.</li>
+            <li>Taxes, accounting fees, and personal costs impact the net income of the PJ scenario.</li>
+            <li>This result is an estimate, useful for an initial assessment of the offer.</li>
           </ul>
         </section>
 
-        <div class="privacy">Seus dados são calculados no seu navegador e não são enviados para um servidor.</div>
+        <div class="privacy">Your data is calculated in your browser and is never sent to a server.</div>
       </div>
     </main>
 

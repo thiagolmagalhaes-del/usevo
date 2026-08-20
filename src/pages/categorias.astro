@@ -1,24 +1,25 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { ferramentas } from "../data/ferramentas";
-import { getTranslations } from "../data/i18n";
+import { getTranslations, getCategoryTranslation } from "../data/i18n";
+import { getFerramentaTranslation } from "../data/ferramentas";
 
-const t = getTranslations("pt-BR");
+const t = getTranslations("en");
 
 const categorias = {} as Record<string, any[]>;
 ferramentas.forEach((ferramenta) => {
-  if (!categorias[ferramenta.categoria]) {
-    categorias[ferramenta.categoria] = [];
+  if (!categorias[ferramenta.categoryKey]) {
+    categorias[ferramenta.categoryKey] = [];
   }
-  categorias[ferramenta.categoria].push(ferramenta);
+  categorias[ferramenta.categoryKey].push(ferramenta);
 });
 
 const categoriasOrdenadas = Object.keys(categorias).sort();
 ---
 
 <Layout
-  title="Categorias — THIPA TOOLS"
-  description="Navegue pelas ferramentas da THIPA TOOLS por categoria. Encontre exatamente o que você precisa."
+  title="Categories — USEVO TOOLS"
+  description="Browse USEVO TOOLS by category. Find exactly what you need."
 >
 
     <style>
@@ -255,7 +256,7 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
       <section class="page-header">
         <div class="container">
           <h1>{t.categories}</h1>
-          <p>Explore nossas ferramentas organizadas por tema. Encontre exatamente o que você precisa.</p>
+          <p>Explore our tools organized by topic. Find exactly what you need.</p>
         </div>
       </section>
 
@@ -265,9 +266,9 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
             {categoriasOrdenadas.map((categoria) => (
               <div class="category-card">
                 <div class="category-header">
-                  <h3 class="category-name">{categoria}</h3>
+                  <h3 class="category-name">{getCategoryTranslation(categoria, "en")}</h3>
                   <p class="category-count">
-                    {categorias[categoria].length} {categorias[categoria].length === 1 ? 'ferramenta' : 'ferramentas'}
+                    {categorias[categoria].length} {categorias[categoria].length === 1 ? 'tool' : 'tools'}
                   </p>
                 </div>
 
@@ -275,7 +276,7 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
                   {categorias[categoria].map((ferramenta) => (
                     <li>
                       <a href={ferramenta.url}>
-                        {ferramenta.icone} {ferramenta.nome}
+                        {ferramenta.icone} {getFerramentaTranslation(ferramenta, "en").title}
                       </a>
                     </li>
                   ))}

@@ -4,8 +4,8 @@ import SiteFooter from "../components/SiteFooter.astro";
 import { resolveLocale, type Locale } from "../data/locales";
 
 const {
-  title = "THIPA TOOLS",
-  description = "Ferramentas online simples, rápidas e úteis para resolver tarefas do dia a dia.",
+  title = "USEVO TOOLS",
+  description = "Simple, fast, and useful online tools for everyday tasks.",
   locale,
   canonical,
   alternateUrls,
@@ -17,9 +17,9 @@ const {
   alternateUrls?: Partial<Record<Locale, string>>;
 };
 
-const resolvedLocale = resolveLocale(locale ?? "pt-BR") as Locale;
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://thipatools.com").href;
-const pageTitle = title.includes("THIPA TOOLS") ? title : `${title} | THIPA TOOLS`;
+const resolvedLocale = resolveLocale(locale ?? "en") as Locale;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://usevo.tools").href;
+const pageTitle = title.includes("USEVO TOOLS") ? title : `${title} | USEVO TOOLS`;
 const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string][];
 ---
 

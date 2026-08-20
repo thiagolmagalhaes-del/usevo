@@ -2,21 +2,21 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title} | THIPA TOOLS</title>
+  <title>{title} | USEVO TOOLS</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
 
@@ -184,62 +184,62 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <header>
     <div class="header-inner">
-      <a href="/" class="logo">THIPA TOOLS</a>
-      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+    <a href="/" class="logo">USEVO TOOLS</a>
+    <a href="/ferramentas" class="back">← Back to tools</a>
     </div>
   </header>
 
   <main>
 
-    <span class="badge">Conversores</span>
+    <span class="badge">Converters</span>
 
-    <h1>Conversor de Unidades</h1>
+    <h1>Unit Converter</h1>
 
     <p class="description">
-      Converta comprimento, peso, temperatura e outras unidades rapidamente.
+      Convert length, weight, temperature and other units quickly.
     </p>
 
     <div class="converter">
 
-      <label for="category">Tipo de conversão</label>
+      <label for="category">Conversion type</label>
 
       <select id="category" onchange="updateUnits()">
-        <option value="length">Comprimento</option>
-        <option value="weight">Peso</option>
-        <option value="temperature">Temperatura</option>
+        <option value="length">Length</option>
+        <option value="weight">Weight</option>
+        <option value="temperature">Temperature</option>
         <option value="volume">Volume</option>
       </select>
 
       <div class="row">
 
         <div>
-          <label for="fromUnit">De</label>
+          <label for="fromUnit">From</label>
           <select id="fromUnit"></select>
         </div>
 
         <div>
-          <label for="toUnit">Para</label>
+          <label for="toUnit">To</label>
           <select id="toUnit"></select>
         </div>
 
       </div>
 
-      <label for="value">Valor</label>
+      <label for="value">Value</label>
 
       <input
         id="value"
         type="number"
-        placeholder="Digite um valor"
+        placeholder="Enter a value"
         step="any"
       />
 
       <button onclick="convert()">
-        Converter
+        Convert
       </button>
 
       <div class="result">
         <div class="result-label">
-          Resultado
+          Result
         </div>
 
         <div class="result-value" id="result">
@@ -289,27 +289,27 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     };
 
     const labels = {
-      metro: "Metro",
-      quilometro: "Quilômetro",
-      centimetro: "Centímetro",
-      milimetro: "Milímetro",
-      milha: "Milha",
-      jarda: "Jarda",
-      pe: "Pé",
-      polegada: "Polegada",
+      metro: "Meter",
+      quilometro: "Kilometer",
+      centimetro: "Centimeter",
+      milimetro: "Millimeter",
+      milha: "Mile",
+      jarda: "Yard",
+      pe: "Foot",
+      polegada: "Inch",
 
-      quilograma: "Quilograma",
-      grama: "Grama",
-      miligrama: "Miligrama",
-      tonelada: "Tonelada",
-      libra: "Libra",
-      onca: "Onça",
+      quilograma: "Kilogram",
+      grama: "Gram",
+      miligrama: "Milligram",
+      tonelada: "Ton",
+      libra: "Pound",
+      onca: "Ounce",
 
-      litro: "Litro",
-      mililitro: "Mililitro",
-      metroCubico: "Metro cúbico",
-      galão: "Galão",
-      xicara: "Xícara",
+      litro: "Liter",
+      mililitro: "Milliliter",
+      metroCubico: "Cubic meter",
+      galão: "Gallon",
+      xicara: "Cup",
 
       celsius: "Celsius",
       fahrenheit: "Fahrenheit",
@@ -351,7 +351,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       const value = parseFloat(valueInput.value);
 
       if (isNaN(value)) {
-        result.textContent = "Digite um valor válido";
+        result.textContent = "Enter a valid value";
         return;
       }
 
@@ -394,7 +394,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     }
 
     function formatNumber(number) {
-      return Number(number.toFixed(8)).toLocaleString("pt-BR");
+      return Number(number.toFixed(8)).toLocaleString("en-US");
     }
 
     updateUnits();

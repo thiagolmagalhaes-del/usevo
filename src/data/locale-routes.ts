@@ -51,9 +51,9 @@ const withTrailingSlash = (value: string) => `${value.replace(/\/+$/, "")}/`;
 export const getSiteAlternates = (pathname: string) => {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";
   const localeMap: Record<string, string> = {
-    en: "https://thipatools.com/en/",
-    "pt-BR": "https://thipatools.com",
-    es: "https://thipatools.com/es/",
+    en: "https://usevo.tools/en/",
+    "pt-BR": "https://usevo.tools",
+    es: "https://usevo.tools/es/",
   };
 
   if (normalizedPath === "/") {
@@ -64,9 +64,9 @@ export const getSiteAlternates = (pathname: string) => {
     const tool = getFerramentaByPath(normalizedPath);
     if (tool) {
       return {
-        "pt-BR": `https://thipatools.com${withTrailingSlash(tool.url)}`,
-        en: `https://thipatools.com/en/tools/${tool.localeSlugs.en}/`,
-        es: `https://thipatools.com/es/herramientas/${tool.localeSlugs.es}/`,
+        "pt-BR": `https://usevo.tools${withTrailingSlash(tool.url)}`,
+        en: `https://usevo.tools/en/tools/${tool.localeSlugs.en}/`,
+        es: `https://usevo.tools/es/herramientas/${tool.localeSlugs.es}/`,
       };
     }
 
@@ -90,15 +90,15 @@ export const getSiteAlternates = (pathname: string) => {
     const tool = toolForPath("/en/tools/");
     if (tool) {
       return {
-        en: `https://thipatools.com${withTrailingSlash(normalizedPath)}`,
-        "pt-BR": `https://thipatools.com${withTrailingSlash(tool.url)}`,
-        es: `https://thipatools.com/es/herramientas/${tool.localeSlugs.es}/`,
+        en: `https://usevo.tools${withTrailingSlash(normalizedPath)}`,
+        "pt-BR": `https://usevo.tools${withTrailingSlash(tool.url)}`,
+        es: `https://usevo.tools/es/herramientas/${tool.localeSlugs.es}/`,
       };
     }
     return {
-      en: `https://thipatools.com${normalizedPath}`,
-      "pt-BR": "https://thipatools.com",
-      es: "https://thipatools.com/es/",
+      en: `https://usevo.tools${normalizedPath}`,
+      "pt-BR": "https://usevo.tools",
+      es: "https://usevo.tools/es/",
     };
   }
 
@@ -106,31 +106,31 @@ export const getSiteAlternates = (pathname: string) => {
     const tool = toolForPath("/es/herramientas/");
     if (tool) {
       return {
-        en: `https://thipatools.com/en/tools/${tool.localeSlugs.en}/`,
-        "pt-BR": `https://thipatools.com${withTrailingSlash(tool.url)}`,
-        es: `https://thipatools.com${withTrailingSlash(normalizedPath)}`,
+        en: `https://usevo.tools/en/tools/${tool.localeSlugs.en}/`,
+        "pt-BR": `https://usevo.tools${withTrailingSlash(tool.url)}`,
+        es: `https://usevo.tools${withTrailingSlash(normalizedPath)}`,
       };
     }
     return {
-      en: "https://thipatools.com/en/",
-      "pt-BR": "https://thipatools.com",
-      es: `https://thipatools.com${normalizedPath}`,
+      en: "https://usevo.tools/en/",
+      "pt-BR": "https://usevo.tools",
+      es: `https://usevo.tools${normalizedPath}`,
     };
   }
 
   if (normalizedPath.startsWith("/en/categories/")) {
     return {
-      en: `https://thipatools.com${normalizedPath}`,
-      "pt-BR": "https://thipatools.com/categorias/",
-      es: "https://thipatools.com/es/categorias/",
+      en: `https://usevo.tools${normalizedPath}`,
+      "pt-BR": "https://usevo.tools/categorias/",
+      es: "https://usevo.tools/es/categorias/",
     };
   }
 
   if (normalizedPath.startsWith("/es/categorias/")) {
     return {
-      en: "https://thipatools.com/en/categories/",
-      "pt-BR": "https://thipatools.com/categorias/",
-      es: `https://thipatools.com${normalizedPath}`,
+      en: "https://usevo.tools/en/categories/",
+      "pt-BR": "https://usevo.tools/categorias/",
+      es: `https://usevo.tools${normalizedPath}`,
     };
   }
 

@@ -2,20 +2,20 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | THIPA TOOLS</title>
+    <title>{title} | USEVO TOOLS</title>
     <meta name="description" content={description} />
     <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
     <link rel="alternate" hreflang="en" href={alternateUrls.en} />
@@ -25,9 +25,9 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <body>
     <main class="container">
-      <a class="back" href="/ferramentas">← Voltar para ferramentas</a>
+      <a class="back" href="/ferramentas">← Back to tools</a>
 
-      <div class="category">Desenvolvimento</div>
+      <div class="category">Development</div>
 
       <h1>{title}</h1>
 
@@ -41,16 +41,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
             id="uuid"
             type="text"
             readonly
-            placeholder="Seu UUID aparecerá aqui..."
+            placeholder="Your UUID will appear here..."
           />
 
           <button id="copyButton" class="secondary" type="button">
-            Copiar
+            Copy
           </button>
         </div>
 
         <button id="generateButton" class="primary" type="button">
-          Gerar UUID
+          Generate UUID
         </button>
 
         <div id="message" class="message" aria-live="polite"></div>
@@ -88,22 +88,22 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       generateButton.addEventListener("click", () => {
         uuidInput.value = generateUUID();
-        showMessage("✓ UUID gerado com sucesso!");
+        showMessage("✓ UUID generated successfully!");
       });
 
       copyButton.addEventListener("click", async () => {
         if (!uuidInput.value) {
-          showMessage("Gere um UUID primeiro.");
+          showMessage("Generate a UUID first.");
           return;
         }
 
         try {
           await navigator.clipboard.writeText(uuidInput.value);
-          showMessage("✓ UUID copiado para a área de transferência!");
+          showMessage("✓ UUID copied to clipboard!");
         } catch {
           uuidInput.select();
           document.execCommand("copy");
-          showMessage("✓ UUID copiado!");
+          showMessage("✓ UUID copied!");
         }
       });
     </script>

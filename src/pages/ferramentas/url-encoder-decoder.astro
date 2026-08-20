@@ -2,20 +2,20 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | THIPA TOOLS</title>
+    <title>{title} | USEVO TOOLS</title>
     <meta name="description" content={description} />
     <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
     <link rel="alternate" hreflang="en" href={alternateUrls.en} />
@@ -25,46 +25,46 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <body>
     <main class="container">
-      <a class="back" href="/ferramentas">← Voltar para ferramentas</a>
+      <a class="back" href="/ferramentas">← Back to tools</a>
 
-      <div class="category">Desenvolvimento</div>
+      <div class="category">Development</div>
 
       <h1>{title}</h1>
 
       <p class="description">{description}</p>
 
       <section class="tool-card">
-        <label for="input">URL ou texto</label>
+        <label for="input">URL or text</label>
 
         <textarea
           id="input"
-          placeholder="Cole sua URL ou texto aqui..."
+          placeholder="Paste your URL or text here..."
         ></textarea>
 
         <div class="buttons">
           <button id="encodeButton" class="primary" type="button">
-            URL → Codificar
+            URL → Encode
           </button>
 
           <button id="decodeButton" class="secondary" type="button">
-            URL → Decodificar
+            URL → Decode
           </button>
 
           <button id="clearButton" class="secondary" type="button">
-            Limpar
+            Clear
           </button>
         </div>
 
-        <label for="result">Resultado</label>
+        <label for="result">Result</label>
 
         <textarea
           id="result"
           readonly
-          placeholder="O resultado aparecerá aqui..."
+          placeholder="The result will appear here..."
         ></textarea>
 
         <button id="copyButton" class="copy" type="button">
-          Copiar resultado
+          Copy result
         </button>
 
         <div id="message" class="message" aria-live="polite"></div>
@@ -94,15 +94,15 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const value = input.value;
 
         if (!value.trim()) {
-          showMessage("Digite uma URL ou texto primeiro.", true);
+          showMessage("Enter a URL or text first.", true);
           return;
         }
 
         try {
           result.value = encodeURIComponent(value);
-          showMessage("✓ URL codificada com sucesso!");
+          showMessage("✓ URL encoded successfully!");
         } catch {
-          showMessage("Não foi possível codificar o conteúdo.", true);
+          showMessage("Could not encode the content.", true);
         }
       });
 
@@ -110,17 +110,17 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const value = input.value;
 
         if (!value.trim()) {
-          showMessage("Digite uma URL codificada primeiro.", true);
+          showMessage("Enter an encoded URL first.", true);
           return;
         }
 
         try {
           result.value = decodeURIComponent(value);
-          showMessage("✓ URL decodificada com sucesso!");
+          showMessage("✓ URL decoded successfully!");
         } catch {
           result.value = "";
           showMessage(
-            "O conteúdo não é uma URL codificada válida.",
+            "The content is not a valid encoded URL.",
             true
           );
         }
@@ -129,22 +129,22 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       clearButton.addEventListener("click", () => {
         input.value = "";
         result.value = "";
-        showMessage("✓ Campos limpos!");
+        showMessage("✓ Fields cleared!");
       });
 
       copyButton.addEventListener("click", async () => {
         if (!result.value) {
-          showMessage("Gere um resultado primeiro.", true);
+          showMessage("Generate a result first.", true);
           return;
         }
 
         try {
           await navigator.clipboard.writeText(result.value);
-          showMessage("✓ Resultado copiado!");
+          showMessage("✓ Result copied!");
         } catch {
           result.select();
           document.execCommand("copy");
-          showMessage("✓ Resultado copiado!");
+          showMessage("✓ Result copied!");
         }
       });
     </script>

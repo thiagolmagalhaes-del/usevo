@@ -4,12 +4,12 @@ import ToolGrid from "../components/tool/ToolGrid.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations } from "../data/i18n";
 
-const t = getTranslations("pt-BR");
+const t = getTranslations("en");
 ---
 
 <Layout
-  title="Todas as ferramentas — THIPA TOOLS"
-  description="Explore todas as ferramentas disponíveis na THIPA TOOLS. Ferramentas online simples, rápidas e úteis para resolver tarefas do dia a dia."
+  title="All tools — USEVO TOOLS"
+  description="Explore every tool available on USEVO TOOLS. Simple, fast, and useful online tools to solve everyday tasks."
 >
 
     <style>
@@ -171,13 +171,13 @@ const t = getTranslations("pt-BR");
       <section class="page-header">
         <div class="container">
           <h1>{t.allTools}</h1>
-          <p>Explore nossa coleção completa de ferramentas online. Escolha uma e resolva sua tarefa agora.</p>
+          <p>Explore our full collection of online tools. Pick one and get your task done right now.</p>
         </div>
       </section>
 
       <section class="tools-section">
         <div class="container">
-          <ToolGrid items={ferramentas} />
+          <ToolGrid items={ferramentas} locale="en" />
         </div>
       </section>
     </main>

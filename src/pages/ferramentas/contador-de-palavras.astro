@@ -2,24 +2,24 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contador de Palavras Online | THIPA TOOLS</title>
+  <title>Online Word Counter | USEVO TOOLS</title>
   <meta
     name="description"
-    content="Conte palavras, caracteres, frases e linhas em qualquer texto com um contador online rápido e gratuito."
+    content="Count words, characters, sentences, and lines in any text with a fast, free online counter."
   />
   <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
   <link rel="alternate" hreflang="en" href={alternateUrls.en} />
@@ -202,55 +202,55 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 <body>
   <header>
     <div class="header-inner">
-      <a href="/" class="logo">THIPA TOOLS</a>
-      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+      <a href="/" class="logo">USEVO TOOLS</a>
+      <a href="/ferramentas" class="back">← Back to tools</a>
     </div>
   </header>
 
   <main class="container">
-    <div class="category">Texto</div>
+    <div class="category">Text</div>
 
-    <h1>Contador de Palavras</h1>
+    <h1>Word Counter</h1>
 
     <p class="subtitle">
-      Conte palavras, caracteres, frases e linhas de qualquer texto.
+      Count words, characters, sentences, and lines in any text.
     </p>
 
     <section class="tool">
       <textarea
         id="texto"
-        placeholder="Digite ou cole seu texto aqui..."
+        placeholder="Type or paste your text here..."
       ></textarea>
 
       <div class="actions">
         <button class="primary" id="contar">
-          Contar
+          Count
         </button>
 
         <button class="secondary" id="limpar">
-          Limpar
+          Clear
         </button>
       </div>
 
       <div class="stats">
         <div class="stat">
           <span class="number" id="palavras">0</span>
-          <span class="label">Palavras</span>
+          <span class="label">Words</span>
         </div>
 
         <div class="stat">
           <span class="number" id="caracteres">0</span>
-          <span class="label">Caracteres</span>
+          <span class="label">Characters</span>
         </div>
 
         <div class="stat">
           <span class="number" id="frases">0</span>
-          <span class="label">Frases</span>
+          <span class="label">Sentences</span>
         </div>
 
         <div class="stat">
           <span class="number" id="linhas">0</span>
-          <span class="label">Linhas</span>
+          <span class="label">Lines</span>
         </div>
       </div>
     </section>
@@ -283,10 +283,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         ? valor.split(/\r?\n/).length
         : 0;
 
-      palavras.textContent = quantidadePalavras.toLocaleString("pt-BR");
-      caracteres.textContent = quantidadeCaracteres.toLocaleString("pt-BR");
-      frases.textContent = quantidadeFrases.toLocaleString("pt-BR");
-      linhas.textContent = quantidadeLinhas.toLocaleString("pt-BR");
+      palavras.textContent = quantidadePalavras.toLocaleString("en-US");
+      caracteres.textContent = quantidadeCaracteres.toLocaleString("en-US");
+      frases.textContent = quantidadeFrases.toLocaleString("en-US");
+      linhas.textContent = quantidadeLinhas.toLocaleString("en-US");
     }
 
     contar.addEventListener("click", atualizarContagem);

@@ -2,21 +2,21 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | THIPA TOOLS</title>
+    <title>{title} | USEVO TOOLS</title>
     <meta
       name="description"
       content={description}
@@ -209,48 +209,48 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <body>
     <header class="header">
-      <a href="/" class="logo">THIPA TOOLS</a>
-      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+      <a href="/" class="logo">USEVO TOOLS</a>
+      <a href="/ferramentas" class="back">← Back to tools</a>
     </header>
 
     <main class="container">
-      <div class="category">Desenvolvimento</div>
+      <div class="category">Development</div>
 
-      <h1>Codificador Base64</h1>
+      <h1>Base64 Encoder</h1>
 
       <p class="description">
-        Converta textos para Base64 e decodifique Base64 para texto rapidamente.
+        Convert text to Base64 and decode Base64 to text quickly.
       </p>
 
       <section class="card">
-        <label for="inputText">Texto ou Base64</label>
+        <label for="inputText">Text or Base64</label>
 
         <textarea
           id="inputText"
-          placeholder="Digite ou cole seu texto aqui..."
+          placeholder="Type or paste your text here..."
         ></textarea>
 
         <div class="buttons">
           <button class="primary" id="encodeBtn">
-            Texto → Base64
+            Text → Base64
           </button>
 
           <button class="secondary" id="decodeBtn">
-            Base64 → Texto
+            Base64 → Text
           </button>
 
           <button class="secondary" id="clearBtn">
-            Limpar
+            Clear
           </button>
         </div>
 
         <div id="result" class="result">
-          <div class="result-label">Resultado</div>
+          <div class="result-label">Result</div>
 
           <div id="resultBox" class="result-box"></div>
 
           <button class="secondary" id="copyBtn" style="margin-top: 12px;">
-            Copiar resultado
+            Copy result
           </button>
 
           <div id="message"></div>
@@ -280,7 +280,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const text = input.value;
 
         if (!text.trim()) {
-          showResult("", "✕ Digite algum texto para converter.", "error");
+          showResult("", "✕ Enter some text to convert.", "error");
           return;
         }
 
@@ -291,13 +291,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           showResult(
             encoded,
-            "✓ Texto convertido para Base64 com sucesso!",
+            "✓ Text converted to Base64 successfully!",
             "success"
           );
         } catch (error) {
           showResult(
             "",
-            "✕ Não foi possível converter o texto.",
+            "✕ Could not convert the text.",
             "error"
           );
         }
@@ -307,7 +307,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const encoded = input.value.trim();
 
         if (!encoded) {
-          showResult("", "✕ Digite um código Base64.", "error");
+          showResult("", "✕ Enter a Base64 code.", "error");
           return;
         }
 
@@ -318,13 +318,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           showResult(
             decoded,
-            "✓ Base64 decodificado com sucesso!",
+            "✓ Base64 decoded successfully!",
             "success"
           );
         } catch (error) {
           showResult(
             "",
-            "✕ Base64 inválido. Verifique o código e tente novamente.",
+            "✕ Invalid Base64. Check the code and try again.",
             "error"
           );
         }
@@ -342,10 +342,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         try {
           await navigator.clipboard.writeText(resultBox.textContent);
 
-          message.textContent = "✓ Resultado copiado!";
+          message.textContent = "✓ Result copied!";
           message.className = "success";
         } catch (error) {
-          message.textContent = "✕ Não foi possível copiar automaticamente.";
+          message.textContent = "✕ Could not copy automatically.";
           message.className = "error";
         }
       });

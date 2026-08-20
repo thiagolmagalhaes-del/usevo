@@ -4,12 +4,12 @@ import ToolGrid from "../components/tool/ToolGrid.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations } from "../data/i18n";
 
-const t = getTranslations("pt-BR");
+const t = getTranslations("en");
 ---
 
 <Layout
-  title="THIPA TOOLS — Ferramentas online"
-  description="Ferramentas online simples, rápidas e úteis para resolver tarefas do dia a dia."
+  title="USEVO TOOLS — Online Tools"
+  description="Simple, fast, and useful online tools for everyday tasks."
 >
 
     <style>
@@ -239,20 +239,20 @@ const t = getTranslations("pt-BR");
           <div class="eyebrow">✦ {t.freeOnlineTools}</div>
 
           <h1>
-            Resolva mais.<br />
-            <span>Complicação, menos.</span>
+            Do more.<br />
+            <span>Less hassle.</span>
           </h1>
 
           <p class="hero-text">
-            A THIPA TOOLS reúne ferramentas simples, rápidas e úteis para transformar
-            tarefas do dia a dia em poucos cliques.
+            USEVO TOOLS brings together simple, fast, and useful tools to turn
+            everyday tasks into just a few clicks.
           </p>
 
           <form class="search" id="searchForm">
             <input
               id="searchInput"
               type="text"
-              placeholder="O que você precisa fazer?"
+              placeholder="What do you need to do?"
               autocomplete="off"
             />
 
@@ -265,10 +265,10 @@ const t = getTranslations("pt-BR");
         <div class="container">
           <div class="section-heading">
             <h2>{t.popularTools}</h2>
-            <p>Escolha uma ferramenta e resolva sua tarefa rapidamente.</p>
+            <p>Pick a tool and get your task done quickly.</p>
           </div>
 
-          <ToolGrid items={ferramentas} />
+          <ToolGrid items={ferramentas} locale="en" />
 
           <div class="explore">
             <a href="/categorias">{t.allTools}</a>
@@ -311,7 +311,7 @@ const t = getTranslations("pt-BR");
       document.getElementById("ferramentas")?.scrollIntoView({ behavior: "smooth" });
 
       if (!encontrou) {
-        alert("Nenhuma ferramenta encontrada.");
+        alert("No tools found.");
       }
     });
   </script>

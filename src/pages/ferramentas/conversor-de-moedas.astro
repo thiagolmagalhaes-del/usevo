@@ -2,37 +2,37 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 const moedas = [
-  { codigo: "BRL", nome: "Real brasileiro" },
-  { codigo: "USD", nome: "Dólar dos Estados Unidos" },
+  { codigo: "BRL", nome: "Brazilian Real" },
+  { codigo: "USD", nome: "US Dollar" },
   { codigo: "EUR", nome: "Euro" },
-  { codigo: "GBP", nome: "Libra esterlina" },
-  { codigo: "JPY", nome: "Iene japonês" },
-  { codigo: "AUD", nome: "Dólar australiano" },
-  { codigo: "CAD", nome: "Dólar canadense" },
-  { codigo: "CHF", nome: "Franco suíço" },
-  { codigo: "CNY", nome: "Yuan chinês" },
-  { codigo: "SEK", nome: "Coroa sueca" },
-  { codigo: "NOK", nome: "Coroa norueguesa" },
-  { codigo: "MXN", nome: "Peso mexicano" }
+  { codigo: "GBP", nome: "British Pound" },
+  { codigo: "JPY", nome: "Japanese Yen" },
+  { codigo: "AUD", nome: "Australian Dollar" },
+  { codigo: "CAD", nome: "Canadian Dollar" },
+  { codigo: "CHF", nome: "Swiss Franc" },
+  { codigo: "CNY", nome: "Chinese Yuan" },
+  { codigo: "SEK", nome: "Swedish Krona" },
+  { codigo: "NOK", nome: "Norwegian Krone" },
+  { codigo: "MXN", nome: "Mexican Peso" }
 ];
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>{title} | THIPA TOOLS</title>
+  <title>{title} | USEVO TOOLS</title>
 
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
@@ -272,17 +272,17 @@ const moedas = [
 
   <header>
     <div class="header-inner">
-      <a href="/" class="logo">THIPA TOOLS</a>
+      <a href="/" class="logo">USEVO TOOLS</a>
 
       <a href="/ferramentas" class="back">
-        ← Voltar para ferramentas
+        ← Back to tools
       </a>
     </div>
   </header>
 
   <main>
 
-    <span class="category">Finanças</span>
+    <span class="category">Finance</span>
 
     <h1>{title}</h1>
 
@@ -295,7 +295,7 @@ const moedas = [
       <div class="row">
 
         <div>
-          <label for="from">De</label>
+          <label for="from">From</label>
 
           <select id="from">
             {moedas.map((moeda) => (
@@ -310,7 +310,7 @@ const moedas = [
         </div>
 
         <div>
-          <label for="to">Para</label>
+          <label for="to">To</label>
 
           <select id="to">
             {moedas.map((moeda) => (
@@ -327,7 +327,7 @@ const moedas = [
       </div>
 
       <div class="swap">
-        <button id="swap" type="button" title="Trocar moedas">
+        <button id="swap" type="button" title="Swap currencies">
           ⇄
         </button>
       </div>
@@ -335,7 +335,7 @@ const moedas = [
       <div class="value-field">
 
         <label for="amount">
-          Valor
+          Amount
         </label>
 
         <input
@@ -343,13 +343,13 @@ const moedas = [
           type="number"
           min="0"
           step="any"
-          placeholder="Digite um valor"
+          placeholder="Enter a value"
         />
 
       </div>
 
       <button class="convert" id="convert" type="button">
-        Converter
+        Convert
       </button>
 
       <div class="error" id="error"></div>
@@ -357,7 +357,7 @@ const moedas = [
       <div class="result" id="result">
 
         <div class="result-label">
-          Resultado
+          Result
         </div>
 
         <div class="result-value" id="resultValue"></div>
@@ -414,11 +414,11 @@ const moedas = [
       hideError();
 
       if (!value || value < 0) {
-        showError("Digite um valor válido.");
+        showError("Enter a valid value.");
         return;
       }
 
-      button.textContent = "Convertendo...";
+      button.textContent = "Converting...";
       button.disabled = true;
 
       try {
@@ -435,7 +435,7 @@ const moedas = [
             `1 ${from.value} = 1 ${to.value}`;
 
           dateText.textContent =
-            "Conversão direta";
+            "Direct conversion";
 
           result.classList.add("show");
 
@@ -447,7 +447,7 @@ const moedas = [
         );
 
         if (!response.ok) {
-          throw new Error("Não foi possível obter a cotação.");
+          throw new Error("Could not fetch the exchange rate.");
         }
 
         const data = await response.json();
@@ -469,7 +469,7 @@ const moedas = [
 
         if (data.date) {
           dateText.textContent =
-            `Cotação de ${data.date}`;
+            `Rate as of ${data.date}`;
         } else {
           dateText.textContent = "";
         }
@@ -479,12 +479,12 @@ const moedas = [
       } catch (err) {
 
         showError(
-          "Não foi possível consultar a cotação agora. Tente novamente."
+          "Could not fetch the exchange rate right now. Please try again."
         );
 
       } finally {
 
-        button.textContent = "Converter";
+        button.textContent = "Convert";
         button.disabled = false;
 
       }

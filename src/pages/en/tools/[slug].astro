@@ -61,6 +61,6 @@ const toolPageMap = {
 const PageComponent = toolPageMap[ferramenta.id as keyof typeof toolPageMap];
 ---
 
-<Layout title={toolMeta.title} description={toolMeta.description} locale="en" canonical={`https://thipatools.com${route}`} alternateUrls={alternateUrls}>
+<Layout title={toolMeta.title} description={toolMeta.description} locale="en" canonical={`https://usevo.tools${route}`} alternateUrls={alternateUrls}>
   {PageComponent ? <PageComponent /> : <main><h1>{toolMeta.title}</h1></main>}
 </Layout>

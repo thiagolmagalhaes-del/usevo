@@ -2,24 +2,24 @@
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 const ferramenta = getFerramentaByPath(Astro.url.pathname);
-const toolMeta = getFerramentaTranslation(ferramenta, "pt-BR");
+const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://thipatools.com").href;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gerador de Senhas Seguras | THIPA TOOLS</title>
+  <title>Secure Password Generator | USEVO TOOLS</title>
   <meta
     name="description"
-    content="Crie senhas fortes e aleatórias com diferentes níveis de segurança em segundos, de forma rápida e gratuita."
+    content="Create strong, random passwords with different security levels in seconds, quickly and for free."
   />
   <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
   <link rel="alternate" hreflang="en" href={alternateUrls.en} />
@@ -221,28 +221,28 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 <body>
   <header>
     <div class="header-inner">
-      <a href="/" class="logo">THIPA TOOLS</a>
-      <a href="/ferramentas" class="back">← Voltar para ferramentas</a>
+      <a href="/" class="logo">USEVO TOOLS</a>
+      <a href="/ferramentas" class="back">← Back to tools</a>
     </div>
   </header>
 
   <main class="container">
-    <div class="category">Segurança</div>
+    <div class="category">Security</div>
 
-    <h1>Gerador de Senhas</h1>
+    <h1>Password Generator</h1>
 
     <p class="subtitle">
-      Crie senhas fortes e aleatórias em poucos segundos.
+      Create strong, random passwords in seconds.
     </p>
 
     <section class="tool">
       <div class="password-box">
         <input id="senha" type="text" readonly />
-        <button class="copy" id="copiar">Copiar</button>
+        <button class="copy" id="copiar">Copy</button>
       </div>
 
       <div class="length-row">
-        <span class="length-label">Tamanho da senha</span>
+        <span class="length-label">Password length</span>
         <span id="lengthValue">16</span>
       </div>
 
@@ -257,31 +257,31 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       <div class="options">
         <label class="option">
           <input type="checkbox" id="maiusculas" checked />
-          Letras maiúsculas
+          Uppercase letters
         </label>
 
         <label class="option">
           <input type="checkbox" id="minusculas" checked />
-          Letras minúsculas
+          Lowercase letters
         </label>
 
         <label class="option">
           <input type="checkbox" id="numeros" checked />
-          Números
+          Numbers
         </label>
 
         <label class="option">
           <input type="checkbox" id="simbolos" checked />
-          Símbolos
+          Symbols
         </label>
       </div>
 
       <div class="strength">
-        Força: <span id="strength">Forte</span>
+        Strength: <span id="strength">Strong</span>
       </div>
 
       <button class="generate" id="gerar">
-        Gerar nova senha
+        Generate new password
       </button>
     </section>
   </main>
@@ -329,7 +329,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       if (!caracteres) {
         senha.value = "";
-        strength.textContent = "Selecione pelo menos uma opção";
+        strength.textContent = "Select at least one option";
         return;
       }
 
@@ -358,14 +358,14 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       if (numeros.checked) quantidade++;
       if (simbolos.checked) quantidade++;
 
-      let resultado = "Fraca";
+      let resultado = "Weak";
 
       if (tamanho >= 12 && quantidade >= 3) {
-        resultado = "Forte";
+        resultado = "Strong";
       }
 
       if (tamanho >= 16 && quantidade === 4) {
-        resultado = "Muito forte";
+        resultado = "Very strong";
       }
 
       strength.textContent = resultado;
@@ -388,10 +388,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       await navigator.clipboard.writeText(senha.value);
 
-      copiar.textContent = "Copiado!";
+      copiar.textContent = "Copied!";
 
       setTimeout(() => {
-        copiar.textContent = "Copiar";
+        copiar.textContent = "Copy";
       }, 1500);
     });
 
