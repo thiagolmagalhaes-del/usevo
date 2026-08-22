@@ -1,5 +1,4 @@
 ---
-import Layout from "../../../layouts/Layout.astro";
 import Base64Page from "../../ferramentas/base64.astro";
 import CalculadoraPage from "../../ferramentas/calculadora.astro";
 import CalculadoraDePorcentagemPage from "../../ferramentas/calculadora-de-porcentagem.astro";
@@ -20,7 +19,7 @@ import JuntarPdfPage from "../../ferramentas/juntar-pdf.astro";
 import UrlEncoderDecoderPage from "../../ferramentas/url-encoder-decoder.astro";
 import UuidGeneratorPage from "../../ferramentas/uuid-generator.astro";
 import { ferramentas, getFerramentaTranslation } from "../../../data/ferramentas";
-import { getSiteAlternates, resolveToolByLocaleSlug } from "../../../data/locale-routes";
+import { resolveToolByLocaleSlug } from "../../../data/locale-routes";
 
 export function getStaticPaths() {
   return ferramentas.map((ferramenta) => ({
@@ -34,9 +33,7 @@ if (!ferramenta) {
   throw new Error(`Tool not found for EN slug: ${slug ?? "(empty)"}`);
 }
 
-const route = `/en/tools/${ferramenta.localeSlugs.en}/`;
 const toolMeta = getFerramentaTranslation(ferramenta, "en");
-const alternateUrls = getSiteAlternates(route);
 const toolPageMap = {
   "calculadora-de-porcentagem": CalculadoraDePorcentagemPage,
   calculadora: CalculadoraPage,
@@ -61,6 +58,4 @@ const toolPageMap = {
 const PageComponent = toolPageMap[ferramenta.id as keyof typeof toolPageMap];
 ---
 
-<Layout title={toolMeta.title} description={toolMeta.description} locale="en" canonical={`https://usevo.tools${route}`} alternateUrls={alternateUrls}>
-  {PageComponent ? <PageComponent /> : <main><h1>{toolMeta.title}</h1></main>}
-</Layout>
+{PageComponent ? <PageComponent locale="en" /> : <main><h1>{toolMeta.title}</h1></main>}

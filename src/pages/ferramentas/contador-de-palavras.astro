@@ -1,10 +1,15 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools["contador-de-palavras"];
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/contador-de-palavras");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -13,21 +18,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Word Counter | USEVO TOOLS</title>
-  <meta
-    name="description"
-    content="Count words, characters, sentences, and lines in any text with a fast, free online counter."
-  />
-  <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-  <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-  <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-  <link rel="canonical" href={canonicalUrl} />
-
+<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
   <style>
     * {
       box-sizing: border-box;
@@ -199,60 +190,52 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       }
     }
   </style>
-</head>
-
-<body>
-  <header>
-    <div class="header-inner">
-      <a href="/" class="logo">USEVO TOOLS</a>
-      <a href="/ferramentas" class="back">← Back to tools</a>
-    </div>
-  </header>
 
   <main class="container">
-    <div class="category">Text</div>
+    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+    <div class="category">{ui.category}</div>
 
-    <h1>Word Counter</h1>
+    <h1>{ui.title}</h1>
 
     <p class="subtitle">
-      Count words, characters, sentences, and lines in any text.
+      {ui.description}
     </p>
 
     <section class="tool">
       <textarea
         id="texto"
-        placeholder="Type or paste your text here..."
+        placeholder={ui.placeholder}
       ></textarea>
 
       <div class="actions">
         <button class="primary" id="contar">
-          Count
+          {ui.count}
         </button>
 
         <button class="secondary" id="limpar">
-          Clear
+          {toolUi.common.clear}
         </button>
       </div>
 
       <div class="stats">
         <div class="stat">
           <span class="number" id="palavras">0</span>
-          <span class="label">Words</span>
+          <span class="label">{ui.words}</span>
         </div>
 
         <div class="stat">
           <span class="number" id="caracteres">0</span>
-          <span class="label">Characters</span>
+          <span class="label">{ui.characters}</span>
         </div>
 
         <div class="stat">
           <span class="number" id="frases">0</span>
-          <span class="label">Sentences</span>
+          <span class="label">{ui.sentences}</span>
         </div>
 
         <div class="stat">
           <span class="number" id="linhas">0</span>
-          <span class="label">Lines</span>
+          <span class="label">{ui.lines}</span>
         </div>
       </div>
     </section>
@@ -306,5 +289,4 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       texto.focus();
     });
   </script>
-</body>
-</html>
+</Layout>

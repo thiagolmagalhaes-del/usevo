@@ -1,22 +1,30 @@
 ---
 import { getTranslations } from "../data/i18n";
+import type { Locale } from "../data/locales";
 
-const t = getTranslations("en");
+const { locale } = Astro.props as { locale: Locale };
+const t = getTranslations(locale);
+const routes: Record<Locale, { home: string; tools: string; categories: string }> = {
+  "pt-BR": { home: "/", tools: "/ferramentas", categories: "/categorias" },
+  en: { home: "/en/", tools: "/en/tools", categories: "/en/categories" },
+  es: { home: "/es/", tools: "/es/herramientas", categories: "/es/categorias" },
+};
+const localizedRoutes = routes[locale];
 const navItems = [
-  { label: t.tools, href: "/ferramentas" },
-  { label: t.categories, href: "/categorias" },
+  { label: t.tools, href: localizedRoutes.tools },
+  { label: t.categories, href: localizedRoutes.categories },
 ];
 ---
 
 <header>
   <div class="container header-inner">
-    <a href="/" class="logo">USEVO TOOLS</a>
+    <a href={localizedRoutes.home} class="logo">USEVO TOOLS</a>
 
     <nav>
       {navItems.map((item) => (
         <a href={item.href}>{item.label}</a>
       ))}
-      <a href="/ferramentas" class="nav-button">{t.exploreTools}</a>
+      <a href={localizedRoutes.tools} class="nav-button">{t.exploreTools}</a>
     </nav>
   </div>
 </header>

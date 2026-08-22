@@ -1,7 +1,9 @@
 ---
 import { getTranslations } from "../data/i18n";
+import type { Locale } from "../data/locales";
 
-const t = getTranslations("en");
+const { locale } = Astro.props as { locale: Locale };
+const t = getTranslations(locale);
 ---
 
 <footer>

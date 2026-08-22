@@ -1,11 +1,13 @@
 ---
 import { getToolLocaleRoute } from "../../data/locale-routes";
 import type { Locale } from "../../data/locales";
+import { getCategoryTranslation } from "../../data/i18n";
 
 interface Ferramenta {
   nome: string;
   descricao: string;
   categoria: string;
+  categoryKey: string;
   icone: string;
   url: string;
   localeSlugs?: Partial<Record<Locale, string>>;
@@ -31,6 +33,8 @@ const localizedDescription =
       ? ferramenta.translations?.es?.description ?? ferramenta.descricao
       : ferramenta.descricao;
 
+const localizedCategory = getCategoryTranslation(ferramenta.categoryKey, locale);
+
 const resolvedHref = getToolLocaleRoute(
   ferramenta as any,
   locale,
@@ -41,11 +45,11 @@ const resolvedHref = getToolLocaleRoute(
   href={resolvedHref}
   class="tool-card"
   data-name={localizedTitle.toLowerCase()}
-  data-category={ferramenta.categoria.toLowerCase()}
+  data-category={localizedCategory.toLowerCase()}
 >
   <div class="tool-icon">{ferramenta.icone}</div>
 
-  <span class="category">{ferramenta.categoria}</span>
+  <span class="category">{localizedCategory}</span>
 
   <h3>{localizedTitle}</h3>
 

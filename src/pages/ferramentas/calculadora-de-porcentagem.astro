@@ -1,10 +1,15 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools["calculadora-de-porcentagem"];
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/calculadora-de-porcentagem");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -13,22 +18,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | USEVO TOOLS</title>
-    <meta
-      name="description"
-      content={description}
-    />
-
-    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-    <link rel="canonical" href={canonicalUrl} />
-
+<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
     <style>
       :global(*) {
         box-sizing: border-box;
@@ -179,60 +169,52 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         text-align: center;
       }
     </style>
-  </head>
 
-  <body>
-    <header>
-      <div class="container header-inner">
-        <a href="/" class="logo">USEVO TOOLS</a>
-        <a href="/ferramentas" class="back">← All tools</a>
-      </div>
-    </header>
+  <main>
+    <div class="container">
+      <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+        <div class="eyebrow">{ui.onlineTools} › {ui.category}</div>
 
-    <main>
-      <div class="container">
-        <div class="eyebrow">Tools › Finance</div>
-
-        <h1>Percentage Calculator</h1>
+        <h1>{ui.title}</h1>
 
         <p class="intro">
-          Quickly find out how much a percentage of a given value represents.
+          {ui.description}
         </p>
 
         <section class="calculator">
           <div class="field">
-            <label for="percentage">Percentage (%)</label>
+            <label for="percentage">{ui.percentage}</label>
             <input
               id="percentage"
               type="number"
-              placeholder="E.g.: 15"
+              placeholder={ui.percentagePlaceholder}
               step="any"
             />
           </div>
 
           <div class="field">
-            <label for="value">Value</label>
+            <label for="value">{ui.value}</label>
             <input
               id="value"
               type="number"
-              placeholder="E.g.: 500"
+              placeholder={ui.valuePlaceholder}
               step="any"
             />
           </div>
 
-          <button id="calculate">Calculate</button>
+          <button id="calculate">{ui.calculate}</button>
 
           <div id="result" class="result">
-            <div class="result-label">Result</div>
-            <div id="resultValue" class="result-value">R$ 0,00</div>
-            <div id="formula" class="formula"></div>
+            <div class="result-label">{ui.result}</div>
+            <div id="resultValue" class="result-value">0</div>
+            <div id="formula" class="formula" data-template={ui.formula}></div>
           </div>
         </section>
       </div>
     </main>
 
     <footer>
-      © {new Date().getFullYear()} USEVO TOOLS — Online Tools
+      © {new Date().getFullYear()} USEVO TOOLS — {ui.onlineTools}
     </footer>
 
     <script>
@@ -254,6 +236,11 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       ) as HTMLDivElement;
 
       const formula = document.getElementById("formula") as HTMLDivElement;
+      const formulaTemplate = formula.dataset.template ?? "";
+      const numberFormatter = new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      });
 
       calculateButton.addEventListener("click", () => {
         const percentage = Number(percentageInput.value);
@@ -266,24 +253,20 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
         const calculated = (percentage / 100) * value;
 
-        resultValue.textContent = calculated.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        });
+        resultValue.textContent = numberFormatter.format(calculated);
 
-        formula.textContent = `${percentage}% of ${value.toLocaleString(
-          "pt-BR",
-          {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }
-        )} = ${calculated.toLocaleString("pt-BR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`;
+        formula.textContent = formulaTemplate
+          .replace("{percentage}", String(percentage))
+          .replace(
+            "{value}",
+            numberFormatter.format(value)
+          )
+          .replace(
+            "{calculated}",
+            numberFormatter.format(calculated)
+          );
 
         result.classList.add("visible");
       });
     </script>
-  </body>
-</html>
+</Layout>

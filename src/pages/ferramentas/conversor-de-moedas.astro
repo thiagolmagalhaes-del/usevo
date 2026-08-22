@@ -1,10 +1,23 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools["conversor-de-moedas"];
+const converterMessages = {
+  invalidValue: ui.invalidValue,
+  converting: ui.converting,
+  directConversion: ui.directConversion,
+  rateAsOf: ui.rateAsOf,
+  fetchError: ui.fetchError,
+  convert: ui.convert,
+};
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/conversor-de-moedas");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -28,21 +41,7 @@ const moedas = [
 
 
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>{title} | USEVO TOOLS</title>
-
-  <meta name="description" content={description} />
-  <link rel="canonical" href={canonicalUrl} />
-  
-  <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-  <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-  <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-  
+<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
   <style>
     * {
       box-sizing: border-box;
@@ -268,23 +267,11 @@ const moedas = [
       }
     }
   </style>
-</head>
-
-<body>
-
-  <header>
-    <div class="header-inner">
-      <a href="/" class="logo">USEVO TOOLS</a>
-
-      <a href="/ferramentas" class="back">
-        ← Back to tools
-      </a>
-    </div>
-  </header>
 
   <main>
+    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
 
-    <span class="category">Finance</span>
+    <span class="category">{ui.category}</span>
 
     <h1>{title}</h1>
 
@@ -297,7 +284,7 @@ const moedas = [
       <div class="row">
 
         <div>
-          <label for="from">From</label>
+          <label for="from">{ui.from}</label>
 
           <select id="from">
             {moedas.map((moeda) => (
@@ -312,7 +299,7 @@ const moedas = [
         </div>
 
         <div>
-          <label for="to">To</label>
+          <label for="to">{ui.to}</label>
 
           <select id="to">
             {moedas.map((moeda) => (
@@ -329,7 +316,7 @@ const moedas = [
       </div>
 
       <div class="swap">
-        <button id="swap" type="button" title="Swap currencies">
+        <button id="swap" type="button" title={ui.swapCurrencies}>
           ⇄
         </button>
       </div>
@@ -337,7 +324,7 @@ const moedas = [
       <div class="value-field">
 
         <label for="amount">
-          Amount
+          {ui.amount}
         </label>
 
         <input
@@ -345,13 +332,13 @@ const moedas = [
           type="number"
           min="0"
           step="any"
-          placeholder="Enter a value"
+          placeholder={ui.amountPlaceholder}
         />
 
       </div>
 
       <button class="convert" id="convert" type="button">
-        Convert
+        {ui.convert}
       </button>
 
       <div class="error" id="error"></div>
@@ -359,7 +346,7 @@ const moedas = [
       <div class="result" id="result">
 
         <div class="result-label">
-          Result
+          {ui.result}
         </div>
 
         <div class="result-value" id="resultValue"></div>
@@ -374,7 +361,7 @@ const moedas = [
 
   </main>
 
-  <script>
+  <script define:vars={{ converterMessages }}>
     const amount = document.getElementById("amount");
     const from = document.getElementById("from");
     const to = document.getElementById("to");
@@ -416,11 +403,11 @@ const moedas = [
       hideError();
 
       if (!value || value < 0) {
-        showError("Enter a valid value.");
+        showError(converterMessages.invalidValue);
         return;
       }
 
-      button.textContent = "Converting...";
+      button.textContent = converterMessages.converting;
       button.disabled = true;
 
       try {
@@ -437,7 +424,7 @@ const moedas = [
             `1 ${from.value} = 1 ${to.value}`;
 
           dateText.textContent =
-            "Direct conversion";
+            converterMessages.directConversion;
 
           result.classList.add("show");
 
@@ -471,7 +458,7 @@ const moedas = [
 
         if (data.date) {
           dateText.textContent =
-            `Rate as of ${data.date}`;
+            converterMessages.rateAsOf.replace("{date}", data.date);
         } else {
           dateText.textContent = "";
         }
@@ -481,12 +468,12 @@ const moedas = [
       } catch (err) {
 
         showError(
-          "Could not fetch the exchange rate right now. Please try again."
+          converterMessages.fetchError
         );
 
       } finally {
 
-        button.textContent = "Convert";
+        button.textContent = converterMessages.convert;
         button.disabled = false;
 
       }
@@ -500,5 +487,4 @@ const moedas = [
     });
   </script>
 
-</body>
-</html>
+</Layout>

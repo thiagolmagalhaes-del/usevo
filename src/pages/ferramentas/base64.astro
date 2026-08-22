@@ -1,10 +1,25 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools.base64;
+const base64Messages = {
+  emptyTextError: ui.emptyTextError,
+  encodeSuccess: ui.encodeSuccess,
+  encodeError: ui.encodeError,
+  emptyBase64Error: ui.emptyBase64Error,
+  decodeSuccess: ui.decodeSuccess,
+  invalidBase64Error: ui.invalidBase64Error,
+  copiedSuccess: ui.copiedSuccess,
+  copyError: ui.copyError,
+};
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/base64");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -13,22 +28,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | USEVO TOOLS</title>
-    <meta
-      name="description"
-      content={description}
-    />
-    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-    <link rel="canonical" href={canonicalUrl} />
-
-    <style>
+<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
+  <style>
       :global(*) {
         box-sizing: border-box;
       }
@@ -207,52 +208,46 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         }
       }
     </style>
-  </head>
 
-  <body>
-    <header class="header">
-      <a href="/" class="logo">USEVO TOOLS</a>
-      <a href="/ferramentas" class="back">← Back to tools</a>
-    </header>
+  <main class="container">
+    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+      <div class="category">{ui.category}</div>
 
-    <main class="container">
-      <div class="category">Development</div>
-
-      <h1>Base64 Encoder</h1>
+      <h1>{ui.title}</h1>
 
       <p class="description">
-        Convert text to Base64 and decode Base64 to text quickly.
+        {ui.description}
       </p>
 
       <section class="card">
-        <label for="inputText">Text or Base64</label>
+        <label for="inputText">{ui.inputLabel}</label>
 
         <textarea
           id="inputText"
-          placeholder="Type or paste your text here..."
+          placeholder={ui.placeholder}
         ></textarea>
 
         <div class="buttons">
           <button class="primary" id="encodeBtn">
-            Text → Base64
+            {ui.textToBase64}
           </button>
 
           <button class="secondary" id="decodeBtn">
-            Base64 → Text
+            {ui.base64ToText}
           </button>
 
           <button class="secondary" id="clearBtn">
-            Clear
+            {toolUi.common.clear}
           </button>
         </div>
 
         <div id="result" class="result">
-          <div class="result-label">Result</div>
+          <div class="result-label">{ui.result}</div>
 
           <div id="resultBox" class="result-box"></div>
 
           <button class="secondary" id="copyBtn" style="margin-top: 12px;">
-            Copy result
+            {ui.copyResult}
           </button>
 
           <div id="message"></div>
@@ -260,7 +255,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       </section>
     </main>
 
-    <script>
+    <script define:vars={{ base64Messages }}>
       const input = document.getElementById("inputText");
       const result = document.getElementById("result");
       const resultBox = document.getElementById("resultBox");
@@ -282,7 +277,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const text = input.value;
 
         if (!text.trim()) {
-          showResult("", "✕ Enter some text to convert.", "error");
+          showResult("", base64Messages.emptyTextError, "error");
           return;
         }
 
@@ -293,13 +288,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           showResult(
             encoded,
-            "✓ Text converted to Base64 successfully!",
+            base64Messages.encodeSuccess,
             "success"
           );
         } catch (error) {
           showResult(
             "",
-            "✕ Could not convert the text.",
+            base64Messages.encodeError,
             "error"
           );
         }
@@ -309,7 +304,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const encoded = input.value.trim();
 
         if (!encoded) {
-          showResult("", "✕ Enter a Base64 code.", "error");
+          showResult("", base64Messages.emptyBase64Error, "error");
           return;
         }
 
@@ -320,13 +315,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           showResult(
             decoded,
-            "✓ Base64 decoded successfully!",
+            base64Messages.decodeSuccess,
             "success"
           );
         } catch (error) {
           showResult(
             "",
-            "✕ Invalid Base64. Check the code and try again.",
+            base64Messages.invalidBase64Error,
             "error"
           );
         }
@@ -344,13 +339,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         try {
           await navigator.clipboard.writeText(resultBox.textContent);
 
-          message.textContent = "✓ Result copied!";
+          message.textContent = base64Messages.copiedSuccess;
           message.className = "success";
         } catch (error) {
-          message.textContent = "✕ Could not copy automatically.";
+          message.textContent = base64Messages.copyError;
           message.className = "error";
         }
       });
     </script>
-  </body>
-</html>
+</Layout>

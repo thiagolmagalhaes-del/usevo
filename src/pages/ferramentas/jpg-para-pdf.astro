@@ -1,10 +1,16 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools["jpg-para-pdf"];
+const pdfMessages = { invalidImageError: ui.invalidImageError };
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/jpg-para-pdf");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -13,18 +19,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | USEVO TOOLS</title>
-    <meta name="description" content={description} />
-    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-    <link rel="canonical" href={canonicalUrl} />
-
+<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
     <style>
       * {
         box-sizing: border-box;
@@ -200,26 +195,15 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         }
       }
     </style>
-  </head>
 
-  <body>
-    <header>
-      <div class="header-inner">
-        <a href="/" class="logo">USEVO TOOLS</a>
+  <main>
+    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+      <span class="category">{ui.category}</span>
 
-        <a href="/ferramentas" class="back">
-          ← Back to tools
-        </a>
-      </div>
-    </header>
-
-    <main>
-      <span class="category">Files</span>
-
-      <h1>JPG to PDF</h1>
+      <h1>{ui.title}</h1>
 
       <p class="description">
-        Convert JPG images into PDF documents quickly.
+        {ui.description}
       </p>
 
       <div class="card">
@@ -228,11 +212,11 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           <div class="upload-icon">📄</div>
 
           <div class="upload-title">
-            Click to select an image
+            {ui.selectImage}
           </div>
 
           <div class="upload-text">
-            JPG, JPEG or PNG
+            {ui.supportedFormats}
           </div>
         </label>
 
@@ -244,22 +228,22 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
         <div id="fileName" class="file-name"></div>
 
-        <img id="preview" alt="Image preview" />
+        <img id="preview" alt={ui.imagePreviewAlt} />
 
         <button id="convertBtn" disabled>
-          Convert to PDF
+          {ui.convertToPdf}
         </button>
 
         <div id="error" class="error"></div>
 
         <div id="success" class="success">
-          PDF created successfully!
+          {ui.success}
         </div>
 
       </div>
     </main>
 
-    <script>
+    <script define:vars={{ pdfMessages }}>
       import { jsPDF } from "jspdf";
 
       const fileInput = document.getElementById("fileInput");
@@ -279,7 +263,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         }
 
         if (!file.type.startsWith("image/")) {
-          error.textContent = "Please select a JPG, JPEG or PNG image.";
+          error.textContent = pdfMessages.invalidImageError;
           error.style.display = "block";
           convertBtn.disabled = true;
           return;
@@ -350,5 +334,4 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         reader.readAsDataURL(selectedFile);
       });
     </script>
-  </body>
-</html>
+</Layout>

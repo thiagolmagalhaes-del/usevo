@@ -1,10 +1,23 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools["gerador-de-senhas"];
+const passwordMessages = {
+  copied: ui.copied,
+  copy: ui.copy,
+  selectAtLeastOneOption: ui.selectAtLeastOneOption,
+  weak: ui.weak,
+  strong: ui.strong,
+  veryStrong: ui.veryStrong,
+};
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/gerador-de-senhas");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -13,21 +26,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
 
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Secure Password Generator | USEVO TOOLS</title>
-  <meta
-    name="description"
-    content="Create strong, random passwords with different security levels in seconds, quickly and for free."
-  />
-  <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-  <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-  <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-  <link rel="canonical" href={canonicalUrl} />
-
+<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
   <style>
     * {
       box-sizing: border-box;
@@ -218,33 +217,25 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       }
     }
   </style>
-</head>
-
-<body>
-  <header>
-    <div class="header-inner">
-      <a href="/" class="logo">USEVO TOOLS</a>
-      <a href="/ferramentas" class="back">← Back to tools</a>
-    </div>
-  </header>
 
   <main class="container">
-    <div class="category">Security</div>
+    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+    <div class="category">{ui.category}</div>
 
-    <h1>Password Generator</h1>
+    <h1>{ui.title}</h1>
 
     <p class="subtitle">
-      Create strong, random passwords in seconds.
+      {ui.description}
     </p>
 
     <section class="tool">
       <div class="password-box">
         <input id="senha" type="text" readonly />
-        <button class="copy" id="copiar">Copy</button>
+        <button class="copy" id="copiar">{ui.copy}</button>
       </div>
 
       <div class="length-row">
-        <span class="length-label">Password length</span>
+        <span class="length-label">{ui.passwordLength}</span>
         <span id="lengthValue">16</span>
       </div>
 
@@ -259,36 +250,36 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       <div class="options">
         <label class="option">
           <input type="checkbox" id="maiusculas" checked />
-          Uppercase letters
+          {ui.uppercaseLetters}
         </label>
 
         <label class="option">
           <input type="checkbox" id="minusculas" checked />
-          Lowercase letters
+          {ui.lowercaseLetters}
         </label>
 
         <label class="option">
           <input type="checkbox" id="numeros" checked />
-          Numbers
+          {ui.numbers}
         </label>
 
         <label class="option">
           <input type="checkbox" id="simbolos" checked />
-          Symbols
+          {ui.symbols}
         </label>
       </div>
 
       <div class="strength">
-        Strength: <span id="strength">Strong</span>
+        {ui.strength} <span id="strength">{ui.strong}</span>
       </div>
 
       <button class="generate" id="gerar">
-        Generate new password
+        {ui.generateNewPassword}
       </button>
     </section>
   </main>
 
-  <script>
+  <script define:vars={{ passwordMessages }}>
     const senha = document.getElementById("senha");
     const copiar = document.getElementById("copiar");
     const gerar = document.getElementById("gerar");
@@ -331,7 +322,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       if (!caracteres) {
         senha.value = "";
-        strength.textContent = "Select at least one option";
+        strength.textContent = passwordMessages.selectAtLeastOneOption;
         return;
       }
 
@@ -360,14 +351,14 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       if (numeros.checked) quantidade++;
       if (simbolos.checked) quantidade++;
 
-      let resultado = "Weak";
+      let resultado = passwordMessages.weak;
 
       if (tamanho >= 12 && quantidade >= 3) {
-        resultado = "Strong";
+        resultado = passwordMessages.strong;
       }
 
       if (tamanho >= 16 && quantidade === 4) {
-        resultado = "Very strong";
+        resultado = passwordMessages.veryStrong;
       }
 
       strength.textContent = resultado;
@@ -390,14 +381,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       await navigator.clipboard.writeText(senha.value);
 
-      copiar.textContent = "Copied!";
+      copiar.textContent = passwordMessages.copied;
 
       setTimeout(() => {
-        copiar.textContent = "Copy";
+        copiar.textContent = passwordMessages.copy;
       }, 1500);
     });
 
     gerarSenha();
   </script>
-</body>
-</html>
+</Layout>

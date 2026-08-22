@@ -45,9 +45,9 @@ const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string]
     <title>{pageTitle}</title>
   </head>
   <body>
-    <SiteHeader />
+    <SiteHeader locale={resolvedLocale} />
     <slot />
-    <SiteFooter />
+    <SiteFooter locale={resolvedLocale} />
   </body>
 </html>
 

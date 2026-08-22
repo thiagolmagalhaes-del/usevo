@@ -1,29 +1,21 @@
 ---
+import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/calculadora-clt-pj");
-const toolMeta = getFerramentaTranslation(ferramenta, "en");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
 
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} — Compare Employee (CLT) vs Freelance (PJ) Income | USEVO</title>
-    <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
-    <link rel="alternate" hreflang="pt-BR" href={alternateUrls["pt-BR"]} />
-    <link rel="alternate" hreflang="en" href={alternateUrls.en} />
-    <link rel="alternate" hreflang="es" href={alternateUrls.es} />
-    <link rel="canonical" href="https://usevo.tools/ferramentas/calculadora-clt-pj" />
+<Layout title={`${title} — Compare Employee (CLT) vs Freelance (PJ) Income`} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
     <style>
       * { box-sizing: border-box; }
 
@@ -313,18 +305,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         }
       }
     </style>
-  </head>
 
-  <body>
-    <header>
-      <div class="container header-inner">
-        <a href="/" class="logo">USEVO TOOLS</a>
-        <a href="/ferramentas" class="back">← Back to tools</a>
-      </div>
-    </header>
-
-    <main>
-      <div class="container">
+  <main>
+    <div class="container">
+      <a href="/ferramentas" class="back">← Back to tools</a>
         <div class="eyebrow">Finance</div>
         <h1>CLT vs Freelance (PJ) Calculator</h1>
 
@@ -623,5 +607,4 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       countrySelector.addEventListener("change", update);
       update();
     </script>
-  </body>
-</html>
+</Layout>
