@@ -1,20 +1,23 @@
 ---
+import type { Locale } from "../../data/locales";
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? { title: "Comparador de texto", original: "Texto original", modified: "Texto modificado", compare: "Comparar", clear: "Limpar" } : { title: "Text Comparator", original: "Original text", modified: "Modified text", compare: "Compare", clear: "Clear" };
 ---
 <div class="tool-card card">
-  <h2>Text Comparator</h2>
+  <h2>{copy.title}</h2>
   <div style="display:flex; gap:12px; flex-wrap:wrap;">
     <div style="flex:1; min-width:260px;">
-      <label>Original text</label>
+      <label>{copy.original}</label>
       <textarea id="original" rows="10" style="width:100%"></textarea>
     </div>
     <div style="flex:1; min-width:260px;">
-      <label>Modified text</label>
+      <label>{copy.modified}</label>
       <textarea id="modified" rows="10" style="width:100%"></textarea>
     </div>
   </div>
   <div style="margin-top:12px">
-    <button id="compareBtn">Compare</button>
-    <button id="clearBtn">Clear</button>
+    <button id="compareBtn">{copy.compare}</button>
+    <button id="clearBtn">{copy.clear}</button>
   </div>
   <div id="result" style="margin-top:12px"></div>
 </div>

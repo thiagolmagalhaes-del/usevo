@@ -3,16 +3,18 @@ import Layout from "../layouts/Layout.astro";
 import ToolGrid from "../components/tool/ToolGrid.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations } from "../data/i18n";
-import { getSiteAlternates } from "../data/locale-routes";
 
-const t = getTranslations("pt-BR");
-const alternateUrls = getSiteAlternates("/");
+const t = getTranslations("en");
+const alternateUrls = {
+  en: "https://usevo.tools/",
+  es: "https://usevo.tools/es/",
+};
 ---
 
 <Layout
   title="USEVO TOOLS — Online Tools"
   description="Simple, fast, and useful online tools for everyday tasks."
-  locale="pt-BR"
+  locale="en"
   canonical="https://usevo.tools/"
   alternateUrls={alternateUrls}
 >
@@ -266,17 +268,17 @@ const alternateUrls = getSiteAlternates("/");
         </div>
       </section>
 
-      <section class="tools-section" id="ferramentas">
+      <section class="tools-section" id="tools">
         <div class="container">
           <div class="section-heading">
             <h2>{t.popularTools}</h2>
             <p>Pick a tool and get your task done quickly.</p>
           </div>
 
-          <ToolGrid items={ferramentas} locale="pt-BR" />
+          <ToolGrid items={ferramentas} locale="en" />
 
           <div class="explore">
-            <a href="/categorias">{t.allTools}</a>
+            <a href="/en/categories/">{t.allTools}</a>
           </div>
         </div>
       </section>
@@ -292,7 +294,7 @@ const alternateUrls = getSiteAlternates("/");
       const termo = input.value.trim().toLowerCase();
 
       if (!termo) {
-        window.location.href = "#ferramentas";
+        window.location.href = "#tools";
         return;
       }
 
@@ -313,7 +315,7 @@ const alternateUrls = getSiteAlternates("/");
         }
       });
 
-      document.getElementById("ferramentas")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("tools")?.scrollIntoView({ behavior: "smooth" });
 
       if (!encontrou) {
         alert("No tools found.");

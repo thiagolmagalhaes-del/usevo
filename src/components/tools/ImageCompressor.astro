@@ -1,20 +1,27 @@
 ---
+import type { Locale } from "../../data/locales";
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Comprimir imagem", drop: "Arraste e solte uma imagem aqui ou clique para selecionar", file: "Arquivo", original: "Tamanho original", quality: "Qualidade", processing: "Processando...", final: "Tamanho final", reduction: "Redução", download: "Baixar imagem", formats: "Formatos aceitos: JPG, PNG, WebP", noFile: "Nenhum arquivo selecionado.", tooLarge: "O arquivo excede o limite de {size} MB.", noReduction: "Não foi obtida uma redução efetiva.", error: "Erro ao comprimir a imagem. O arquivo pode ser muito grande ou inválido.",
+} : {
+  title: "Compress Image", drop: "Drag and drop an image here or click to select", file: "File", original: "Original size", quality: "Quality", processing: "Processing...", final: "Final size", reduction: "Reduction", download: "Download Image", formats: "Supported formats: JPG, PNG, WebP", noFile: "No file selected.", tooLarge: "File exceeds the limit of {size} MB.", noReduction: "No effective reduction was achieved.", error: "Error compressing the image. The file may be too large or invalid.",
+};
 ---
 <div class="tool-card card">
-  <h2>Compress Image</h2>
-  <div id="dropArea" class="drop">Drag and drop an image here or click to select</div>
+  <h2>{copy.title}</h2>
+  <div id="dropArea" class="drop">{copy.drop}</div>
   <input id="fileInput" type="file" accept="image/*" style="display:none" />
   <div id="fileInfo" style="display:none">
-    <div>File: <span id="fileName"></span></div>
-    <div>Original size: <span id="originalSize"></span></div>
-    <label>Quality: <input id="quality" type="range" min="0.1" max="1" step="0.05" value="0.8"></label>
-    <button id="compressBtn">Compress Image</button>
+    <div>{copy.file}: <span id="fileName"></span></div>
+    <div>{copy.original}: <span id="originalSize"></span></div>
+    <label>{copy.quality}: <input id="quality" type="range" min="0.1" max="1" step="0.05" value="0.8"></label>
+    <button id="compressBtn">{copy.title}</button>
   </div>
-  <div id="processing" style="display:none">Processing...</div>
+  <div id="processing" style="display:none">{copy.processing}</div>
   <div id="result" style="display:none">
-    <div>Final size: <span id="finalSize"></span></div>
-    <div>Reduction: <span id="reduction"></span></div>
-    <a id="downloadLink" href="#" download>Download Image</a>
+    <div>{copy.final}: <span id="finalSize"></span></div>
+    <div>{copy.reduction}: <span id="reduction"></span></div>
+    <a id="downloadLink" href="#" download>{copy.download}</a>
   </div>
   <div id="error" class="error" style="display:none"></div>
 </div>
@@ -24,7 +31,7 @@
 .error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
 </style>
 
-<script type="module">
+<script type="module" define:vars={{ copy }}>
   import imageCompression from 'browser-image-compression';
 
   const dropArea = document.getElementById('dropArea');
@@ -74,7 +81,7 @@
     clearError();
     if (!file) return;
     const allowed = ['image/jpeg','image/png','image/webp'];
-    if (!allowed.includes(file.type)) { showError('Supported formats: JPG, PNG, WebP'); return; }
+    if (!allowed.includes(file.type)) { showError(copy.formats); return; }
     currentFile = file;
     fileNameEl.textContent = file.name;
     originalSizeEl.textContent = humanSize(file.size);
@@ -83,11 +90,11 @@
   }
 
   async function compressImage() {
-    if (!currentFile) return showError('No file selected.');
+    if (!currentFile) return showError(copy.noFile);
     clearError();
 
       if (currentFile.size > IMAGE_MAX_FILE) {
-        return showError(`File exceeds the limit of ${Math.round(IMAGE_MAX_FILE/1024/1024)} MB.`);
+        return showError(copy.tooLarge.replace("{size}", String(Math.round(IMAGE_MAX_FILE/1024/1024))));
       }
 
       compressBtn.disabled = true;
@@ -116,7 +123,7 @@
           processing.style.display = 'none';
           result.style.display = 'block';
           finalSizeEl.textContent = humanSize(finalSize);
-          reductionEl.textContent = 'No effective reduction was achieved.';
+          reductionEl.textContent = copy.noReduction;
           setDownload(finalBlob, 'compressed-' + currentFile.name);
           return;
         }
@@ -128,7 +135,7 @@
         setDownload(finalBlob, 'compressed-' + currentFile.name);
       } catch (err) {
         console.error(err);
-        showError('Error compressing the image. The file may be too large or invalid.');
+        showError(copy.error);
       } finally {
         compressBtn.disabled = false;
         processing.style.display = 'none';

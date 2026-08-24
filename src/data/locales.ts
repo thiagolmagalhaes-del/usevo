@@ -18,8 +18,9 @@ export const resolveLocale = (value?: string | null): Locale => {
 
 /** The public route is authoritative; component props are only a fallback. */
 export const resolveLocaleFromPath = (pathname: string, fallback?: string | null): Locale => {
+  if (pathname === "/") return "en";
   if (pathname === "/en" || pathname.startsWith("/en/")) return "en";
   if (pathname === "/es" || pathname.startsWith("/es/")) return "es";
-  if (pathname === "/" || pathname.startsWith("/ferramentas/")) return "pt-BR";
+  if (pathname === "/ferramentas" || pathname.startsWith("/ferramentas/")) return "pt-BR";
   return resolveLocale(fallback);
 };

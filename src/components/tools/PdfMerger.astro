@@ -1,18 +1,25 @@
 ---
+import type { Locale } from "../../data/locales";
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Juntar PDFs", drop: "Arraste e solte PDFs aqui ou clique para selecionar", action: "Juntar PDFs", processing: "Processando...", download: "Baixar PDF unido", remove: "Remover", invalid: "Nenhum PDF válido selecionado.", noFile: "Nenhum PDF carregado.", perFile: "O arquivo {name} excede o limite por arquivo de {size} MB.", total: "O tamanho total dos arquivos excede {size} MB.", error: "Erro ao juntar PDFs. Verifique os arquivos.",
+} : {
+  title: "Merge PDF", drop: "Drag and drop PDFs here or click to select", action: "Merge PDFs", processing: "Processing...", download: "Download merged PDF", remove: "Remove", invalid: "No valid PDF selected.", noFile: "No PDF loaded.", perFile: "The file {name} exceeds the per-file limit of {size} MB.", total: "Total file size exceeds {size} MB.", error: "Error merging PDFs. Check the files.",
+};
 ---
 <div class="tool-card card">
-  <h2>Merge PDF</h2>
+  <h2>{copy.title}</h2>
   <input id="fileInput" type="file" accept="application/pdf" multiple style="display:none" />
-  <div id="dropArea" class="drop">Drag and drop PDFs here or click to select</div>
+  <div id="dropArea" class="drop">{copy.drop}</div>
 
   <ul id="fileList"></ul>
   <div>
-    <button id="mergeBtn">Merge PDFs</button>
-    <div id="processing" style="display:none">Processing...</div>
+    <button id="mergeBtn">{copy.action}</button>
+    <div id="processing" style="display:none">{copy.processing}</div>
   </div>
   <div id="error" class="error" style="display:none"></div>
   <div id="result" style="display:none">
-    <a id="downloadLink" href="#" download>Download merged PDF</a>
+    <a id="downloadLink" href="#" download>{copy.download}</a>
   </div>
 </div>
 
@@ -24,7 +31,7 @@
 .file-controls button { margin-left:6px; }
 </style>
 
-<script type="module">
+<script type="module" define:vars={{ copy }}>
   // lazy import PDF library when needed to avoid large SSR/initial bundles
   const fileInput = document.getElementById('fileInput');
   const dropArea = document.getElementById('dropArea');
@@ -52,7 +59,7 @@
       controls.className = 'file-controls';
       const upBtn = document.createElement('button'); upBtn.textContent = '↑';
       const downBtn = document.createElement('button'); downBtn.textContent = '↓';
-      const removeBtn = document.createElement('button'); removeBtn.textContent = 'Remover';
+      const removeBtn = document.createElement('button'); removeBtn.textContent = copy.remove;
       upBtn.addEventListener('click', () => { if (idx > 0) { const tmp = files[idx-1]; files[idx-1] = files[idx]; files[idx] = tmp; renderList(); } });
       downBtn.addEventListener('click', () => { if (idx < files.length -1) { const tmp = files[idx+1]; files[idx+1] = files[idx]; files[idx] = tmp; renderList(); } });
       removeBtn.addEventListener('click', () => { files.splice(idx,1); renderList(); });
@@ -78,24 +85,24 @@
   function handleFiles(selected) {
     clearError();
     const pdfs = selected.filter(f => f.type === 'application/pdf');
-    if (pdfs.length === 0) { showError('No valid PDF selected.'); return; }
+    if (pdfs.length === 0) { showError(copy.invalid); return; }
     files = files.concat(pdfs);
     renderList();
     result.style.display = 'none';
   }
 
   async function mergePdfs() {
-    if (files.length === 0) return showError('No PDF loaded.');
+    if (files.length === 0) return showError(copy.noFile);
       if (isProcessing) return; // prevent concurrent runs
       clearError();
 
       // Check per-file and total size limits
       let total = 0;
       for (const f of files) {
-        if (f.size > PDF_MERGE_PER_FILE_LIMIT) return showError(`The file ${f.name} exceeds the per-file limit of ${Math.round(PDF_MERGE_PER_FILE_LIMIT/1024/1024)} MB.`);
+        if (f.size > PDF_MERGE_PER_FILE_LIMIT) return showError(copy.perFile.replace("{name}", f.name).replace("{size}", String(Math.round(PDF_MERGE_PER_FILE_LIMIT/1024/1024))));
         total += f.size;
       }
-      if (total > PDF_MERGE_TOTAL_LIMIT) return showError(`Total file size exceeds ${Math.round(PDF_MERGE_TOTAL_LIMIT/1024/1024)} MB.`);
+      if (total > PDF_MERGE_TOTAL_LIMIT) return showError(copy.total.replace("{size}", String(Math.round(PDF_MERGE_TOTAL_LIMIT/1024/1024))));
 
       isProcessing = true;
       mergeBtn.disabled = true;
@@ -129,7 +136,7 @@
         downloadLink.addEventListener('click', onClick, { once: true });
       } catch (err) {
         console.error(err);
-        showError('Error merging PDFs. Check the files.');
+        showError(copy.error);
       } finally {
         processing.style.display = 'none';
         mergeBtn.disabled = false;

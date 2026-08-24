@@ -2,7 +2,10 @@
 import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
-const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+import { resolveLocaleFromPath, type Locale } from "../../data/locales";
+const { locale: localeProp } = Astro.props as { locale?: Locale };
+const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
+const copy = locale === "pt-BR" ? { back: "Todas as ferramentas", eyebrow: "Ferramentas › Desenvolvimento", placeholder: "Cole seu JSON aqui...", inspect: "Inspecionar JSON", clear: "Limpar", copy: "Copiar JSON formatado", properties: "Propriedades", objects: "Objetos", arrays: "Arrays", depth: "Profundidade", tree: "Visualização em árvore", empty: "Nenhum dado para exibir.", valid: "✓ JSON válido", invalid: "JSON inválido. Verifique a estrutura e tente novamente.", copied: "✓ JSON formatado copiado para a área de transferência." } : { back: "All tools", eyebrow: "Tools › Development", placeholder: "Paste your JSON here...", inspect: "Inspect JSON", clear: "Clear", copy: "Copy formatted JSON", properties: "Properties", objects: "Objects", arrays: "Arrays", depth: "Depth", tree: "Tree view", empty: "No data to display.", valid: "✓ Valid JSON", invalid: "Invalid JSON. Check the structure and try again.", copied: "✓ Formatted JSON copied to clipboard." };
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/json-inspector");
@@ -367,8 +370,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <main>
     <div class="container">
-      <a href="/ferramentas/" class="back">← All tools</a>
-        <div class="eyebrow">Tools › Development</div>
+      <a href="/ferramentas/" class="back">← {copy.back}</a>
+        <div class="eyebrow">{copy.eyebrow}</div>
 
         <h1>{pageTitle}</h1>
 
@@ -381,16 +384,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           <textarea
             id="jsonInput"
-            placeholder="Paste your JSON here..."
+            placeholder={copy.placeholder}
           ></textarea>
 
           <div class="buttons">
             <button type="button" class="primary" id="inspectBtn">
-              Inspect JSON
+              {copy.inspect}
             </button>
 
             <button type="button" class="secondary" id="clearBtn">
-              Clear
+              {copy.clear}
             </button>
           </div>
 
@@ -399,22 +402,22 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           <div id="summary" class="summary" aria-live="polite">
             <div class="summary-grid">
               <div class="stat">
-                <span class="stat-label">Properties</span>
+                <span class="stat-label">{copy.properties}</span>
                 <span id="propertyCount" class="stat-value">0</span>
               </div>
 
               <div class="stat">
-                <span class="stat-label">Objects</span>
+                <span class="stat-label">{copy.objects}</span>
                 <span id="objectCount" class="stat-value">0</span>
               </div>
 
               <div class="stat">
-                <span class="stat-label">Arrays</span>
+                <span class="stat-label">{copy.arrays}</span>
                 <span id="arrayCount" class="stat-value">0</span>
               </div>
 
               <div class="stat">
-                <span class="stat-label">Depth</span>
+                <span class="stat-label">{copy.depth}</span>
                 <span id="depthCount" class="stat-value">0</span>
               </div>
             </div>
@@ -422,9 +425,9 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
           <div class="tree-section">
             <div class="tree-header">
-              <div class="tree-title">Tree view</div>
+              <div class="tree-title">{copy.tree}</div>
               <button type="button" class="secondary hidden" id="copyBtn">
-                Copy formatted JSON
+                {copy.copy}
               </button>
             </div>
 
@@ -436,7 +439,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       </div>
     </main>
 
-    <script>
+  <script define:vars={{ copy }}>
       const jsonInput = document.getElementById("jsonInput");
       const inspectBtn = document.getElementById("inspectBtn");
       const clearBtn = document.getElementById("clearBtn");
@@ -659,7 +662,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         tree.innerHTML = "";
 
         if (data === null || data === undefined) {
-          tree.innerHTML = '<div class="empty">No data to display.</div>';
+          tree.innerHTML = `<div class="empty">${copy.empty}</div>`;
           return;
         }
 
@@ -676,12 +679,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           const stats = analyzeNode(value, 0);
           showSummary(stats);
           renderTree(value);
-          setStatus("✓ Valid JSON", "success");
+          setStatus(copy.valid, "success");
         } catch (error) {
           currentData = null;
           hideSummary();
           tree.innerHTML = "";
-          setStatus("Invalid JSON. Check the structure and try again.", "error");
+          setStatus(copy.invalid, "error");
         }
       }
 
@@ -695,7 +698,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       async function copyFormattedJson() {
         if (!currentData) {
-          setStatus("Invalid JSON. Check the structure and try again.", "error");
+          setStatus(copy.invalid, "error");
           return;
         }
 
@@ -703,7 +706,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
         try {
           await navigator.clipboard.writeText(formatted);
-          setStatus("✓ Formatted JSON copied to clipboard.", "success");
+          setStatus(copy.copied, "success");
         } catch (error) {
           const fallback = document.createElement("textarea");
           fallback.value = formatted;
@@ -711,7 +714,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           fallback.select();
           document.execCommand("copy");
           fallback.remove();
-          setStatus("✓ Formatted JSON copied to clipboard.", "success");
+          setStatus(copy.copied, "success");
         }
       }
 

@@ -1,19 +1,27 @@
 ---
+import type { Locale } from "../../data/locales";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Comprimir PDF", drop: "Arraste e solte um PDF aqui ou clique para selecionar", file: "Arquivo", original: "Tamanho original", processing: "Processando...", final: "Tamanho final", reduction: "Redução", download: "Baixar PDF", onlyPdf: "Apenas arquivos PDF são aceitos.", readError: "Erro ao ler o arquivo.", noFile: "Nenhum arquivo carregado.", tooLarge: "O arquivo excede o limite de {size}. Escolha um arquivo menor.", noReduction: "Não foi obtida uma redução efetiva.", processError: "Erro ao processar o PDF. Ele pode estar corrompido ou não ser compatível.",
+} : {
+  title: "Compress PDF", drop: "Drag and drop a PDF here or click to select", file: "File", original: "Original size", processing: "Processing...", final: "Final size", reduction: "Reduction", download: "Download PDF", onlyPdf: "Only PDF files are accepted.", readError: "Error reading the file.", noFile: "No file loaded.", tooLarge: "File exceeds the limit of {size}. Choose a smaller file.", noReduction: "No effective reduction was achieved.", processError: "Error processing the PDF. It may be corrupted or unsupported.",
+};
 ---
 <div class="tool-card card">
-  <h2>Compress PDF</h2>
-  <div id="dropArea" class="drop">Drag and drop a PDF here or click to select</div>
+  <h2>{copy.title}</h2>
+  <div id="dropArea" class="drop">{copy.drop}</div>
   <input id="fileInput" type="file" accept="application/pdf" style="display:none" />
   <div id="fileInfo" style="display:none">
-    <div>File: <span id="fileName"></span></div>
-    <div>Original size: <span id="originalSize"></span></div>
-    <button id="compressBtn">Compress PDF</button>
+    <div>{copy.file}: <span id="fileName"></span></div>
+    <div>{copy.original}: <span id="originalSize"></span></div>
+    <button id="compressBtn">{copy.title}</button>
   </div>
-  <div id="processing" style="display:none">Processing...</div>
+  <div id="processing" style="display:none">{copy.processing}</div>
   <div id="result" style="display:none">
-    <div>Final size: <span id="finalSize"></span></div>
-    <div>Reduction: <span id="reduction"></span></div>
-    <a id="downloadLink" href="#" download>Download PDF</a>
+    <div>{copy.final}: <span id="finalSize"></span></div>
+    <div>{copy.reduction}: <span id="reduction"></span></div>
+    <a id="downloadLink" href="#" download>{copy.download}</a>
   </div>
   <div id="error" class="error" style="display:none"></div>
 </div>
@@ -24,7 +32,7 @@
 .error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
 </style>
 
-<script type="module">
+<script type="module" define:vars={{ copy }}>
   import { PDFDocument } from 'pdf-lib';
 
   const dropArea = document.getElementById('dropArea');
@@ -82,7 +90,7 @@
     clearError();
     if (!file) return;
     if (file.type !== 'application/pdf') {
-      showError('Only PDF files are accepted.');
+      showError(copy.onlyPdf);
       return;
     }
     currentFile = file;
@@ -95,17 +103,17 @@
     reader.onload = () => {
       currentArrayBuffer = reader.result;
     };
-    reader.onerror = () => showError('Error reading the file.');
+    reader.onerror = () => showError(copy.readError);
     reader.readAsArrayBuffer(file);
   }
 
   async function compressPdf() {
-    if (!currentArrayBuffer) return showError('No file loaded.');
+    if (!currentArrayBuffer) return showError(copy.noFile);
     clearError();
 
       // File size protection
       if (currentFile && currentFile.size > PDF_MAX_SINGLE) {
-        return showError(`File exceeds the limit of ${humanSize(PDF_MAX_SINGLE)}. Choose a smaller file.`);
+        return showError(copy.tooLarge.replace("{size}", humanSize(PDF_MAX_SINGLE)));
       }
 
       // Prevent concurrent runs and disable button
@@ -159,7 +167,7 @@
           processing.style.display = 'none';
           result.style.display = 'block';
           finalSizeEl.textContent = humanSize(finalSize);
-          reductionEl.textContent = 'No effective reduction was achieved.';
+          reductionEl.textContent = copy.noReduction;
           setDownload(finalBlob, 'compressed-' + currentFile.name);
           return;
         }
@@ -172,7 +180,7 @@
         setDownload(finalBlob, 'compressed-' + currentFile.name);
       } catch (err) {
         console.error(err);
-        showError('Error processing the PDF. It may be corrupted or unsupported.');
+        showError(copy.processError);
       } finally {
         processing.style.display = 'none';
         compressBtn.disabled = false;

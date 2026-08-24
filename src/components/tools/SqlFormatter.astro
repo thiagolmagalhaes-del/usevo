@@ -1,22 +1,25 @@
 ---
+import type { Locale } from "../../data/locales";
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? { title: "Formatador SQL", dialect: "Dialeto (opcional)", standard: "SQL padrão", format: "Formatar SQL", copy: "Copiar", clear: "Limpar" } : { title: "SQL Formatter", dialect: "Dialect (optional)", standard: "Standard SQL", format: "Format SQL", copy: "Copy", clear: "Clear" };
 ---
 <div class="tool-card card">
-  <h2>SQL Formatter</h2>
+  <h2>{copy.title}</h2>
   <label>SQL</label>
   <textarea id="sqlInput" rows="12" style="width:100%"></textarea>
   <div style="margin-top:8px">
-    <label for="dialect">Dialect (optional)</label>
+    <label for="dialect">{copy.dialect}</label>
     <select id="dialect">
-      <option value="sql">Standard SQL</option>
+      <option value="sql">{copy.standard}</option>
       <option value="postgresql">PostgreSQL</option>
       <option value="mysql">MySQL</option>
       <option value="sqlite">SQLite</option>
     </select>
   </div>
   <div style="margin-top:12px">
-    <button id="formatBtn">Format SQL</button>
-    <button id="copyBtn">Copy</button>
-    <button id="clearBtn">Clear</button>
+    <button id="formatBtn">{copy.format}</button>
+    <button id="copyBtn">{copy.copy}</button>
+    <button id="clearBtn">{copy.clear}</button>
   </div>
   <div id="result" style="margin-top:12px"><pre id="formatted" style="white-space:pre-wrap"></pre></div>
   <div id="error" class="error" style="display:none"></div>

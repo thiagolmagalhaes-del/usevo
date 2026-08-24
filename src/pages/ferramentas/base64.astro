@@ -3,7 +3,9 @@ import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
-const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+import { resolveLocaleFromPath, type Locale } from "../../data/locales";
+const { locale: localeProp } = Astro.props as { locale?: Locale };
+const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
 const toolUi = getToolUi(locale);
 const ui = toolUi.tools.base64;
 const base64Messages = {
