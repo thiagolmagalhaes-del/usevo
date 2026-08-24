@@ -3,13 +3,18 @@ import Layout from "../layouts/Layout.astro";
 import ToolGrid from "../components/tool/ToolGrid.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations } from "../data/i18n";
+import { getSiteAlternates } from "../data/locale-routes";
 
-const t = getTranslations("en");
+const t = getTranslations("pt-BR");
+const alternateUrls = getSiteAlternates("/ferramentas/");
 ---
 
 <Layout
   title="All tools — USEVO TOOLS"
   description="Explore every tool available on USEVO TOOLS. Simple, fast, and useful online tools to solve everyday tasks."
+  locale="pt-BR"
+  canonical="https://usevo.tools/ferramentas/"
+  alternateUrls={alternateUrls}
 >
 
     <style>
@@ -177,7 +182,7 @@ const t = getTranslations("en");
 
       <section class="tools-section">
         <div class="container">
-          <ToolGrid items={ferramentas} locale="en" />
+          <ToolGrid items={ferramentas} locale="pt-BR" />
         </div>
       </section>
     </main>

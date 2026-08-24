@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://usevo.tools/sitemap.xml
+Sitemap: https://usevo.tools/sitemap-index.xml

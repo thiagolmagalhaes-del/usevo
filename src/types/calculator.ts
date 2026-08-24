@@ -13,6 +13,13 @@ export type CalculatorInput = {
   businessCosts?: number;
   socialCharges?: number;
   professionalCosts?: number;
+  dependents?: number;
+  taxRatePercent?: number;
+  contractorHealthInsurance?: number;
+  contractorSocialSecurity?: number;
+  contractorOtherCosts?: number;
+  vacationReserve?: number;
+  thirteenthReserve?: number;
 };
 
 export type ComparisonMetrics = {
@@ -23,6 +30,8 @@ export type ComparisonMetrics = {
   equivalentContractorIncome: number;
   employeeShare: number;
   contractorShare: number;
+  employee: { grossSalary: number; inss: number; irrf: number; monthlyNet: number; benefits: number; thirteenthSalary: number; vacationBonus: number; fgts: number; economicMonthlyValue: number; economicAnnualValue: number };
+  contractor: { grossRevenue: number; taxes: number; costs: number; reserves: number; monthlyBeforeReserves: number; monthlyAvailable: number; annualNet: number };
 };
 
 export type ComparisonResult = {

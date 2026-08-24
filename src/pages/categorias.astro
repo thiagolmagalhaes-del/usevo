@@ -3,8 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations, getCategoryTranslation } from "../data/i18n";
 import { getFerramentaTranslation } from "../data/ferramentas";
+import { getSiteAlternates } from "../data/locale-routes";
 
-const t = getTranslations("en");
+const t = getTranslations("pt-BR");
+const alternateUrls = getSiteAlternates("/categorias/");
 
 const categorias = {} as Record<string, any[]>;
 ferramentas.forEach((ferramenta) => {
@@ -20,6 +22,9 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
 <Layout
   title="Categories — USEVO TOOLS"
   description="Browse USEVO TOOLS by category. Find exactly what you need."
+  locale="pt-BR"
+  canonical="https://usevo.tools/categorias/"
+  alternateUrls={alternateUrls}
 >
 
     <style>

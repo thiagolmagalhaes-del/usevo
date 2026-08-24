@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi, getCategoryTranslation } from "../../data/i18n";
 const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
@@ -11,6 +12,8 @@ const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
+const toolUi = getToolUi(locale);
+const category = getCategoryTranslation("development", locale);
 ---
 
 
@@ -60,6 +63,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         color: #2563eb;
         font-size: 14px;
         font-weight: 700;
+        padding-top: 4px;
         margin-bottom: 12px;
       }
 
@@ -174,8 +178,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     </style>
 
   <main class="container">
-    <a href="/ferramentas" class="back">← Back to tools</a>
-      <div class="category">Development</div>
+    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+      <div class="category">{category}</div>
 
       <h1>JSON Formatter</h1>
 

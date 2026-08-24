@@ -5,6 +5,8 @@ export type EmploymentModel = "employee" | "contractor";
 export type ValidationStatus =
   | "validated"
   | "needs_review"
+  | "planned"
+  | "unsupported"
   | "not_validated"
   | "draft";
 
