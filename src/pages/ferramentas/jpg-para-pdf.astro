@@ -1,339 +1,448 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import {
+  getFerramentaByPath,
+  getFerramentaTranslation
+} from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
-const { locale = "en" } = Astro.props as { locale?: "en" | "es" | "pt-BR" };
+
+const { locale = "en" } = Astro.props as {
+  locale?: "en" | "es" | "pt-BR";
+};
+
 const toolUi = getToolUi(locale);
 const ui = toolUi.tools["jpg-para-pdf"];
-const pdfMessages = { invalidImageError: ui.invalidImageError };
-// This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
-// so the lookup must use this tool's canonical path, not the current route's pathname.
+
 const ferramenta = getFerramentaByPath("/ferramentas/jpg-para-pdf");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+
 const title = toolMeta.title;
 const description = toolMeta.description;
-const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
+const canonicalUrl = new URL(
+  Astro.url.pathname,
+  "https://usevo.tools"
+).href;
+
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
 
+<Layout
+  title={title}
+  description={description}
+  canonical={canonicalUrl}
+  alternateUrls={alternateUrls}
+  locale={locale}
+>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #172033;
+    }
 
-<Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
+    header {
+      border-bottom: 1px solid #e8e8e8;
+      padding: 24px 5%;
+    }
 
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #fff;
-        color: #172033;
-      }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-      header {
-        border-bottom: 1px solid #e8e8e8;
-        padding: 24px 5%;
-      }
+    .logo {
+      text-decoration: none;
+      color: #172033;
+      font-size: 24px;
+      font-weight: 800;
+    }
 
-      .header-inner {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+    .back {
+      display: block;
+      text-decoration: none;
+      color: #667085;
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
 
-      .logo {
-        text-decoration: none;
-        color: #172033;
-        font-size: 24px;
-        font-weight: 800;
-      }
+    main {
+      max-width: 900px;
+      margin: 70px auto;
+      padding: 0 24px;
+    }
 
-      .back {
-        display: block;
-        text-decoration: none;
-        color: #667085;
-        font-size: 15px;
-        margin-bottom: 16px;
-      }
+    .category {
+      color: #2563eb;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
 
-      main {
-        max-width: 900px;
-        margin: 70px auto;
-        padding: 0 24px;
-      }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 48px;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+    }
 
-      .category {
-        color: #2563eb;
-        font-size: 14px;
-        font-weight: 700;
-        display: inline-block;
-        margin-bottom: 14px;
-      }
+    .description {
+      margin: 0 0 40px;
+      color: #667085;
+      font-size: 18px;
+    }
 
+    .card {
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 32px;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 14px;
+      padding: 50px 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .upload-area:hover {
+      border-color: #2563eb;
+      background: #f8fafc;
+    }
+
+    .upload-icon {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .upload-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .upload-text {
+      color: #667085;
+      font-size: 14px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    #preview {
+      display: none;
+      max-width: 100%;
+      max-height: 400px;
+      margin: 25px auto;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .file-name {
+      display: none;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #475467;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      border: 0;
+      border-radius: 10px;
+      background: #1677e8;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover:not(:disabled) {
+      background: #1268cc;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .error {
+      display: none;
+      margin-top: 15px;
+      color: #dc2626;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .success {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #f0fdf4;
+      color: #166534;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
       h1 {
-        margin: 0 0 12px;
-        font-size: 48px;
-        line-height: 1.1;
-        letter-spacing: -1.5px;
-      }
-
-      .description {
-        margin: 0 0 40px;
-        color: #667085;
-        font-size: 18px;
+        font-size: 36px;
       }
 
       .card {
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
-        padding: 32px;
-        background: white;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        padding: 20px;
       }
-
-      .upload-area {
-        border: 2px dashed #d1d5db;
-        border-radius: 14px;
-        padding: 50px 25px;
-        text-align: center;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-
-      .upload-area:hover {
-        border-color: #2563eb;
-        background: #f8fafc;
-      }
-
-      .upload-icon {
-        font-size: 42px;
-        margin-bottom: 15px;
-      }
-
-      .upload-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-
-      .upload-text {
-        color: #667085;
-        font-size: 14px;
-      }
-
-      input[type="file"] {
-        display: none;
-      }
-
-      #preview {
-        display: none;
-        max-width: 100%;
-        max-height: 400px;
-        margin: 25px auto;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-      }
-
-      .file-name {
-        display: none;
-        text-align: center;
-        margin-top: 15px;
-        font-size: 14px;
-        color: #475467;
-      }
-
-      button {
-        width: 100%;
-        margin-top: 20px;
-        padding: 16px;
-        border: 0;
-        border-radius: 10px;
-        background: #1677e8;
-        color: white;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background: #1268cc;
-      }
-
-      button:disabled {
-        background: #9ca3af;
-        cursor: not-allowed;
-      }
-
-      .error {
-        display: none;
-        margin-top: 15px;
-        color: #dc2626;
-        text-align: center;
-        font-size: 14px;
-      }
-
-      .success {
-        display: none;
-        margin-top: 20px;
-        padding: 15px;
-        border-radius: 10px;
-        background: #f0fdf4;
-        color: #166534;
-        text-align: center;
-        font-weight: 600;
-      }
-
-      @media (max-width: 700px) {
-        h1 {
-          font-size: 36px;
-        }
-
-        .card {
-          padding: 20px;
-        }
-      }
-    </style>
+    }
+  </style>
 
   <main>
-    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
-      <span class="category">{ui.category}</span>
+    <a href="/ferramentas" class="back">
+      ← {toolUi.common.back}
+    </a>
 
-      <h1>{ui.title}</h1>
+    <span class="category">{ui.category}</span>
 
-      <p class="description">
-        {ui.description}
-      </p>
+    <h1>{ui.title}</h1>
 
-      <div class="card">
+    <p class="description">
+      {ui.description}
+    </p>
 
-        <label for="fileInput" class="upload-area">
-          <div class="upload-icon">📄</div>
+    <div class="card">
+      <label for="fileInput" class="upload-area">
+        <div class="upload-icon">📄</div>
 
-          <div class="upload-title">
-            {ui.selectImage}
-          </div>
-
-          <div class="upload-text">
-            {ui.supportedFormats}
-          </div>
-        </label>
-
-        <input
-          id="fileInput"
-          type="file"
-          accept="image/jpeg,image/jpg,image/png"
-        />
-
-        <div id="fileName" class="file-name"></div>
-
-        <img id="preview" alt={ui.imagePreviewAlt} />
-
-        <button id="convertBtn" disabled>
-          {ui.convertToPdf}
-        </button>
-
-        <div id="error" class="error"></div>
-
-        <div id="success" class="success">
-          {ui.success}
+        <div class="upload-title">
+          {ui.selectImage}
         </div>
 
+        <div class="upload-text">
+          {ui.supportedFormats}
+        </div>
+      </label>
+
+      <input
+        id="fileInput"
+        type="file"
+        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+      />
+
+      <div id="fileName" class="file-name"></div>
+
+      <img
+        id="preview"
+        alt={ui.imagePreviewAlt}
+      />
+
+      <button
+        id="convertBtn"
+        type="button"
+        disabled
+      >
+        {ui.convertToPdf}
+      </button>
+
+      <div
+        id="error"
+        class="error"
+        data-invalid-image-error={ui.invalidImageError}
+      ></div>
+
+      <div id="success" class="success">
+        {ui.success}
       </div>
-    </main>
+    </div>
+  </main>
 
-    <script define:vars={{ pdfMessages }}>
-      import { jsPDF } from "jspdf";
+  <script>
+    import { jsPDF } from "jspdf";
 
-      const fileInput = document.getElementById("fileInput");
-      const preview = document.getElementById("preview");
-      const fileName = document.getElementById("fileName");
-      const convertBtn = document.getElementById("convertBtn");
-      const error = document.getElementById("error");
-      const success = document.getElementById("success");
+    const fileInput = document.getElementById("fileInput");
+    const preview = document.getElementById("preview");
+    const fileName = document.getElementById("fileName");
+    const convertBtn = document.getElementById("convertBtn");
+    const error = document.getElementById("error");
+    const success = document.getElementById("success");
 
-      let selectedFile = null;
+    let selectedFile = null;
 
-      fileInput.addEventListener("change", () => {
-        const file = fileInput.files?.[0];
+    if (
+      fileInput &&
+      preview &&
+      fileName &&
+      convertBtn &&
+      error &&
+      success
+    ) {
+      fileInput.addEventListener("change", handleFileSelection);
+      convertBtn.addEventListener("click", convertToPdf);
+    }
 
-        if (!file) {
-          return;
-        }
+    function handleFileSelection() {
+      const file = fileInput.files?.[0];
 
-        if (!file.type.startsWith("image/")) {
-          error.textContent = pdfMessages.invalidImageError;
+      selectedFile = null;
+      convertBtn.disabled = true;
+      preview.style.display = "none";
+      fileName.style.display = "none";
+      error.style.display = "none";
+      success.style.display = "none";
+
+      if (!file) {
+        return;
+      }
+
+      const isSupported =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        /\.(jpe?g|png)$/i.test(file.name);
+
+      if (!isSupported) {
+        error.textContent =
+          error.dataset.invalidImageError ||
+          "Please select a JPG, JPEG, or PNG image.";
+
+        error.style.display = "block";
+        return;
+      }
+
+      selectedFile = file;
+
+      fileName.textContent = file.name;
+      fileName.style.display = "block";
+
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const result = event.target?.result;
+
+        if (typeof result !== "string") {
+          error.textContent = "Unable to read the selected image.";
           error.style.display = "block";
+          selectedFile = null;
           convertBtn.disabled = true;
           return;
         }
 
-        selectedFile = file;
-
-        error.style.display = "none";
-        success.style.display = "none";
-
-        fileName.textContent = file.name;
-        fileName.style.display = "block";
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-          preview.src = event.target.result;
-          preview.style.display = "block";
-        };
-
-        reader.readAsDataURL(file);
-
+        preview.src = result;
+        preview.style.display = "block";
         convertBtn.disabled = false;
-      });
+      };
 
-      convertBtn.addEventListener("click", () => {
-        if (!selectedFile) {
+      reader.onerror = () => {
+        error.textContent = "Unable to read the selected image.";
+        error.style.display = "block";
+        selectedFile = null;
+        convertBtn.disabled = true;
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function convertToPdf() {
+      if (!selectedFile) {
+        return;
+      }
+
+      convertBtn.disabled = true;
+      error.style.display = "none";
+      success.style.display = "none";
+
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const imageData = event.target?.result;
+
+        if (typeof imageData !== "string") {
+          showConversionError();
           return;
         }
 
-        error.style.display = "none";
-        success.style.display = "none";
+        const image = new Image();
 
-        const reader = new FileReader();
+        image.onload = () => {
+          try {
+            const orientation =
+              image.width > image.height
+                ? "landscape"
+                : "portrait";
 
-        reader.onload = (event) => {
-          const imageData = event.target.result;
-
-          const image = new Image();
-
-          image.onload = () => {
             const pdf = new jsPDF({
-              orientation:
-                image.width > image.height ? "landscape" : "portrait",
+              orientation,
               unit: "px",
               format: [image.width, image.height]
             });
 
+            const imageFormat =
+              selectedFile.type === "image/png" ||
+              /\.png$/i.test(selectedFile.name)
+                ? "PNG"
+                : "JPEG";
+
             pdf.addImage(
               imageData,
-              "JPEG",
+              imageFormat,
               0,
               0,
               image.width,
               image.height
             );
 
-            pdf.save(
-              selectedFile.name.replace(/\.[^/.]+$/, "") + ".pdf"
-            );
+            const pdfName =
+              selectedFile.name.replace(/\.[^/.]+$/, "") +
+              ".pdf";
+
+            pdf.save(pdfName);
 
             success.style.display = "block";
-          };
+            convertBtn.disabled = false;
+          } catch (conversionError) {
+            console.error(
+              "JPG to PDF conversion error:",
+              conversionError
+            );
 
-          image.src = imageData;
+            showConversionError();
+          }
         };
 
-        reader.readAsDataURL(selectedFile);
-      });
-    </script>
+        image.onerror = () => {
+          showConversionError();
+        };
+
+        image.src = imageData;
+      };
+
+      reader.onerror = () => {
+        showConversionError();
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
+
+    function showConversionError() {
+      error.textContent =
+        "Unable to convert this image to PDF. Please try another image.";
+
+      error.style.display = "block";
+      convertBtn.disabled = false;
+    }
+  </script>
 </Layout>
