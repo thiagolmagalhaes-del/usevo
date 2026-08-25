@@ -8,7 +8,7 @@ const { locale: localeProp } = Astro.props as { locale?: Locale };
 const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
 const toolUi = getToolUi(locale);
 const ui = toolUi.tools["gerador-de-qr-code"];
-const qrMessages = { generationError: ui.generationError };
+const qrMessages = { emptyInputError: ui.emptyInputError, generationError: ui.generationError };
 // This component is also mounted inside /en/tools/[slug] and /es/herramientas/[slug],
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/gerador-de-qr-code");
@@ -241,6 +241,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
             class="download"
             href="#"
             download="usevo-qrcode.png"
+            hidden
           >
             {ui.downloadQrCode}
           </a>
@@ -248,42 +249,57 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       </div>
     </main>
 
-    <script define:vars={{ qrMessages }}>
+    <script id="qrMessages" type="application/json" set:html={JSON.stringify(qrMessages)}></script>
+    <script>
+      import QRCode from "qrcode";
+
+      const qrMessages = JSON.parse(document.getElementById("qrMessages").textContent);
       const textInput = document.getElementById("qrText");
       const generateBtn = document.getElementById("generateBtn");
       const qrImage = document.getElementById("qrImage");
       const result = document.getElementById("result");
       const error = document.getElementById("error");
       const downloadBtn = document.getElementById("downloadBtn");
+      let qrObjectUrl = "";
 
-      generateBtn.addEventListener("click", () => {
+      const clearQrCode = () => {
+        if (qrObjectUrl) URL.revokeObjectURL(qrObjectUrl);
+        qrObjectUrl = "";
+        qrImage.removeAttribute("src");
+        downloadBtn.removeAttribute("href");
+        downloadBtn.hidden = true;
+        result.classList.remove("show");
+      };
+
+      const canvasToPng = (canvas) => new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Unable to create PNG.")), "image/png");
+      });
+
+      generateBtn.addEventListener("click", async () => {
         const text = textInput.value.trim();
+        clearQrCode();
 
         if (!text) {
+          error.textContent = qrMessages.emptyInputError;
           error.style.display = "block";
-          result.classList.remove("show");
           return;
         }
 
         error.style.display = "none";
-
-        const qrUrl =
-          "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=" +
-          encodeURIComponent(text);
-
-        qrImage.src = qrUrl;
-
-        qrImage.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          await QRCode.toCanvas(canvas, text, { width: 500, margin: 2 });
+          const png = await canvasToPng(canvas);
+          qrObjectUrl = URL.createObjectURL(png);
+          qrImage.src = qrObjectUrl;
+          downloadBtn.href = qrObjectUrl;
+          downloadBtn.hidden = false;
           result.classList.add("show");
-          downloadBtn.href = qrUrl;
-        };
-
-        qrImage.onerror = () => {
+        } catch {
           error.textContent =
             qrMessages.generationError;
           error.style.display = "block";
-          result.classList.remove("show");
-        };
+        }
       });
     </script>
 </Layout>
