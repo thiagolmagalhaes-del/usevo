@@ -16,13 +16,15 @@ const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 const toolUi = getToolUi(locale);
 const category = getCategoryTranslation("development", locale);
+const ui = toolUi.tools["url-encoder-decoder"];
+const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
 ---
 
 
 
 <Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
     <main class="container">
-      <a class="back" href="/ferramentas">← {toolUi.common.back}</a>
+      <a class="back" href={backRoute}>← {toolUi.common.back}</a>
 
       <div class="category">{category}</div>
 
@@ -31,44 +33,47 @@ const category = getCategoryTranslation("development", locale);
       <p class="description">{description}</p>
 
       <section class="tool-card">
-        <label for="input">URL or text</label>
+        <label for="input">{ui.inputLabel}</label>
 
         <textarea
           id="input"
-          placeholder="Paste your URL or text here..."
+          placeholder={ui.inputPlaceholder}
         ></textarea>
 
         <div class="buttons">
           <button id="encodeButton" class="primary" type="button">
-            URL → Encode
+            {ui.encode}
           </button>
 
           <button id="decodeButton" class="secondary" type="button">
-            URL → Decode
+            {ui.decode}
           </button>
 
           <button id="clearButton" class="secondary" type="button">
-            Clear
+            {ui.clear}
           </button>
         </div>
 
-        <label for="result">Result</label>
+        <label for="result">{ui.result}</label>
 
         <textarea
           id="result"
           readonly
-          placeholder="The result will appear here..."
+          placeholder={ui.resultPlaceholder}
         ></textarea>
 
         <button id="copyButton" class="copy" type="button">
-          Copy result
+          {ui.copyResult}
         </button>
 
         <div id="message" class="message" aria-live="polite"></div>
       </section>
     </main>
 
+    <script id="urlEncoderMessages" type="application/json" set:html={JSON.stringify(ui)}></script>
     <script>
+      const messagesElement = document.getElementById("urlEncoderMessages");
+      const messages = JSON.parse(messagesElement?.textContent ?? "{}");
       const input = document.getElementById("input");
       const result = document.getElementById("result");
       const encodeButton = document.getElementById("encodeButton");
@@ -91,15 +96,15 @@ const category = getCategoryTranslation("development", locale);
         const value = input.value;
 
         if (!value.trim()) {
-          showMessage("Enter a URL or text first.", true);
+          showMessage(messages.emptyInput, true);
           return;
         }
 
         try {
           result.value = encodeURIComponent(value);
-          showMessage("✓ URL encoded successfully!");
+          showMessage(messages.encodeSuccess);
         } catch {
-          showMessage("Could not encode the content.", true);
+          showMessage(messages.encodeError, true);
         }
       });
 
@@ -107,17 +112,17 @@ const category = getCategoryTranslation("development", locale);
         const value = input.value;
 
         if (!value.trim()) {
-          showMessage("Enter an encoded URL first.", true);
+          showMessage(messages.emptyEncodedInput, true);
           return;
         }
 
         try {
           result.value = decodeURIComponent(value);
-          showMessage("✓ URL decoded successfully!");
+          showMessage(messages.decodeSuccess);
         } catch {
           result.value = "";
           showMessage(
-            "The content is not a valid encoded URL.",
+            messages.invalidEncodedUrl,
             true
           );
         }
@@ -126,22 +131,22 @@ const category = getCategoryTranslation("development", locale);
       clearButton.addEventListener("click", () => {
         input.value = "";
         result.value = "";
-        showMessage("✓ Fields cleared!");
+        showMessage(messages.cleared);
       });
 
       copyButton.addEventListener("click", async () => {
         if (!result.value) {
-          showMessage("Generate a result first.", true);
+          showMessage(messages.emptyResult, true);
           return;
         }
 
         try {
           await navigator.clipboard.writeText(result.value);
-          showMessage("✓ Result copied!");
+          showMessage(messages.copied);
         } catch {
           result.select();
           document.execCommand("copy");
-          showMessage("✓ Result copied!");
+          showMessage(messages.copied);
         }
       });
     </script>

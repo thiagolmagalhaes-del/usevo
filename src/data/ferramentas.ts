@@ -341,13 +341,13 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
-    "URL Encoder / Decoder",
+    "Codificador / decodificador de URL",
     "Codifique e decodifique URLs rapidamente.",
     "Desenvolvimento",
     "⧉",
     "/ferramentas/url-encoder-decoder",
     buildTranslations(
-      "URL Encoder / Decoder",
+      "Codificador / decodificador de URL",
       "Codifique e decodifique URLs rapidamente.",
       "URL Encoder / Decoder",
       "Encode and decode URLs quickly.",

@@ -16,13 +16,15 @@ const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 const toolUi = getToolUi(locale);
 const category = getCategoryTranslation("development", locale);
+const ui = toolUi.tools["uuid-generator"];
+const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
 ---
 
 
 
 <Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
     <main class="container">
-      <a class="back" href="/ferramentas">← {toolUi.common.back}</a>
+      <a class="back" href={backRoute}>← {toolUi.common.back}</a>
 
       <div class="category">{category}</div>
 
@@ -31,30 +33,33 @@ const category = getCategoryTranslation("development", locale);
       <p class="description">{description}</p>
 
       <section class="tool-card">
-        <label for="uuid">UUID</label>
+        <label for="uuid">{ui.inputLabel}</label>
 
         <div class="uuid-row">
           <input
             id="uuid"
             type="text"
             readonly
-            placeholder="Your UUID will appear here..."
+            placeholder={ui.placeholder}
           />
 
           <button id="copyButton" class="secondary" type="button">
-            Copy
+            {ui.copy}
           </button>
         </div>
 
         <button id="generateButton" class="primary" type="button">
-          Generate UUID
+          {ui.generate}
         </button>
 
         <div id="message" class="message" aria-live="polite"></div>
       </section>
     </main>
 
+    <script id="uuidGeneratorMessages" type="application/json" set:html={JSON.stringify(ui)}></script>
     <script>
+      const messagesElement = document.getElementById("uuidGeneratorMessages");
+      const messages = JSON.parse(messagesElement?.textContent ?? "{}");
       const uuidInput = document.getElementById("uuid");
       const generateButton = document.getElementById("generateButton");
       const copyButton = document.getElementById("copyButton");
@@ -85,22 +90,22 @@ const category = getCategoryTranslation("development", locale);
 
       generateButton.addEventListener("click", () => {
         uuidInput.value = generateUUID();
-        showMessage("✓ UUID generated successfully!");
+        showMessage(messages.generated);
       });
 
       copyButton.addEventListener("click", async () => {
         if (!uuidInput.value) {
-          showMessage("Generate a UUID first.");
+          showMessage(messages.generateFirst);
           return;
         }
 
         try {
           await navigator.clipboard.writeText(uuidInput.value);
-          showMessage("✓ UUID copied to clipboard!");
+          showMessage(messages.copiedClipboard);
         } catch {
           uuidInput.select();
           document.execCommand("copy");
-          showMessage("✓ UUID copied!");
+          showMessage(messages.copied);
         }
       });
     </script>

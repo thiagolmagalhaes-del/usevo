@@ -3,12 +3,14 @@ import type { Locale } from "../../data/locales";
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const copy = locale === "pt-BR" ? {
   title: "Juntar PDFs", drop: "Arraste e solte PDFs aqui ou clique para selecionar", action: "Juntar PDFs", processing: "Processando...", download: "Baixar PDF unido", remove: "Remover", invalid: "Nenhum PDF válido selecionado.", noFile: "Nenhum PDF carregado.", perFile: "O arquivo {name} excede o limite por arquivo de {size} MB.", total: "O tamanho total dos arquivos excede {size} MB.", error: "Erro ao juntar PDFs. Verifique os arquivos.",
+} : locale === "es" ? {
+  title: "Combinar PDF", drop: "Arrastra y suelta archivos PDF aquí o haz clic para seleccionarlos", action: "Combinar PDF", processing: "Procesando...", download: "Descargar PDF combinado", remove: "Eliminar", invalid: "No se seleccionó ningún PDF válido.", noFile: "No se cargó ningún PDF.", perFile: "El archivo {name} supera el límite por archivo de {size} MB.", total: "El tamaño total de los archivos supera {size} MB.", error: "Error al combinar los PDF. Comprueba los archivos.",
 } : {
   title: "Merge PDF", drop: "Drag and drop PDFs here or click to select", action: "Merge PDFs", processing: "Processing...", download: "Download merged PDF", remove: "Remove", invalid: "No valid PDF selected.", noFile: "No PDF loaded.", perFile: "The file {name} exceeds the per-file limit of {size} MB.", total: "Total file size exceeds {size} MB.", error: "Error merging PDFs. Check the files.",
 };
 ---
 <div class="tool-card card">
-  <h2>{copy.title}</h2>
+  <h1 style="font-size: 1.5em; margin-block: 0.83em;">{copy.title}</h1>
   <input id="fileInput" type="file" accept="application/pdf" multiple style="display:none" />
   <div id="dropArea" class="drop">{copy.drop}</div>
 

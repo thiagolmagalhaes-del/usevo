@@ -16,6 +16,8 @@ const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 const toolUi = getToolUi(locale);
 const category = getCategoryTranslation("development", locale);
+const ui = toolUi.tools["formatador-de-json"];
+const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
 ---
 
 
@@ -180,34 +182,34 @@ const category = getCategoryTranslation("development", locale);
     </style>
 
   <main class="container">
-    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
+    <a href={backRoute} class="back">← {toolUi.common.back}</a>
       <div class="category">{category}</div>
 
-      <h1>JSON Formatter</h1>
+      <h1>{title}</h1>
 
       <p class="description">
-        Format, validate, and organize your JSON data quickly and for free.
+        {description}
       </p>
 
       <section class="card">
-        <label for="jsonInput">JSON</label>
+        <label for="jsonInput">{ui.inputLabel}</label>
 
         <textarea
           id="jsonInput"
-          placeholder='Paste your JSON here...'
+          placeholder={ui.placeholder}
         ></textarea>
 
         <div class="buttons">
-          <button class="primary" id="formatBtn">
-            Format JSON
+          <button class="primary" id="formatBtn" type="button">
+            {ui.format}
           </button>
 
-          <button class="secondary" id="minifyBtn">
-            Minify
+          <button class="secondary" id="minifyBtn" type="button">
+            {ui.minify}
           </button>
 
-          <button class="secondary" id="clearBtn">
-            Clear
+          <button class="secondary" id="clearBtn" type="button">
+            {ui.clear}
           </button>
         </div>
 
@@ -215,7 +217,10 @@ const category = getCategoryTranslation("development", locale);
       </section>
     </main>
 
+    <script id="jsonFormatterMessages" type="application/json" set:html={JSON.stringify(ui)}></script>
     <script>
+      const messagesElement = document.getElementById("jsonFormatterMessages");
+      const messages = JSON.parse(messagesElement?.textContent ?? "{}");
       const input = document.getElementById("jsonInput");
       const result = document.getElementById("result");
       const formatBtn = document.getElementById("formatBtn");
@@ -228,30 +233,40 @@ const category = getCategoryTranslation("development", locale);
       }
 
       formatBtn.addEventListener("click", () => {
+        if (!input.value.trim()) {
+          showMessage(messages.emptyInputError, "error");
+          return;
+        }
+
         try {
           const parsed = JSON.parse(input.value);
 
           input.value = JSON.stringify(parsed, null, 2);
 
-          showMessage("✓ Valid JSON, formatted successfully!", "success");
+          showMessage(messages.formatSuccess, "success");
         } catch (error) {
           showMessage(
-            "✕ Invalid JSON. Check the structure and try again.",
+            messages.formatError,
             "error"
           );
         }
       });
 
       minifyBtn.addEventListener("click", () => {
+        if (!input.value.trim()) {
+          showMessage(messages.emptyInputError, "error");
+          return;
+        }
+
         try {
           const parsed = JSON.parse(input.value);
 
           input.value = JSON.stringify(parsed);
 
-          showMessage("✓ JSON minified successfully!", "success");
+          showMessage(messages.minifySuccess, "success");
         } catch (error) {
           showMessage(
-            "✕ Invalid JSON. Could not minify.",
+            messages.minifyError,
             "error"
           );
         }
