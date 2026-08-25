@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import { brazil2026Profile } from "../../../data/countries/br/2026/profile";
 import { calculateComparison } from "./compare";
 import { calculateIrrfByTable, calculateIrrfReduction2026, calculateMonthlyIrrf, calculateProgressiveInss, getIrrfMonthlyBase } from "./brazil2026";
+import { localizeCalculatorValidationIssue } from "./localizeValidation";
+import { normalizeInputs } from "./normalizeInputs";
 
 const input = (overrides = {}) => ({ country: "BR", grossSalary: 7000, benefits: 0, mealVoucher: 0, healthInsurance: 0, otherBenefits: 0, dependents: 0, contractorIncome: 7000, taxRatePercent: 15, accountingCosts: 0, businessCosts: 0, contractorHealthInsurance: 0, contractorSocialSecurity: 0, contractorOtherCosts: 0, vacationReserve: 0, thirteenthReserve: 0, ...overrides });
 const result = (overrides = {}) => calculateComparison({ countryProfile: brazil2026Profile, inputs: input(overrides) });
+const optionalAmountFields = ["benefits", "mealVoucher", "healthInsurance", "otherBenefits", "accountingCosts", "businessCosts", "contractorHealthInsurance", "contractorSocialSecurity", "contractorOtherCosts", "vacationReserve", "thirteenthReserve"];
 
 describe("Brazil 2026 payroll", () => {
   it("calculates progressive INSS in every band and caps it", () => {
@@ -32,12 +35,73 @@ describe("Brazil 2026 payroll", () => {
 });
 
 describe("CLT versus PJ comparison", () => {
+  it("normalizes every optional benefit, cost and reserve left blank to zero", () => {
+    const emptyOptionals = Object.fromEntries(optionalAmountFields.map((field) => [field, ""]));
+    const normalized = normalizeInputs(input(emptyOptionals));
+    const comparison = result(emptyOptionals);
+
+    expect(normalized.issues).toEqual([]);
+    optionalAmountFields.forEach((field) => expect(normalized.values[field]).toBe(0));
+    expect(comparison.validation.valid).toBe(true);
+    expect(comparison.employee.benefits).toBe(0);
+    expect(comparison.contractor.costs).toBe(0);
+    expect(comparison.contractor.reserves).toBe(0);
+  });
+  it("accepts zero in every optional benefit, cost and reserve", () => {
+    const zeroOptionals = Object.fromEntries(optionalAmountFields.map((field) => [field, 0]));
+    const comparison = result(zeroOptionals);
+
+    expect(comparison.validation.valid).toBe(true);
+    expect(comparison.employee.benefits).toBe(0);
+    expect(comparison.contractor.costs).toBe(0);
+    expect(comparison.contractor.reserves).toBe(0);
+  });
   it("handles zero values and rejects negatives without NaN or Infinity", () => {
     const zero = result({ grossSalary: 0, contractorIncome: 0 });
     expect(zero.validation.valid).toBe(true); expect(zero.employee.economicAnnualValue).toBe(0);
     const invalid = result({ grossSalary: -1 }); expect(invalid.validation.valid).toBe(false);
     expect(result({ grossSalary: "" }).validation.valid).toBe(false);
     expect(Object.values(invalid.employee).every(Number.isFinite)).toBe(true);
+  });
+  it("rejects invalid numeric values, tax rates outside the range and fractional dependents", () => {
+    optionalAmountFields.forEach((field) => expect(result({ [field]: -1 }).validation.valid).toBe(false));
+    expect(result({ grossSalary: Number.NaN }).validation.valid).toBe(false);
+    expect(result({ contractorIncome: Infinity }).validation.valid).toBe(false);
+    expect(result({ accountingCosts: "invalid" }).validation.valid).toBe(false);
+    expect(result({ taxRatePercent: "" }).validation.valid).toBe(false);
+    expect(result({ taxRatePercent: -1 }).validation.valid).toBe(false);
+    expect(result({ taxRatePercent: 100.01 }).validation.valid).toBe(false);
+    expect(result({ dependents: 1.5 }).validation.valid).toBe(false);
+  });
+  it("localizes validation messages without exposing internal field names", () => {
+    const labels = {
+      "pt-BR": { grossSalary: "Salário bruto mensal", mealVoucher: "Vale-alimentação/refeição" },
+      en: { grossSalary: "Monthly gross salary", mealVoucher: "Meal/food voucher" },
+      es: { grossSalary: "Salario bruto mensual", mealVoucher: "Vale de comida" },
+    };
+    const expected = {
+      "pt-BR": ["O campo Salário bruto mensal é obrigatório.", "O campo Vale-alimentação/refeição deve ser um número válido."],
+      en: ["Monthly gross salary is required.", "Meal/food voucher must be a valid number."],
+      es: ["El campo Salario bruto mensual es obligatorio.", "El campo Vale de comida debe ser un número válido."],
+    };
+
+    (["pt-BR", "en", "es"] as const).forEach((locale) => {
+      const required = localizeCalculatorValidationIssue("grossSalary is required.", locale, labels[locale]);
+      const invalidNumber = localizeCalculatorValidationIssue("mealVoucher must be a valid number.", locale, labels[locale]);
+      expect(required).toBe(expected[locale][0]);
+      expect(invalidNumber).toBe(expected[locale][1]);
+      expect(`${required} ${invalidNumber}`).not.toMatch(/grossSalary|mealVoucher|healthInsurance|otherBenefits/);
+    });
+  });
+  it("preserves the validated CLT and PJ calculation scenario", () => {
+    const comparison = result({ benefits: 1000, contractorIncome: 10000, taxRatePercent: 15, accountingCosts: 300 });
+
+    expect(comparison.validation.valid).toBe(true);
+    expect(comparison.employee.grossSalary).toBe(7000);
+    expect(comparison.employee.benefits).toBe(1000);
+    expect(comparison.contractor.grossRevenue).toBe(10000);
+    expect(comparison.contractor.taxes).toBe(1500);
+    expect(comparison.contractor.costs).toBe(300);
   });
   it("accepts PJ tax rates at 0, intermediate and 100 percent", () => {
     expect(result({ taxRatePercent: 0 }).contractor.taxes).toBe(0);
