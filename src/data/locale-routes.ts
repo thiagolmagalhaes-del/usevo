@@ -3,7 +3,7 @@ import { ferramentas, getFerramentaByPath } from "./ferramentas";
 
 export const localeRouteConfig = {
   en: {
-    home: "/en/",
+    home: "/",
     tools: "/en/tools/",
     categories: "/en/categories/",
   },
@@ -50,14 +50,30 @@ const withTrailingSlash = (value: string) => `${value.replace(/\/+$/, "")}/`;
 
 export const getSiteAlternates = (pathname: string) => {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";
-  const localeMap: Record<string, string> = {
-    en: "https://usevo.tools/en/",
-    "pt-BR": "https://usevo.tools",
+  const homeAlternates = {
+    en: "https://usevo.tools/",
     es: "https://usevo.tools/es/",
+    "x-default": "https://usevo.tools/",
   };
 
-  if (normalizedPath === "/") {
-    return localeMap;
+  if (["/", "/en", "/es"].includes(normalizedPath)) {
+    return homeAlternates;
+  }
+
+  if (["/ferramentas", "/en/tools", "/es/herramientas"].includes(normalizedPath)) {
+    return {
+      "pt-BR": "https://usevo.tools/ferramentas/",
+      en: "https://usevo.tools/en/tools/",
+      es: "https://usevo.tools/es/herramientas/",
+    };
+  }
+
+  if (["/categorias", "/en/categories", "/es/categorias"].includes(normalizedPath)) {
+    return {
+      "pt-BR": "https://usevo.tools/categorias/",
+      en: "https://usevo.tools/en/categories/",
+      es: "https://usevo.tools/es/categorias/",
+    };
   }
 
   if (normalizedPath.startsWith("/ferramentas/")) {
@@ -70,7 +86,7 @@ export const getSiteAlternates = (pathname: string) => {
       };
     }
 
-    return localeMap;
+    return homeAlternates;
   }
 
   const toolForPath = (prefix: "/en/tools/" | "/es/herramientas/") => {
@@ -134,7 +150,7 @@ export const getSiteAlternates = (pathname: string) => {
     };
   }
 
-  return localeMap;
+  return homeAlternates;
 };
 
 export const getLocaleNavigationRoutes = (pathname: string) => {

@@ -3,12 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import ToolGrid from "../components/tool/ToolGrid.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations } from "../data/i18n";
+import { getSiteAlternates } from "../data/locale-routes";
 
 const t = getTranslations("en");
-const alternateUrls = {
-  en: "https://usevo.tools/",
-  es: "https://usevo.tools/es/",
-};
+const alternateUrls = getSiteAlternates("/");
 ---
 
 <Layout

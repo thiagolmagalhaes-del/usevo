@@ -6,11 +6,11 @@ import { getTranslations } from "../../data/i18n";
 import { getSiteAlternates } from "../../data/locale-routes";
 
 const t = getTranslations("en");
-const canonical = "https://usevo.tools/en/";
-const alternateUrls = getSiteAlternates("/en/");
+const canonical = "https://usevo.tools/";
+const alternateUrls = getSiteAlternates("/");
 ---
 
-<Layout title={t.exploreTools} description="Fast, practical online tools for everyday tasks." locale="en" canonical={canonical} alternateUrls={alternateUrls}>
+<Layout title={t.exploreTools} description="Fast, practical online tools for everyday tasks." locale="en" canonical={canonical} alternateUrls={alternateUrls} robots="noindex, follow">
   <main>
     <section style="padding: 100px 0 80px; text-align: center;">
       <div style="width: min(1180px, calc(100% - 40px)); margin: 0 auto;">
