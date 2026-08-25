@@ -11,11 +11,12 @@ const copy = locale === "pt-BR" ? {
 ---
 <div class="tool-card card">
   <h2>{copy.title}</h2>
-  <div id="dropArea" class="drop">{copy.drop}</div>
-  <input id="fileInput" type="file" accept="image/*" style="display:none" />
+  <label id="dropArea" class="drop" for="fileInput">{copy.drop}</label>
+  <input id="fileInput" class="file-input" type="file" accept="image/*" />
   <div id="fileInfo" style="display:none">
     <div>{copy.file}: <span id="fileName"></span></div>
     <div>{copy.original}: <span id="originalSize"></span></div>
+    <img id="filePreview" class="file-preview" alt="" />
     <label>{copy.quality}: <input id="quality" type="range" min="0.1" max="1" step="0.05" value="0.8"></label>
     <button id="compressBtn">{copy.title}</button>
   </div>
@@ -30,6 +31,8 @@ const copy = locale === "pt-BR" ? {
 
 <style>
 .drop { padding: 18px; border: 2px dashed #d7dce5; border-radius:12px; text-align:center; cursor:pointer; }
+.file-input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+.file-preview { display:block; max-width:100%; max-height:240px; margin:16px auto 0; border-radius:8px; }
 .error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
 </style>
 
@@ -41,6 +44,7 @@ const copy = locale === "pt-BR" ? {
   const fileInfo = document.getElementById('fileInfo');
   const fileNameEl = document.getElementById('fileName');
   const originalSizeEl = document.getElementById('originalSize');
+  const filePreview = document.getElementById('filePreview');
   const qualityInput = document.getElementById('quality');
   const compressBtn = document.getElementById('compressBtn');
   const processing = document.getElementById('processing');
@@ -52,6 +56,7 @@ const copy = locale === "pt-BR" ? {
 
   let currentFile = null;
   let currentImageObjectUrl = null;
+  let previewObjectUrl = null;
   const IMAGE_MAX_FILE = 10 * 1024 * 1024; // 10 MB per image limit (client-side)
 
   function humanSize(bytes) {
@@ -62,7 +67,6 @@ const copy = locale === "pt-BR" ? {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  dropArea.addEventListener('click', () => fileInput.click());
   dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.style.borderColor = '#315bea'; });
   dropArea.addEventListener('dragleave', () => { dropArea.style.borderColor = '#d7dce5'; });
   dropArea.addEventListener('drop', (e) => {
@@ -81,12 +85,16 @@ const copy = locale === "pt-BR" ? {
 
   function handleFile(file) {
     clearError();
+    if (previewObjectUrl) { URL.revokeObjectURL(previewObjectUrl); previewObjectUrl = null; }
+    filePreview.removeAttribute('src');
     if (!file) return;
     const allowed = ['image/jpeg','image/png','image/webp'];
     if (!allowed.includes(file.type)) { showError(copy.formats); return; }
     currentFile = file;
     fileNameEl.textContent = file.name;
     originalSizeEl.textContent = humanSize(file.size);
+    previewObjectUrl = URL.createObjectURL(file);
+    filePreview.src = previewObjectUrl;
     fileInfo.style.display = 'block';
     result.style.display = 'none';
   }

@@ -4,7 +4,7 @@ import {
   getFerramentaByPath,
   getFerramentaTranslation
 } from "../../data/ferramentas";
-import { getSiteAlternates } from "../../data/locale-routes";
+import { getSiteAlternates, localeRouteConfig } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 
@@ -143,6 +143,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       display: none;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
     #preview {
       display: none;
       max-width: 100%;
@@ -190,7 +194,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       font-size: 14px;
     }
 
-    .success {
+    .success,
+    .download-hint {
       display: none;
       margin-top: 20px;
       padding: 15px;
@@ -199,6 +204,40 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       color: #166534;
       text-align: center;
       font-weight: 600;
+    }
+
+    .success:not([hidden]),
+    .download-hint:not([hidden]) {
+      display: block;
+    }
+
+    .download-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .download-actions a,
+    .download-actions button {
+      flex: 1;
+      margin-top: 0;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .download-actions a {
+      background: #166534;
+    }
+
+    .download-actions .secondary {
+      background: #475467;
+    }
+
+    .download-hint {
+      margin-top: 12px;
+      color: #475467;
+      font-size: 14px;
+      text-align: center;
     }
 
     @media (max-width: 700px) {
@@ -213,7 +252,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   </style>
 
   <main>
-    <a href="/ferramentas" class="back">
+    <a href={localeRouteConfig[locale].tools} class="back">
       ← {toolUi.common.back}
     </a>
 
@@ -225,12 +264,21 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       {ui.description}
     </p>
 
-    <div class="card">
+    <div
+      id="jpgPdfCard"
+      class="card"
+      data-selected-image={ui.selectedImage}
+      data-conversion-error={ui.conversionError}
+      data-processing={ui.processing}
+      data-pdf-ready={ui.pdfReady}
+      data-download-blocked={ui.downloadBlocked}
+      data-read-image-error={ui.readImageError}
+    >
       <label for="fileInput" class="upload-area">
         <div class="upload-icon">📄</div>
 
         <div class="upload-title">
-          {ui.selectImage}
+          {ui.dropImages}
         </div>
 
         <div class="upload-text">
@@ -246,18 +294,18 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       <div id="fileName" class="file-name"></div>
 
+      <button id="removeBtn" type="button" class="secondary" hidden>{ui.removeImage}</button>
+
       <img
         id="preview"
         alt={ui.imagePreviewAlt}
       />
 
-      <button
-        id="convertBtn"
-        type="button"
-        disabled
-      >
+      <button id="convertBtn" type="button" disabled>
         {ui.convertToPdf}
       </button>
+
+      <div id="processing" class="success" hidden>{ui.processing}</div>
 
       <div
         id="error"
@@ -265,9 +313,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         data-invalid-image-error={ui.invalidImageError}
       ></div>
 
-      <div id="success" class="success">
-        {ui.success}
+      <div id="success" class="success" hidden>
+        {ui.pdfReady}
       </div>
+
+      <div id="downloadActions" class="download-actions" hidden>
+        <a id="downloadPdf" href="#" download="usevo-jpg-para-pdf.pdf">{ui.downloadPdf}</a>
+        <a id="openPdf" class="secondary" href="#" target="_blank" rel="noopener noreferrer">{ui.openPdf}</a>
+      </div>
+      <p id="downloadHint" class="download-hint">{ui.downloadBlocked}</p>
+      <button id="retryBtn" type="button" class="secondary" hidden>{ui.retry}</button>
     </div>
   </main>
 
@@ -277,11 +332,31 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     const fileInput = document.getElementById("fileInput");
     const preview = document.getElementById("preview");
     const fileName = document.getElementById("fileName");
+    const removeBtn = document.getElementById("removeBtn");
     const convertBtn = document.getElementById("convertBtn");
     const error = document.getElementById("error");
     const success = document.getElementById("success");
+    const processing = document.getElementById("processing");
+    const downloadActions = document.getElementById("downloadActions");
+    const downloadPdf = document.getElementById("downloadPdf");
+    const openPdf = document.getElementById("openPdf");
+    const downloadHint = document.getElementById("downloadHint");
+    const retryBtn = document.getElementById("retryBtn");
+    const card = document.getElementById("jpgPdfCard");
+    const messages = {
+      selectedImage: card.dataset.selectedImage,
+      conversionError: card.dataset.conversionError,
+      processing: card.dataset.processing,
+      pdfReady: card.dataset.pdfReady,
+      downloadBlocked: card.dataset.downloadBlocked,
+      readImageError: card.dataset.readImageError,
+    };
 
     let selectedFile = null;
+    let currentPdfUrl = "";
+    let isProcessing = false;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
     if (
       fileInput &&
@@ -293,12 +368,41 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     ) {
       fileInput.addEventListener("change", handleFileSelection);
       convertBtn.addEventListener("click", convertToPdf);
+      removeBtn.addEventListener("click", clearSelection);
+      retryBtn.addEventListener("click", () => fileInput.click());
+    }
+
+    window.addEventListener("pagehide", clearPdf);
+
+    function clearPdf() {
+      if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
+      currentPdfUrl = "";
+      downloadPdf.removeAttribute("href");
+      openPdf.removeAttribute("href");
+      downloadActions.hidden = true;
+      downloadHint.hidden = true;
+      success.hidden = true;
+    }
+
+    function clearSelection() {
+      if (isProcessing) return;
+      selectedFile = null;
+      fileInput.value = "";
+      preview.removeAttribute("src");
+      preview.style.display = "none";
+      fileName.textContent = "";
+      fileName.style.display = "none";
+      removeBtn.hidden = true;
+      convertBtn.disabled = true;
+      clearPdf();
+      error.style.display = "none";
     }
 
     function handleFileSelection() {
       const file = fileInput.files?.[0];
 
       selectedFile = null;
+      clearPdf();
       convertBtn.disabled = true;
       preview.style.display = "none";
       fileName.style.display = "none";
@@ -326,7 +430,9 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       selectedFile = file;
 
       fileName.textContent = file.name;
+      fileName.textContent = `${messages.selectedImage}: ${file.name}`;
       fileName.style.display = "block";
+      removeBtn.hidden = false;
 
       const reader = new FileReader();
 
@@ -334,7 +440,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const result = event.target?.result;
 
         if (typeof result !== "string") {
-          error.textContent = "Unable to read the selected image.";
+          error.textContent = messages.readImageError;
           error.style.display = "block";
           selectedFile = null;
           convertBtn.disabled = true;
@@ -347,7 +453,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       };
 
       reader.onerror = () => {
-        error.textContent = "Unable to read the selected image.";
+        error.textContent = messages.readImageError;
         error.style.display = "block";
         selectedFile = null;
         convertBtn.disabled = true;
@@ -356,14 +462,21 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       reader.readAsDataURL(file);
     }
 
-    function convertToPdf() {
-      if (!selectedFile) {
+    async function convertToPdf() {
+      if (!selectedFile || isProcessing) {
         return;
       }
 
+      isProcessing = true;
+      fileInput.disabled = true;
       convertBtn.disabled = true;
+      removeBtn.disabled = true;
+      retryBtn.hidden = true;
       error.style.display = "none";
-      success.style.display = "none";
+      success.hidden = true;
+      processing.textContent = messages.processing;
+      processing.hidden = false;
+      clearPdf();
 
       const reader = new FileReader();
 
@@ -405,13 +518,33 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
               image.height
             );
 
-            const pdfName =
-              selectedFile.name.replace(/\.[^/.]+$/, "") +
-              ".pdf";
+            const pdfBytes = pdf.output("arraybuffer");
+            const header = new TextDecoder().decode(new Uint8Array(pdfBytes).subarray(0, 5));
+            if (!pdfBytes.byteLength || header !== "%PDF-") throw new Error("Invalid PDF output");
+            const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+            currentPdfUrl = URL.createObjectURL(pdfBlob);
+            downloadPdf.href = currentPdfUrl;
+            downloadPdf.download = "usevo-jpg-para-pdf.pdf";
+            openPdf.href = currentPdfUrl;
+            downloadActions.hidden = false;
+            success.textContent = messages.pdfReady;
+            success.hidden = false;
+            downloadHint.textContent = messages.downloadBlocked;
+            downloadHint.hidden = !isIOS;
 
-            pdf.save(pdfName);
-
-            success.style.display = "block";
+            if (!isIOS) {
+              const automaticLink = document.createElement("a");
+              automaticLink.href = currentPdfUrl;
+              automaticLink.download = "usevo-jpg-para-pdf.pdf";
+              automaticLink.style.display = "none";
+              document.body.appendChild(automaticLink);
+              automaticLink.click();
+              automaticLink.remove();
+            }
+            processing.hidden = true;
+            isProcessing = false;
+            fileInput.disabled = false;
+            removeBtn.disabled = false;
             convertBtn.disabled = false;
           } catch (conversionError) {
             console.error(
@@ -438,11 +571,15 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     }
 
     function showConversionError() {
-      error.textContent =
-        "Unable to convert this image to PDF. Please try another image.";
+      error.textContent = messages.conversionError;
 
       error.style.display = "block";
-      convertBtn.disabled = false;
+      retryBtn.hidden = false;
+      processing.hidden = true;
+      isProcessing = false;
+      fileInput.disabled = false;
+      removeBtn.disabled = false;
+      convertBtn.disabled = !selectedFile;
     }
   </script>
 </Layout>

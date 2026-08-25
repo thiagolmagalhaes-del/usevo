@@ -136,3 +136,33 @@ export const getSiteAlternates = (pathname: string) => {
 
   return localeMap;
 };
+
+export const getLocaleNavigationRoutes = (pathname: string) => {
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+
+  if (["/", "/en", "/es"].includes(normalizedPath)) {
+    return {
+      "pt-BR": localeRouteConfig["pt-BR"].tools,
+      en: localeRouteConfig.en.home,
+      es: localeRouteConfig.es.home,
+    };
+  }
+
+  if (["/ferramentas", "/en/tools", "/es/herramientas"].includes(normalizedPath)) {
+    return {
+      "pt-BR": localeRouteConfig["pt-BR"].tools,
+      en: localeRouteConfig.en.tools,
+      es: localeRouteConfig.es.tools,
+    };
+  }
+
+  if (["/categorias", "/en/categories", "/es/categorias"].includes(normalizedPath)) {
+    return {
+      "pt-BR": localeRouteConfig["pt-BR"].categories,
+      en: localeRouteConfig.en.categories,
+      es: localeRouteConfig.es.categories,
+    };
+  }
+
+  return getSiteAlternates(pathname);
+};

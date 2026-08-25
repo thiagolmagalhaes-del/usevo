@@ -1,15 +1,13 @@
 ---
 import { getTranslations } from "../data/i18n";
 import type { Locale } from "../data/locales";
+import { getLocaleNavigationRoutes, localeRouteConfig } from "../data/locale-routes";
 
 const { locale } = Astro.props as { locale: Locale };
 const t = getTranslations(locale);
-const routes: Record<Locale, { home: string; tools: string; categories: string }> = {
-  "pt-BR": { home: "/", tools: "/ferramentas", categories: "/categorias" },
-  en: { home: "/en/", tools: "/en/tools", categories: "/en/categories" },
-  es: { home: "/es/", tools: "/es/herramientas", categories: "/es/categorias" },
-};
-const localizedRoutes = routes[locale];
+const localizedRoutes = localeRouteConfig[locale];
+const languageRoutes = getLocaleNavigationRoutes(Astro.url.pathname);
+const languageLabel = locale === "en" ? "Language" : "Idioma";
 const navItems = [
   { label: t.tools, href: localizedRoutes.tools },
   { label: t.categories, href: localizedRoutes.categories },
@@ -25,6 +23,16 @@ const navItems = [
         <a href={item.href}>{item.label}</a>
       ))}
       <a href={localizedRoutes.tools} class="nav-button">{t.exploreTools}</a>
+      <span class="language-switcher" role="group" aria-label={languageLabel}>
+        {([['pt-BR', 'PT'], ['en', 'EN'], ['es', 'ES']] as const).map(([option, label]) => (
+          <a
+            class:list={{ "language-option": true, current: locale === option }}
+            href={languageRoutes[option]}
+            aria-current={locale === option ? "page" : undefined}
+            aria-label={`${languageLabel}: ${label}`}
+          >{label}</a>
+        ))}
+      </span>
     </nav>
   </div>
 </header>
@@ -73,6 +81,32 @@ const navItems = [
     color: #315bea;
   }
 
+  .language-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: 4px;
+    padding: 2px;
+    border: 1px solid #d9dee8;
+    border-radius: 8px;
+  }
+
+  .language-switcher .language-option {
+    min-width: 38px;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .language-switcher .language-option.current {
+    background: #eef2ff;
+    color: #315bea;
+  }
+
   .nav-button {
     background: #172033;
     color: #ffffff;
@@ -92,15 +126,36 @@ const navItems = [
     }
 
     .header-inner {
-      gap: 20px;
+      height: auto;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
     nav {
-      gap: 12px;
+      width: 100%;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
     }
 
-    nav a:not(.nav-button) {
+    nav a:not(.nav-button):not(.language-option) {
       display: none;
+    }
+
+    nav .language-switcher .language-option {
+      display: inline-flex;
+    }
+
+    .nav-button {
+      min-height: 38px;
+      padding: 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .language-switcher {
+      flex: 0 0 auto;
+      margin-left: 0;
     }
   }
 </style>
