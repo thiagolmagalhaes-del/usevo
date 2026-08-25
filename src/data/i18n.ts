@@ -19,6 +19,14 @@ export type UITranslations = {
   upload: string;
   language: string;
   noResults: string;
+  analyticsConsent: {
+    title: string;
+    description: string;
+    details: string;
+    accept: string;
+    reject: string;
+    settings: string;
+  };
 };
 
 export type ToolKey =
@@ -135,6 +143,14 @@ export const uiTranslations: Record<Locale, UITranslations> = {
     upload: "Upload",
     language: "Language",
     noResults: "No tools found.",
+    analyticsConsent: {
+      title: "Your privacy",
+      description: "We use Google Analytics to understand, in aggregate, how the site is used. We do not send typed content, files, or values entered in tools to Analytics.",
+      details: "You can change this choice at any time.",
+      accept: "Accept Analytics",
+      reject: "Decline Analytics",
+      settings: "Privacy settings",
+    },
   },
   "pt-BR": {
     tools: "Ferramentas",
@@ -155,6 +171,14 @@ export const uiTranslations: Record<Locale, UITranslations> = {
     upload: "Enviar",
     language: "Idioma",
     noResults: "Nenhuma ferramenta encontrada.",
+    analyticsConsent: {
+      title: "Sua privacidade",
+      description: "Usamos o Google Analytics para entender, de forma agregada, como o site é utilizado. Não enviamos ao Analytics conteúdo digitado, arquivos nem valores inseridos nas ferramentas.",
+      details: "Você pode alterar esta escolha a qualquer momento.",
+      accept: "Aceitar Analytics",
+      reject: "Recusar Analytics",
+      settings: "Configurações de privacidade",
+    },
   },
   es: {
     tools: "Herramientas",
@@ -175,6 +199,14 @@ export const uiTranslations: Record<Locale, UITranslations> = {
     upload: "Subir",
     language: "Idioma",
     noResults: "No se encontraron herramientas.",
+    analyticsConsent: {
+      title: "Tu privacidad",
+      description: "Usamos Google Analytics para entender, de forma agregada, cómo se utiliza el sitio. No enviamos a Analytics contenido escrito, archivos ni valores introducidos en las herramientas.",
+      details: "Puedes cambiar esta elección en cualquier momento.",
+      accept: "Aceptar Analytics",
+      reject: "Rechazar Analytics",
+      settings: "Configuración de privacidad",
+    },
   },
 };
 

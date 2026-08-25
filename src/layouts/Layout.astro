@@ -1,6 +1,7 @@
 ---
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import AnalyticsConsent from "../components/AnalyticsConsent.astro";
 import { resolveLocale, type Locale } from "../data/locales";
 
 const {
@@ -50,6 +51,7 @@ const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string]
     <SiteHeader locale={resolvedLocale} />
     <slot />
     <SiteFooter locale={resolvedLocale} />
+    <AnalyticsConsent locale={resolvedLocale} />
   </body>
 </html>
 

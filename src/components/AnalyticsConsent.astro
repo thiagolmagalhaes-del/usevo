@@ -1,0 +1,225 @@
+---
+import { getTranslations } from "../data/i18n";
+import type { Locale } from "../data/locales";
+
+const { locale } = Astro.props as { locale: Locale };
+const copy = getTranslations(locale).analyticsConsent;
+---
+
+<section id="analyticsConsent" class="analytics-consent" role="dialog" aria-modal="false" aria-labelledby="analyticsConsentTitle" aria-describedby="analyticsConsentDescription" hidden>
+  <div class="analytics-consent__content">
+    <h2 id="analyticsConsentTitle">{copy.title}</h2>
+    <p id="analyticsConsentDescription">{copy.description}</p>
+    <p class="analytics-consent__details">{copy.details}</p>
+    <div class="analytics-consent__actions">
+      <button id="analyticsAccept" class="analytics-consent__choice" type="button">{copy.accept}</button>
+      <button id="analyticsReject" class="analytics-consent__choice analytics-consent__choice--reject" type="button">{copy.reject}</button>
+    </div>
+  </div>
+</section>
+
+<button id="analyticsSettings" class="analytics-settings" type="button" hidden>{copy.settings}</button>
+
+<script is:inline>
+  (() => {
+    const measurementId = "G-MWYREH2FFV";
+    const storageKey = "usevo.analytics-consent";
+    const banner = document.getElementById("analyticsConsent");
+    const acceptButton = document.getElementById("analyticsAccept");
+    const rejectButton = document.getElementById("analyticsReject");
+    const settingsButton = document.getElementById("analyticsSettings");
+
+    if (!banner || !acceptButton || !rejectButton || !settingsButton) return;
+
+    const getConsent = () => {
+      try {
+        return window.localStorage.getItem(storageKey);
+      } catch {
+        return null;
+      }
+    };
+
+    const saveConsent = (value) => {
+      try {
+        window.localStorage.setItem(storageKey, value);
+      } catch {
+        // Keep the preference for the current page when local storage is unavailable.
+      }
+    };
+
+    const showBanner = () => {
+      banner.hidden = false;
+      settingsButton.hidden = true;
+      acceptButton.focus();
+    };
+
+    const hideBanner = () => {
+      banner.hidden = true;
+      settingsButton.hidden = false;
+    };
+
+    const disableAnalytics = () => {
+      window[`ga-disable-${measurementId}`] = true;
+      if (typeof window.gtag === "function") {
+        window.gtag("consent", "update", { analytics_storage: "denied" });
+      }
+    };
+
+    const enableAnalytics = () => {
+      window[`ga-disable-${measurementId}`] = false;
+
+      if (window.__usevoAnalyticsInitialized) {
+        if (typeof window.gtag === "function") {
+          window.gtag("consent", "update", { analytics_storage: "granted" });
+        }
+        return;
+      }
+
+      window.__usevoAnalyticsInitialized = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () {
+        window.dataLayer.push(arguments);
+      };
+
+      window.gtag("consent", "default", { analytics_storage: "granted" });
+      window.gtag("js", new Date());
+      window.gtag("config", measurementId, { anonymize_ip: true });
+
+      const tag = document.createElement("script");
+      tag.async = true;
+      tag.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+      tag.dataset.usevoAnalytics = "true";
+      document.head.append(tag);
+    };
+
+    const applyConsent = (value) => {
+      saveConsent(value);
+      if (value === "granted") {
+        enableAnalytics();
+      } else {
+        disableAnalytics();
+      }
+      hideBanner();
+    };
+
+    acceptButton.addEventListener("click", () => applyConsent("granted"));
+    rejectButton.addEventListener("click", () => applyConsent("denied"));
+    settingsButton.addEventListener("click", showBanner);
+
+    const savedConsent = getConsent();
+    if (savedConsent === "granted") {
+      enableAnalytics();
+      hideBanner();
+    } else if (savedConsent === "denied") {
+      disableAnalytics();
+      hideBanner();
+    } else {
+      banner.hidden = false;
+    }
+  })();
+</script>
+
+<style>
+  .analytics-consent {
+    position: fixed;
+    z-index: 1000;
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .analytics-consent__content {
+    width: min(100%, 560px);
+    padding: 24px;
+    border: 1px solid #d9dee8;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 18px 48px rgba(23, 32, 51, 0.2);
+    pointer-events: auto;
+  }
+
+  .analytics-consent h2 {
+    margin: 0 0 10px;
+    color: #172033;
+    font-size: 20px;
+  }
+
+  .analytics-consent p {
+    margin: 0;
+    color: #475467;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .analytics-consent__details {
+    margin-top: 10px !important;
+  }
+
+  .analytics-consent__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .analytics-consent__choice,
+  .analytics-settings {
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .analytics-consent__choice {
+    padding: 10px 14px;
+    background: #1d4ed8;
+    color: #ffffff;
+  }
+
+  .analytics-consent__choice--reject {
+    background: #334155;
+  }
+
+  .analytics-consent__choice:focus-visible,
+  .analytics-settings:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 3px;
+  }
+
+  .analytics-settings {
+    position: fixed;
+    z-index: 999;
+    right: 16px;
+    bottom: 16px;
+    padding: 10px 14px;
+    background: #ffffff;
+    color: #172033;
+    box-shadow: 0 4px 16px rgba(23, 32, 51, 0.18);
+  }
+
+  @media (max-width: 520px) {
+    .analytics-consent {
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+    }
+
+    .analytics-consent__content {
+      padding: 20px;
+    }
+
+    .analytics-consent__actions {
+      grid-template-columns: 1fr;
+    }
+
+    .analytics-settings {
+      right: 12px;
+      bottom: 12px;
+    }
+  }
+</style>
