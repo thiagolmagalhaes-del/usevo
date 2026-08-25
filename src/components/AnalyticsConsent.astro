@@ -1,12 +1,13 @@
 ---
 import { getTranslations } from "../data/i18n";
+import { ANALYTICS_MEASUREMENT_ID } from "../lib/analytics-consent";
 import type { Locale } from "../data/locales";
 
 const { locale } = Astro.props as { locale: Locale };
 const copy = getTranslations(locale).analyticsConsent;
 ---
 
-<section id="analyticsConsent" class="analytics-consent" role="dialog" aria-modal="false" aria-labelledby="analyticsConsentTitle" aria-describedby="analyticsConsentDescription" hidden>
+<section id="analyticsConsent" class="analytics-consent" role="dialog" aria-modal="false" aria-labelledby="analyticsConsentTitle" aria-describedby="analyticsConsentDescription" data-measurement-id={ANALYTICS_MEASUREMENT_ID} hidden>
   <div class="analytics-consent__content">
     <h2 id="analyticsConsentTitle">{copy.title}</h2>
     <p id="analyticsConsentDescription">{copy.description}</p>
@@ -20,103 +21,10 @@ const copy = getTranslations(locale).analyticsConsent;
 
 <button id="analyticsSettings" class="analytics-settings" type="button" hidden>{copy.settings}</button>
 
-<script is:inline>
-  (() => {
-    const measurementId = "G-MWYREH2FFV";
-    const storageKey = "usevo.analytics-consent";
-    const banner = document.getElementById("analyticsConsent");
-    const acceptButton = document.getElementById("analyticsAccept");
-    const rejectButton = document.getElementById("analyticsReject");
-    const settingsButton = document.getElementById("analyticsSettings");
+<script>
+  import { mountAnalyticsConsent } from "../lib/analytics-consent";
 
-    if (!banner || !acceptButton || !rejectButton || !settingsButton) return;
-
-    const getConsent = () => {
-      try {
-        return window.localStorage.getItem(storageKey);
-      } catch {
-        return null;
-      }
-    };
-
-    const saveConsent = (value) => {
-      try {
-        window.localStorage.setItem(storageKey, value);
-      } catch {
-        // Keep the preference for the current page when local storage is unavailable.
-      }
-    };
-
-    const showBanner = () => {
-      banner.hidden = false;
-      settingsButton.hidden = true;
-      acceptButton.focus();
-    };
-
-    const hideBanner = () => {
-      banner.hidden = true;
-      settingsButton.hidden = false;
-    };
-
-    const disableAnalytics = () => {
-      window[`ga-disable-${measurementId}`] = true;
-      if (typeof window.gtag === "function") {
-        window.gtag("consent", "update", { analytics_storage: "denied" });
-      }
-    };
-
-    const enableAnalytics = () => {
-      window[`ga-disable-${measurementId}`] = false;
-
-      if (window.__usevoAnalyticsInitialized) {
-        if (typeof window.gtag === "function") {
-          window.gtag("consent", "update", { analytics_storage: "granted" });
-        }
-        return;
-      }
-
-      window.__usevoAnalyticsInitialized = true;
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function () {
-        window.dataLayer.push(arguments);
-      };
-
-      window.gtag("consent", "default", { analytics_storage: "granted" });
-      window.gtag("js", new Date());
-      window.gtag("config", measurementId, { anonymize_ip: true });
-
-      const tag = document.createElement("script");
-      tag.async = true;
-      tag.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-      tag.dataset.usevoAnalytics = "true";
-      document.head.append(tag);
-    };
-
-    const applyConsent = (value) => {
-      saveConsent(value);
-      if (value === "granted") {
-        enableAnalytics();
-      } else {
-        disableAnalytics();
-      }
-      hideBanner();
-    };
-
-    acceptButton.addEventListener("click", () => applyConsent("granted"));
-    rejectButton.addEventListener("click", () => applyConsent("denied"));
-    settingsButton.addEventListener("click", showBanner);
-
-    const savedConsent = getConsent();
-    if (savedConsent === "granted") {
-      enableAnalytics();
-      hideBanner();
-    } else if (savedConsent === "denied") {
-      disableAnalytics();
-      hideBanner();
-    } else {
-      banner.hidden = false;
-    }
-  })();
+  mountAnalyticsConsent(document, window);
 </script>
 
 <style>
@@ -129,6 +37,11 @@ const copy = getTranslations(locale).analyticsConsent;
     display: flex;
     justify-content: center;
     pointer-events: none;
+  }
+
+  .analytics-consent[hidden],
+  .analytics-settings[hidden] {
+    display: none !important;
   }
 
   .analytics-consent__content {
