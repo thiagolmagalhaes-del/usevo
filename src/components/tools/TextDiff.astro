@@ -1,7 +1,7 @@
 ---
 import type { Locale } from "../../data/locales";
 const { locale = "en" } = Astro.props as { locale?: Locale };
-const copy = locale === "pt-BR" ? { title: "Comparador de texto", original: "Texto original", modified: "Texto modificado", compare: "Comparar", clear: "Limpar" } : { title: "Text Comparator", original: "Original text", modified: "Modified text", compare: "Compare", clear: "Clear" };
+const copy = locale === "pt-BR" ? { title: "Comparador de texto", original: "Texto original", modified: "Texto modificado", compare: "Comparar", clear: "Limpar" } : locale === "es" ? { title: "Comparador de texto", original: "Texto original", modified: "Texto modificado", compare: "Comparar", clear: "Limpiar" } : { title: "Text Comparator", original: "Original text", modified: "Modified text", compare: "Compare", clear: "Clear" };
 ---
 <div class="tool-card card">
   <h2>{copy.title}</h2>

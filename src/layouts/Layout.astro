@@ -9,12 +9,14 @@ const {
   locale,
   canonical,
   alternateUrls,
+  robots = "index, follow",
 } = Astro.props as {
   title?: string;
   description?: string;
   locale?: string | null;
   canonical?: string;
   alternateUrls?: Partial<Record<Locale, string>>;
+  robots?: string;
 };
 
 const resolvedLocale = resolveLocale(locale ?? "en") as Locale;
@@ -30,7 +32,7 @@ const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string]
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={robots} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />

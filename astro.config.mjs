@@ -7,6 +7,7 @@ export default defineConfig({
   site: "https://usevo.tools",
   integrations: [
     sitemap({
+      filter: (page) => !page.endsWith("/404"),
       i18n: {
         defaultLocale: "pt-BR",
         locales: {
