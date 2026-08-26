@@ -12,8 +12,8 @@ const copy = locale === "pt-BR" ? {
 ---
 <div class="tool-card card">
   <h1 style="font-size: 1.5em; margin-block: 0.83em;">{copy.title}</h1>
-  <div id="dropArea" class="drop">{copy.drop}</div>
-  <input id="fileInput" type="file" accept="application/pdf" style="display:none" />
+  <label id="dropArea" class="drop" for="fileInput">{copy.drop}</label>
+  <input id="fileInput" class="file-input" type="file" accept="application/pdf" />
   <div id="fileInfo" style="display:none">
     <div>{copy.file}: <span id="fileName"></span></div>
     <div>{copy.original}: <span id="originalSize"></span></div>
@@ -30,7 +30,8 @@ const copy = locale === "pt-BR" ? {
 
 <style>
 .tool-card { padding: 18px; border:1px solid #e7ebf3; border-radius:12px; background:#fff; }
-.drop { padding: 18px; border: 2px dashed #d7dce5; border-radius:12px; text-align:center; cursor:pointer; }
+.drop { display:block; padding: 18px; border: 2px dashed #d7dce5; border-radius:12px; text-align:center; cursor:pointer; user-select:none; -webkit-user-select:none; }
+.file-input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
 .error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
 </style>
 
@@ -63,7 +64,6 @@ const copy = locale === "pt-BR" ? {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  dropArea.addEventListener('click', () => fileInput.click());
   dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.style.borderColor = '#315bea'; });
   dropArea.addEventListener('dragleave', () => { dropArea.style.borderColor = '#d7dce5'; });
   dropArea.addEventListener('drop', (e) => {
