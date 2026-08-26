@@ -34,6 +34,23 @@ const localDateValue = (date: Date) =>
 const formatCivilDate = (date: { year: number; month: number; day: number }, locale: string) =>
   new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(new Date(date.year, date.month - 1, date.day, 12));
 
+const bindClearDateInput = (
+  button: HTMLButtonElement,
+  input: HTMLInputElement,
+  error: HTMLElement,
+  result: HTMLElement,
+) => {
+  button.addEventListener("click", () => {
+    input.value = "";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    error.textContent = "";
+    error.hidden = true;
+    result.hidden = true;
+    input.focus();
+  });
+};
+
 export const initializeDateCalculator = (documentRef: ElementLookup, copy: DateCalculatorCopy) => {
   const differenceForm = getElement<HTMLFormElement>(documentRef, "differenceForm");
   const periodForm = getElement<HTMLFormElement>(documentRef, "periodForm");
@@ -43,6 +60,8 @@ export const initializeDateCalculator = (documentRef: ElementLookup, copy: DateC
 
   const differenceStart = getElement<HTMLInputElement>(documentRef, "differenceStart");
   const differenceEnd = getElement<HTMLInputElement>(documentRef, "differenceEnd");
+  const clearDifferenceStart = getElement<HTMLButtonElement>(documentRef, "clearDifferenceStart");
+  const clearDifferenceEnd = getElement<HTMLButtonElement>(documentRef, "clearDifferenceEnd");
   const includeEnd = getElement<HTMLInputElement>(documentRef, "includeEnd");
   const differenceError = getElement<HTMLElement>(documentRef, "differenceError");
   const differenceResult = getElement<HTMLElement>(documentRef, "differenceResult");
@@ -52,6 +71,7 @@ export const initializeDateCalculator = (documentRef: ElementLookup, copy: DateC
   const differenceStartWeekday = getElement<HTMLElement>(documentRef, "differenceStartWeekday");
   const differenceEndWeekday = getElement<HTMLElement>(documentRef, "differenceEndWeekday");
   const periodStart = getElement<HTMLInputElement>(documentRef, "periodStart");
+  const clearPeriodStart = getElement<HTMLButtonElement>(documentRef, "clearPeriodStart");
   const operation = getElement<HTMLSelectElement>(documentRef, "operation");
   const periodYears = getElement<HTMLInputElement>(documentRef, "periodYears");
   const periodMonths = getElement<HTMLInputElement>(documentRef, "periodMonths");
@@ -62,6 +82,10 @@ export const initializeDateCalculator = (documentRef: ElementLookup, copy: DateC
   const periodDate = getElement<HTMLElement>(documentRef, "periodDate");
   const periodWeekday = getElement<HTMLElement>(documentRef, "periodWeekday");
   const setError = (element: HTMLElement, message: string) => { element.textContent = message; element.hidden = !message; };
+
+  bindClearDateInput(clearDifferenceStart, differenceStart, differenceError, differenceResult);
+  bindClearDateInput(clearDifferenceEnd, differenceEnd, differenceError, differenceResult);
+  bindClearDateInput(clearPeriodStart, periodStart, periodError, periodResult);
 
   differenceForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -98,6 +122,8 @@ export const initializeAgeCalculator = (documentRef: ElementLookup, copy: AgeCal
   const form = getElement<HTMLFormElement>(documentRef, "ageForm");
   const birthDate = getElement<HTMLInputElement>(documentRef, "birthDate");
   const referenceDate = getElement<HTMLInputElement>(documentRef, "referenceDate");
+  const clearBirthDate = getElement<HTMLButtonElement>(documentRef, "clearBirthDate");
+  const clearReferenceDate = getElement<HTMLButtonElement>(documentRef, "clearReferenceDate");
   const error = getElement<HTMLElement>(documentRef, "ageError");
   const resultElement = getElement<HTMLElement>(documentRef, "ageResult");
   const exactAge = getElement<HTMLElement>(documentRef, "exactAge");
@@ -115,6 +141,9 @@ export const initializeAgeCalculator = (documentRef: ElementLookup, copy: AgeCal
   if (form.dataset.ageCalculatorBound === "true") return;
   form.dataset.ageCalculatorBound = "true";
   const setError = (message: string) => { error.textContent = message; error.hidden = !message; };
+
+  bindClearDateInput(clearBirthDate, birthDate, error, resultElement);
+  bindClearDateInput(clearReferenceDate, referenceDate, error, resultElement);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();

@@ -2,13 +2,19 @@
 import type { Locale } from "../../data/locales";
 
 const { locale = "en" } = Astro.props as { locale?: Locale };
-const copy = locale === "pt-BR" ? {
+const baseCopy = locale === "pt-BR" ? {
   title: "Calculadora de datas", description: "Calcule intervalos entre datas ou adicione e subtraia períodos.", back: "Voltar para ferramentas", related: "Precisa calcular uma idade?", relatedLink: "Abrir Calculadora de idade", differenceTitle: "Diferença entre duas datas", startDate: "Data inicial", endDate: "Data final", includeEnd: "Incluir o último dia", calculateDifference: "Calcular diferença", periodTitle: "Adicionar ou subtrair tempo", operation: "Operação", add: "Adicionar", subtract: "Subtrair", years: "Anos", months: "Meses", weeks: "Semanas", days: "Dias", calculateDate: "Calcular data", result: "Resultado", exactDifference: "Diferença exata", totalDays: "Total de dias", totalWeeks: "Total de semanas e dias", startWeekday: "Dia da semana inicial", endWeekday: "Dia da semana final", calculatedDate: "Data final calculada", weekday: "Dia da semana", required: "Informe datas válidas para continuar.", reversed: "A data final precisa ser igual ou posterior à data inicial.", invalidNumbers: "Informe apenas períodos válidos e não negativos.", weekdays: ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"], dateLocale: "pt-BR",
 } : locale === "es" ? {
   title: "Calculadora de fechas", description: "Calcula intervalos entre fechas o suma y resta períodos.", back: "Volver a herramientas", related: "¿Necesitas calcular una edad?", relatedLink: "Abrir Calculadora de edad", differenceTitle: "Diferencia entre dos fechas", startDate: "Fecha inicial", endDate: "Fecha final", includeEnd: "Incluir el último día", calculateDifference: "Calcular diferencia", periodTitle: "Sumar o restar tiempo", operation: "Operación", add: "Sumar", subtract: "Restar", years: "Años", months: "Meses", weeks: "Semanas", days: "Días", calculateDate: "Calcular fecha", result: "Resultado", exactDifference: "Diferencia exacta", totalDays: "Total de días", totalWeeks: "Total de semanas y días", startWeekday: "Día de la semana inicial", endWeekday: "Día de la semana final", calculatedDate: "Fecha final calculada", weekday: "Día de la semana", required: "Introduce fechas válidas para continuar.", reversed: "La fecha final debe ser igual o posterior a la fecha inicial.", invalidNumbers: "Introduce solo períodos válidos y no negativos.", weekdays: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"], dateLocale: "es",
 } : {
   title: "Date Calculator", description: "Calculate date intervals or add and subtract periods.", back: "Back to tools", related: "Need to calculate an age?", relatedLink: "Open Age Calculator", differenceTitle: "Difference between two dates", startDate: "Start date", endDate: "End date", includeEnd: "Include the last day", calculateDifference: "Calculate difference", periodTitle: "Add or subtract time", operation: "Operation", add: "Add", subtract: "Subtract", years: "Years", months: "Months", weeks: "Weeks", days: "Days", calculateDate: "Calculate date", result: "Result", exactDifference: "Exact difference", totalDays: "Total days", totalWeeks: "Total weeks and days", startWeekday: "Start weekday", endWeekday: "End weekday", calculatedDate: "Calculated end date", weekday: "Weekday", required: "Enter valid dates to continue.", reversed: "The end date must be on or after the start date.", invalidNumbers: "Enter only valid, non-negative periods.", weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], dateLocale: "en-US",
 };
+const clearCopy = locale === "pt-BR"
+  ? { clear: "Limpar", clearStartDate: "Limpar data inicial", clearEndDate: "Limpar data final", clearPeriodStartDate: "Limpar data inicial do período" }
+  : locale === "es"
+    ? { clear: "Limpiar", clearStartDate: "Limpiar fecha inicial", clearEndDate: "Limpiar fecha final", clearPeriodStartDate: "Limpiar fecha inicial del período" }
+    : { clear: "Clear", clearStartDate: "Clear start date", clearEndDate: "Clear end date", clearPeriodStartDate: "Clear period start date" };
+const copy = { ...baseCopy, ...clearCopy };
 
 const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
 const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : locale === "es" ? "/es/herramientas/calculadora-de-edad/" : "/en/tools/age-calculator/";
@@ -25,8 +31,8 @@ const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : loc
       <section class="card" aria-labelledby="differenceTitle">
         <h2 id="differenceTitle">{copy.differenceTitle}</h2>
         <form id="differenceForm" novalidate>
-          <div class="field"><label for="differenceStart">{copy.startDate}</label><input id="differenceStart" type="date" required /></div>
-          <div class="field"><label for="differenceEnd">{copy.endDate}</label><input id="differenceEnd" type="date" required /></div>
+          <div class="field"><label for="differenceStart">{copy.startDate}</label><div class="date-input"><input id="differenceStart" type="date" required /><button id="clearDifferenceStart" class="clear-date" type="button" aria-label={copy.clearStartDate}>{copy.clear}</button></div></div>
+          <div class="field"><label for="differenceEnd">{copy.endDate}</label><div class="date-input"><input id="differenceEnd" type="date" required /><button id="clearDifferenceEnd" class="clear-date" type="button" aria-label={copy.clearEndDate}>{copy.clear}</button></div></div>
           <label class="check" for="includeEnd"><input id="includeEnd" type="checkbox" /> {copy.includeEnd}</label>
           <button type="submit">{copy.calculateDifference}</button>
         </form>
@@ -46,7 +52,7 @@ const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : loc
       <section class="card" aria-labelledby="periodTitle">
         <h2 id="periodTitle">{copy.periodTitle}</h2>
         <form id="periodForm" novalidate>
-          <div class="field"><label for="periodStart">{copy.startDate}</label><input id="periodStart" type="date" required /></div>
+          <div class="field"><label for="periodStart">{copy.startDate}</label><div class="date-input"><input id="periodStart" type="date" required /><button id="clearPeriodStart" class="clear-date" type="button" aria-label={copy.clearPeriodStartDate}>{copy.clear}</button></div></div>
           <div class="field"><label for="operation">{copy.operation}</label><select id="operation"><option value="add">{copy.add}</option><option value="subtract">{copy.subtract}</option></select></div>
           <div class="period-fields">
             <div class="field"><label for="periodYears">{copy.years}</label><input id="periodYears" type="number" min="0" step="1" value="0" inputmode="numeric" /></div>
@@ -83,6 +89,7 @@ const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : loc
   h2 { font-size:22px; margin:0 0 20px; } h3 { font-size:17px; margin:0 0 14px; }
   .field { margin-bottom:16px; } label { display:block; font-weight:600; margin-bottom:7px; }
   input, select { width:100%; border:1px solid #dfe3ea; border-radius:10px; color:#172033; font:inherit; padding:12px; }
+  .date-input { align-items:center; display:flex; gap:8px; }.date-input input { min-width:0; }.clear-date { background:#eef2ff; color:#234cbd; min-height:44px; padding:10px 14px; width:auto; }.clear-date:hover { background:#dce5ff; }
   input:focus, select:focus { border-color:#315bdc; outline:2px solid #dce5ff; outline-offset:1px; }
   .check { align-items:center; display:flex; font-size:14px; gap:8px; margin:4px 0 18px; } .check input { width:auto; }
   .period-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 12px; }
