@@ -46,6 +46,26 @@ const formatFileSize = (bytes: number) => {
   return `${(bytes / 1024 ** unit).toFixed(unit === 0 ? 0 : 2)} ${units[unit]}`;
 };
 
+const loadPreview = (preview: HTMLImageElement, objectUrl: string) => new Promise<ImageDimensions>((resolve, reject) => {
+  const clearHandlers = () => {
+    preview.onload = null;
+    preview.onerror = null;
+  };
+  preview.onload = () => {
+    clearHandlers();
+    resolve({ width: preview.naturalWidth, height: preview.naturalHeight });
+  };
+  preview.onerror = () => {
+    clearHandlers();
+    reject(new Error("Preview decoding failed"));
+  };
+  preview.src = objectUrl;
+  if (preview.complete && preview.naturalWidth > 0) {
+    clearHandlers();
+    resolve({ width: preview.naturalWidth, height: preview.naturalHeight });
+  }
+});
+
 const loadImage = async (file: File): Promise<LoadedImage> => {
   if ("createImageBitmap" in globalThis) {
     try {
@@ -165,30 +185,31 @@ export const initializeImageResizer = (documentRef: ElementLookup, copy: ImageRe
     currentFile = file;
     revokePreview();
     previewUrl = URL.createObjectURL(file);
-    preview.src = previewUrl;
-    fileName.textContent = file.name;
-    fileSize.textContent = formatFileSize(file.size);
-    imageInfo.hidden = false;
+    imageInfo.hidden = true;
     controls.hidden = true;
     status.textContent = copy.processing;
 
     try {
-      const loaded = await loadImage(file);
-      if (version !== loadingVersion) {
-        loaded.dispose();
-        return;
-      }
-      sourceDimensions = loaded.dimensions;
-      originalDimensions.textContent = `${loaded.dimensions.width} × ${loaded.dimensions.height} px`;
-      setDimensions(loaded.dimensions);
+      const dimensions = await loadPreview(preview, previewUrl);
+      if (version !== loadingVersion) return;
+      if (!dimensions.width || !dimensions.height) throw new Error("Invalid preview dimensions");
+      sourceDimensions = dimensions;
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      originalDimensions.textContent = `${dimensions.width} × ${dimensions.height} px`;
+      setDimensions(dimensions);
       setQualityVisibility();
+      imageInfo.hidden = false;
       controls.hidden = false;
       status.textContent = copy.ready;
-      loaded.dispose();
     } catch {
       if (version !== loadingVersion) return;
       currentFile = undefined;
       sourceDimensions = undefined;
+      fileName.textContent = "";
+      fileSize.textContent = "";
+      originalDimensions.textContent = "";
+      imageInfo.hidden = true;
       controls.hidden = true;
       revokePreview();
       showError(copy.readError);

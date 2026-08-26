@@ -3,6 +3,7 @@ import {
   IMAGE_RESIZER_MAX_DIMENSION,
   getOutputMimeType,
   getResizedFileName,
+  isSupportedImageFile,
   resizeByPercentage,
   resizeFromHeight,
   resizeFromWidth,
@@ -42,5 +43,11 @@ describe("image resizer calculations", () => {
     expect(getOutputMimeType("jpeg", "image/png")).toBe("image/jpeg");
     expect(getOutputMimeType("png", "image/jpeg")).toBe("image/png");
     expect(getResizedFileName("holiday.photo.png", "image/jpeg")).toBe("holiday.photo-resized.jpg");
+  });
+
+  it("accepts JPG, PNG, and WebP files", () => {
+    expect(isSupportedImageFile({ name: "photo.jpg", type: "image/jpeg" })).toBe(true);
+    expect(isSupportedImageFile({ name: "photo.png", type: "image/png" })).toBe(true);
+    expect(isSupportedImageFile({ name: "photo.webp", type: "image/webp" })).toBe(true);
   });
 });

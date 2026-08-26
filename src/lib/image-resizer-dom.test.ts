@@ -5,6 +5,7 @@ import { getToolLocaleRoute } from "../data/locale-routes";
 
 const componentUrl = new URL("../components/tools/ImageResizer.astro", import.meta.url);
 const compressorUrl = new URL("../components/tools/ImageCompressor.astro", import.meta.url);
+const clientUrl = new URL("./image-resizer-client.ts", import.meta.url);
 
 describe("image resizer UI contract", () => {
   it("uses a native label and input association for the full upload area", async () => {
@@ -23,6 +24,15 @@ describe("image resizer UI contract", () => {
     expect(resizerMarkup).toContain('<button id="resizerClear" class="button secondary" type="button">');
     expect(compressorMarkup).toContain('<label id="dropArea" class="drop" for="fileInput">');
     expect(compressorMarkup).toContain('browser-image-compression');
+  });
+
+  it("does not reveal the details panel until the preview has decoded", async () => {
+    const clientSource = await readFile(clientUrl, "utf8");
+    const previewDecode = clientSource.indexOf("const dimensions = await loadPreview(preview, previewUrl);");
+    const revealPanel = clientSource.indexOf("imageInfo.hidden = false;");
+    expect(previewDecode).toBeGreaterThan(-1);
+    expect(revealPanel).toBeGreaterThan(previewDecode);
+    expect(clientSource).toContain("imageInfo.hidden = true;");
   });
 });
 
