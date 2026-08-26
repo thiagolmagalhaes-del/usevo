@@ -1,6 +1,8 @@
 ---
 import Base64Page from "../../ferramentas/base64.astro";
 import CalculadoraPage from "../../ferramentas/calculadora.astro";
+import CalculadoraDeDatasPage from "../../ferramentas/calculadora-de-datas.astro";
+import CalculadoraDeIdadePage from "../../ferramentas/calculadora-de-idade.astro";
 import CalculadoraDePorcentagemPage from "../../ferramentas/calculadora-de-porcentagem.astro";
 import CalculadoraCltPjPage from "../../ferramentas/calculadora-clt-pj.astro";
 import ComparadorDeTextoPage from "../../ferramentas/comparador-de-texto.astro";
@@ -37,6 +39,8 @@ const toolMeta = getFerramentaTranslation(ferramenta, "en");
 const toolPageMap = {
   "calculadora-de-porcentagem": CalculadoraDePorcentagemPage,
   calculadora: CalculadoraPage,
+  "calculadora-de-datas": CalculadoraDeDatasPage,
+  "calculadora-de-idade": CalculadoraDeIdadePage,
   "conversor-de-unidades": ConversorDeUnidadesPage,
   "conversor-de-moedas": ConversorDeMoedasPage,
   "contador-de-palavras": ContadorDePalavrasPage,

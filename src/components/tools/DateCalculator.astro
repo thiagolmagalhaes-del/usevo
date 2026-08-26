@@ -1,0 +1,135 @@
+---
+import type { Locale } from "../../data/locales";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Calculadora de datas", description: "Calcule intervalos entre datas ou adicione e subtraia períodos.", back: "Voltar para ferramentas", related: "Precisa calcular uma idade?", relatedLink: "Abrir Calculadora de idade", differenceTitle: "Diferença entre duas datas", startDate: "Data inicial", endDate: "Data final", includeEnd: "Incluir o último dia", calculateDifference: "Calcular diferença", periodTitle: "Adicionar ou subtrair tempo", operation: "Operação", add: "Adicionar", subtract: "Subtrair", years: "Anos", months: "Meses", weeks: "Semanas", days: "Dias", calculateDate: "Calcular data", result: "Resultado", exactDifference: "Diferença exata", totalDays: "Total de dias", totalWeeks: "Total de semanas e dias", startWeekday: "Dia da semana inicial", endWeekday: "Dia da semana final", calculatedDate: "Data final calculada", weekday: "Dia da semana", required: "Informe datas válidas para continuar.", reversed: "A data final precisa ser igual ou posterior à data inicial.", invalidNumbers: "Informe apenas períodos válidos e não negativos.", weekdays: ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"], dateLocale: "pt-BR",
+} : locale === "es" ? {
+  title: "Calculadora de fechas", description: "Calcula intervalos entre fechas o suma y resta períodos.", back: "Volver a herramientas", related: "¿Necesitas calcular una edad?", relatedLink: "Abrir Calculadora de edad", differenceTitle: "Diferencia entre dos fechas", startDate: "Fecha inicial", endDate: "Fecha final", includeEnd: "Incluir el último día", calculateDifference: "Calcular diferencia", periodTitle: "Sumar o restar tiempo", operation: "Operación", add: "Sumar", subtract: "Restar", years: "Años", months: "Meses", weeks: "Semanas", days: "Días", calculateDate: "Calcular fecha", result: "Resultado", exactDifference: "Diferencia exacta", totalDays: "Total de días", totalWeeks: "Total de semanas y días", startWeekday: "Día de la semana inicial", endWeekday: "Día de la semana final", calculatedDate: "Fecha final calculada", weekday: "Día de la semana", required: "Introduce fechas válidas para continuar.", reversed: "La fecha final debe ser igual o posterior a la fecha inicial.", invalidNumbers: "Introduce solo períodos válidos y no negativos.", weekdays: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"], dateLocale: "es",
+} : {
+  title: "Date Calculator", description: "Calculate date intervals or add and subtract periods.", back: "Back to tools", related: "Need to calculate an age?", relatedLink: "Open Age Calculator", differenceTitle: "Difference between two dates", startDate: "Start date", endDate: "End date", includeEnd: "Include the last day", calculateDifference: "Calculate difference", periodTitle: "Add or subtract time", operation: "Operation", add: "Add", subtract: "Subtract", years: "Years", months: "Months", weeks: "Weeks", days: "Days", calculateDate: "Calculate date", result: "Result", exactDifference: "Exact difference", totalDays: "Total days", totalWeeks: "Total weeks and days", startWeekday: "Start weekday", endWeekday: "End weekday", calculatedDate: "Calculated end date", weekday: "Weekday", required: "Enter valid dates to continue.", reversed: "The end date must be on or after the start date.", invalidNumbers: "Enter only valid, non-negative periods.", weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], dateLocale: "en-US",
+};
+
+const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
+const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : locale === "es" ? "/es/herramientas/calculadora-de-edad/" : "/en/tools/age-calculator/";
+---
+
+<main class="date-tool">
+  <div class="container">
+    <a class="back" href={backRoute}>← {copy.back}</a>
+    <p class="eyebrow">{copy.title}</p>
+    <h1>{copy.title}</h1>
+    <p class="intro">{copy.description}</p>
+
+    <div class="calculator-grid">
+      <section class="card" aria-labelledby="differenceTitle">
+        <h2 id="differenceTitle">{copy.differenceTitle}</h2>
+        <form id="differenceForm" novalidate>
+          <div class="field"><label for="differenceStart">{copy.startDate}</label><input id="differenceStart" type="date" required /></div>
+          <div class="field"><label for="differenceEnd">{copy.endDate}</label><input id="differenceEnd" type="date" required /></div>
+          <label class="check" for="includeEnd"><input id="includeEnd" type="checkbox" /> {copy.includeEnd}</label>
+          <button type="submit">{copy.calculateDifference}</button>
+        </form>
+        <p id="differenceError" class="error" role="alert" hidden></p>
+        <div id="differenceResult" class="result" aria-live="polite" hidden>
+          <h3>{copy.result}</h3>
+          <dl>
+            <div><dt>{copy.exactDifference}</dt><dd id="differenceExact"></dd></div>
+            <div><dt>{copy.totalDays}</dt><dd id="differenceDays"></dd></div>
+            <div><dt>{copy.totalWeeks}</dt><dd id="differenceWeeks"></dd></div>
+            <div><dt>{copy.startWeekday}</dt><dd id="differenceStartWeekday"></dd></div>
+            <div><dt>{copy.endWeekday}</dt><dd id="differenceEndWeekday"></dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="periodTitle">
+        <h2 id="periodTitle">{copy.periodTitle}</h2>
+        <form id="periodForm" novalidate>
+          <div class="field"><label for="periodStart">{copy.startDate}</label><input id="periodStart" type="date" required /></div>
+          <div class="field"><label for="operation">{copy.operation}</label><select id="operation"><option value="add">{copy.add}</option><option value="subtract">{copy.subtract}</option></select></div>
+          <div class="period-fields">
+            <div class="field"><label for="periodYears">{copy.years}</label><input id="periodYears" type="number" min="0" step="1" value="0" inputmode="numeric" /></div>
+            <div class="field"><label for="periodMonths">{copy.months}</label><input id="periodMonths" type="number" min="0" step="1" value="0" inputmode="numeric" /></div>
+            <div class="field"><label for="periodWeeks">{copy.weeks}</label><input id="periodWeeks" type="number" min="0" step="1" value="0" inputmode="numeric" /></div>
+            <div class="field"><label for="periodDays">{copy.days}</label><input id="periodDays" type="number" min="0" step="1" value="0" inputmode="numeric" /></div>
+          </div>
+          <button type="submit">{copy.calculateDate}</button>
+        </form>
+        <p id="periodError" class="error" role="alert" hidden></p>
+        <div id="periodResult" class="result" aria-live="polite" hidden>
+          <h3>{copy.result}</h3>
+          <dl>
+            <div><dt>{copy.calculatedDate}</dt><dd id="periodDate"></dd></div>
+            <div><dt>{copy.weekday}</dt><dd id="periodWeekday"></dd></div>
+          </dl>
+        </div>
+      </section>
+    </div>
+
+    <aside class="related"><span>{copy.related}</span> <a href={ageRoute}>{copy.relatedLink}</a></aside>
+  </div>
+</main>
+
+<style>
+  .date-tool { background:#f8f9fc; padding:48px 20px 80px; }
+  .container { max-width:980px; margin:0 auto; }
+  .back { display:inline-block; color:#526174; font-size:14px; margin-bottom:22px; }
+  .eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }
+  h1 { font-size:clamp(32px,5vw,46px); margin:0; line-height:1.1; }
+  .intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 32px; }
+  .calculator-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+  .card { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); padding:24px; }
+  h2 { font-size:22px; margin:0 0 20px; } h3 { font-size:17px; margin:0 0 14px; }
+  .field { margin-bottom:16px; } label { display:block; font-weight:600; margin-bottom:7px; }
+  input, select { width:100%; border:1px solid #dfe3ea; border-radius:10px; color:#172033; font:inherit; padding:12px; }
+  input:focus, select:focus { border-color:#315bdc; outline:2px solid #dce5ff; outline-offset:1px; }
+  .check { align-items:center; display:flex; font-size:14px; gap:8px; margin:4px 0 18px; } .check input { width:auto; }
+  .period-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 12px; }
+  button { background:#315bdc; border:0; border-radius:10px; color:#fff; cursor:pointer; font:inherit; font-weight:700; padding:13px 18px; width:100%; } button:hover { background:#264bc0; }
+  .error { background:#fff1f0; border-radius:8px; color:#8a280d; margin:16px 0 0; padding:10px; }
+  .result { background:#f4f7ff; border-radius:12px; margin-top:18px; padding:18px; } dl { display:grid; gap:11px; margin:0; } dl div { display:flex; gap:12px; justify-content:space-between; } dt { color:#536176; } dd { font-weight:700; margin:0; text-align:right; }
+  .related { background:#eef2ff; border-radius:12px; margin-top:26px; padding:16px 18px; } .related a { color:#234cbd; font-weight:700; text-decoration:underline; }
+  @media (max-width:720px) { .date-tool { padding:32px 16px 64px; } .calculator-grid { grid-template-columns:1fr; } }
+</style>
+
+<script type="module" define:vars={{ copy }}>
+  import { addPeriod, getDateDifference, getWeekday, parseCivilDate } from "../../lib/date-calculations";
+
+  const byId = (id) => document.getElementById(id);
+  const formatDate = (date) => new Intl.DateTimeFormat(copy.dateLocale, { dateStyle: "long" }).format(new Date(date.year, date.month - 1, date.day, 12));
+  const formatDifference = (difference) => `${difference.years} ${copy.years.toLowerCase()}, ${difference.months} ${copy.months.toLowerCase()}, ${difference.days} ${copy.days.toLowerCase()}`;
+  const setError = (id, message) => { const element = byId(id); element.textContent = message; element.hidden = !message; };
+
+  byId("differenceForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const start = parseCivilDate(byId("differenceStart").value);
+    const end = parseCivilDate(byId("differenceEnd").value);
+    const result = byId("differenceResult");
+    if (!start || !end) { setError("differenceError", copy.required); result.hidden = true; return; }
+    const difference = getDateDifference(start, end, byId("includeEnd").checked);
+    if (!difference) { setError("differenceError", copy.reversed); result.hidden = true; return; }
+    setError("differenceError", "");
+    byId("differenceExact").textContent = formatDifference(difference);
+    byId("differenceDays").textContent = String(difference.totalDays);
+    byId("differenceWeeks").textContent = `${difference.weeks} ${copy.weeks.toLowerCase()} + ${difference.remainingDays} ${copy.days.toLowerCase()}`;
+    byId("differenceStartWeekday").textContent = copy.weekdays[getWeekday(start)];
+    byId("differenceEndWeekday").textContent = copy.weekdays[getWeekday(end)];
+    result.hidden = false;
+  });
+
+  byId("periodForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const start = parseCivilDate(byId("periodStart").value);
+    const values = ["Years", "Months", "Weeks", "Days"].map((name) => Number(byId(`period${name}`).value));
+    const result = byId("periodResult");
+    if (!start) { setError("periodError", copy.required); result.hidden = true; return; }
+    if (values.some((value) => !Number.isInteger(value) || value < 0)) { setError("periodError", copy.invalidNumbers); result.hidden = true; return; }
+    const direction = byId("operation").value === "subtract" ? -1 : 1;
+    const end = addPeriod(start, { years: values[0] * direction, months: values[1] * direction, weeks: values[2] * direction, days: values[3] * direction });
+    setError("periodError", "");
+    byId("periodDate").textContent = formatDate(end);
+    byId("periodWeekday").textContent = copy.weekdays[getWeekday(end)];
+    result.hidden = false;
+  });
+</script>

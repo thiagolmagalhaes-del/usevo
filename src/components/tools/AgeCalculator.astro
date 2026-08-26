@@ -1,0 +1,79 @@
+---
+import type { Locale } from "../../data/locales";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Calculadora de idade", description: "Descubra a idade exata e informações do próximo aniversário.", back: "Voltar para ferramentas", related: "Precisa comparar datas?", relatedLink: "Abrir Calculadora de datas", birthDate: "Data de nascimento", referenceDate: "Idade em / data de referência", calculate: "Calcular idade", result: "Resultado", exactAge: "Idade exata", approximateMonths: "Meses aproximados", approximateWeeks: "Semanas aproximadas", totalDays: "Total exato de dias", birthWeekday: "Dia da semana do nascimento", nextBirthday: "Próximo aniversário", daysUntilBirthday: "Dias até o próximo aniversário", required: "Informe datas válidas para continuar.", futureBirth: "A data de nascimento não pode ser posterior à data de referência.", weekdays: ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"], ageUnits: ["anos", "meses", "dias"], dateLocale: "pt-BR",
+} : locale === "es" ? {
+  title: "Calculadora de edad", description: "Descubre la edad exacta e información sobre el próximo cumpleaños.", back: "Volver a herramientas", related: "¿Necesitas comparar fechas?", relatedLink: "Abrir Calculadora de fechas", birthDate: "Fecha de nacimiento", referenceDate: "Edad al / fecha de referencia", calculate: "Calcular edad", result: "Resultado", exactAge: "Edad exacta", approximateMonths: "Meses aproximados", approximateWeeks: "Semanas aproximadas", totalDays: "Total exacto de días", birthWeekday: "Día de la semana de nacimiento", nextBirthday: "Próximo cumpleaños", daysUntilBirthday: "Días hasta el próximo cumpleaños", required: "Introduce fechas válidas para continuar.", futureBirth: "La fecha de nacimiento no puede ser posterior a la fecha de referencia.", weekdays: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"], ageUnits: ["años", "meses", "días"], dateLocale: "es",
+} : {
+  title: "Age Calculator", description: "Find an exact age and details about the next birthday.", back: "Back to tools", related: "Need to compare dates?", relatedLink: "Open Date Calculator", birthDate: "Date of birth", referenceDate: "Age on / reference date", calculate: "Calculate age", result: "Result", exactAge: "Exact age", approximateMonths: "Approximate months", approximateWeeks: "Approximate weeks", totalDays: "Exact total days", birthWeekday: "Birth weekday", nextBirthday: "Next birthday", daysUntilBirthday: "Days until next birthday", required: "Enter valid dates to continue.", futureBirth: "The date of birth cannot be after the reference date.", weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], ageUnits: ["years", "months", "days"], dateLocale: "en-US",
+};
+
+const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
+const dateRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-datas/" : locale === "es" ? "/es/herramientas/calculadora-de-fechas/" : "/en/tools/date-calculator/";
+---
+
+<main class="age-tool">
+  <div class="container">
+    <a class="back" href={backRoute}>← {copy.back}</a>
+    <p class="eyebrow">{copy.title}</p>
+    <h1>{copy.title}</h1>
+    <p class="intro">{copy.description}</p>
+    <section class="card" aria-labelledby="ageTitle">
+      <h2 id="ageTitle">{copy.title}</h2>
+      <form id="ageForm" novalidate>
+        <div class="field"><label for="birthDate">{copy.birthDate}</label><input id="birthDate" type="date" required /></div>
+        <div class="field"><label for="referenceDate">{copy.referenceDate}</label><input id="referenceDate" type="date" required /></div>
+        <button type="submit">{copy.calculate}</button>
+      </form>
+      <p id="ageError" class="error" role="alert" hidden></p>
+      <div id="ageResult" class="result" aria-live="polite" hidden>
+        <h3>{copy.result}</h3>
+        <dl>
+          <div><dt>{copy.exactAge}</dt><dd id="exactAge"></dd></div>
+          <div><dt>{copy.approximateMonths}</dt><dd id="approximateMonths"></dd></div>
+          <div><dt>{copy.approximateWeeks}</dt><dd id="approximateWeeks"></dd></div>
+          <div><dt>{copy.totalDays}</dt><dd id="totalDays"></dd></div>
+          <div><dt>{copy.birthWeekday}</dt><dd id="birthWeekday"></dd></div>
+          <div><dt>{copy.nextBirthday}</dt><dd id="nextBirthday"></dd></div>
+          <div><dt>{copy.daysUntilBirthday}</dt><dd id="daysUntilBirthday"></dd></div>
+        </dl>
+      </div>
+    </section>
+    <aside class="related"><span>{copy.related}</span> <a href={dateRoute}>{copy.relatedLink}</a></aside>
+  </div>
+</main>
+
+<style>
+  .age-tool { background:#f8f9fc; padding:48px 20px 80px; }.container { max-width:700px; margin:0 auto; }.back { color:#526174; display:inline-block; font-size:14px; margin-bottom:22px; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); margin:0; line-height:1.1; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 32px; }.card { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); padding:26px; }h2 { font-size:23px; margin:0 0 20px; }h3 { font-size:17px; margin:0 0 14px; }.field { margin-bottom:17px; }label { display:block; font-weight:600; margin-bottom:7px; }input { border:1px solid #dfe3ea; border-radius:10px; color:#172033; font:inherit; padding:12px; width:100%; }input:focus { border-color:#315bdc; outline:2px solid #dce5ff; outline-offset:1px; }button { background:#315bdc; border:0; border-radius:10px; color:#fff; cursor:pointer; font:inherit; font-weight:700; padding:13px 18px; width:100%; }button:hover { background:#264bc0; }.error { background:#fff1f0; border-radius:8px; color:#8a280d; margin:16px 0 0; padding:10px; }.result { background:#f4f7ff; border-radius:12px; margin-top:18px; padding:18px; }dl { display:grid; gap:11px; margin:0; }dl div { display:flex; gap:12px; justify-content:space-between; }dt { color:#536176; }dd { font-weight:700; margin:0; text-align:right; }.related { background:#eef2ff; border-radius:12px; margin-top:26px; padding:16px 18px; }.related a { color:#234cbd; font-weight:700; text-decoration:underline; }@media (max-width:520px) { .age-tool { padding:32px 16px 64px; }.card { padding:20px; }dl div { align-items:flex-start; flex-direction:column; gap:3px; }dd { text-align:left; } }
+</style>
+
+<script type="module" define:vars={{ copy }}>
+  import { calculateAge, getWeekday, parseCivilDate } from "../../lib/date-calculations";
+
+  const byId = (id) => document.getElementById(id);
+  const today = new Date();
+  byId("referenceDate").value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const formatDate = (date) => new Intl.DateTimeFormat(copy.dateLocale, { dateStyle: "long" }).format(new Date(date.year, date.month - 1, date.day, 12));
+  const setError = (message) => { const element = byId("ageError"); element.textContent = message; element.hidden = !message; };
+
+  byId("ageForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const birthDate = parseCivilDate(byId("birthDate").value);
+    const referenceDate = parseCivilDate(byId("referenceDate").value);
+    const resultElement = byId("ageResult");
+    if (!birthDate || !referenceDate) { setError(copy.required); resultElement.hidden = true; return; }
+    const result = calculateAge(birthDate, referenceDate);
+    if (!result) { setError(copy.futureBirth); resultElement.hidden = true; return; }
+    setError("");
+    byId("exactAge").textContent = `${result.years} ${copy.ageUnits[0]}, ${result.months} ${copy.ageUnits[1]}, ${result.days} ${copy.ageUnits[2]}`;
+    byId("approximateMonths").textContent = String(result.approximateMonths);
+    byId("approximateWeeks").textContent = String(result.approximateWeeks);
+    byId("totalDays").textContent = String(result.totalDays);
+    byId("birthWeekday").textContent = copy.weekdays[getWeekday(birthDate)];
+    byId("nextBirthday").textContent = formatDate(result.nextBirthday);
+    byId("daysUntilBirthday").textContent = String(result.daysUntilNextBirthday);
+    resultElement.hidden = false;
+  });
+</script>
