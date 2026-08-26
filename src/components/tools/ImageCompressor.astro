@@ -8,6 +8,8 @@ const copy = locale === "pt-BR" ? {
 } : {
   title: "Compress Image", drop: "Drag and drop an image here or click to select", file: "File", original: "Original size", quality: "Quality", processing: "Processing...", final: "Final size", reduction: "Reduction", download: "Download Image", formats: "Supported formats: JPG, PNG, WebP", noFile: "No file selected.", tooLarge: "File exceeds the limit of {size} MB.", noReduction: "No effective reduction was achieved.", error: "Error compressing the image. The file may be too large or invalid.",
 };
+const resizerRoute = locale === "pt-BR" ? "/ferramentas/redimensionar-imagem/" : locale === "es" ? "/es/herramientas/redimensionar-imagen/" : "/en/tools/image-resizer/";
+const resizerLink = locale === "pt-BR" ? "Precisa alterar largura e altura? Abra o Redimensionador de imagem." : locale === "es" ? "¿Necesitas cambiar el ancho y el alto? Abre el Redimensionador de imagen." : "Need to change width and height? Open Image Resizer.";
 ---
 <div class="tool-card card">
   <h1 style="font-size: 1.5em; margin-block: 0.83em;">{copy.title}</h1>
@@ -27,6 +29,7 @@ const copy = locale === "pt-BR" ? {
     <a id="downloadLink" href="#" download>{copy.download}</a>
   </div>
   <div id="error" class="error" style="display:none"></div>
+  <p class="related"><a href={resizerRoute}>{resizerLink}</a></p>
 </div>
 
 <style>
@@ -34,6 +37,7 @@ const copy = locale === "pt-BR" ? {
 .file-input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
 .file-preview { display:block; max-width:100%; max-height:240px; margin:16px auto 0; border-radius:8px; }
 .error { color: #7a1f00; background:#fff1f0; padding:8px; border-radius:8px; margin-top:8px; }
+.related { margin:18px 0 0; }.related a { color:#234cbd; font-weight:700; }
 </style>
 
 <script type="module" define:vars={{ copy }}>

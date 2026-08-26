@@ -1,0 +1,88 @@
+---
+import type { Locale } from "../../data/locales";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Redimensionador de imagem", eyebrow: "Ferramentas › Arquivos", intro: "Altere largura e altura de imagens sem enviar nada para um servidor.", upload: "Arraste e solte uma imagem aqui ou clique para selecionar", formats: "Aceita JPG, PNG e WebP. Uma imagem por vez.", file: "Arquivo", originalSize: "Tamanho original", originalDimensions: "Dimensões originais", dimensions: "Dimensões", width: "Largura (px)", height: "Altura (px)", keepRatio: "Manter proporção", percentage: "Redimensionar por porcentagem", export: "Exportação", format: "Formato", keepOriginal: "Manter formato original", jpeg: "JPG", png: "PNG", webp: "WebP", quality: "Qualidade", process: "Redimensionar imagem", replace: "Substituir imagem", clear: "Limpar tudo", processing: "Processando imagem…", ready: "Imagem pronta para redimensionar.", outputReady: "Imagem redimensionada com sucesso.", result: "Resultado", finalDimensions: "Dimensões finais", finalSize: "Tamanho final", download: "Baixar imagem", noImage: "Selecione uma imagem antes de redimensionar.", unsupportedFile: "Selecione uma imagem JPG, PNG ou WebP válida.", invalidDimensions: "Informe largura e altura inteiras maiores que zero.", dimensionsTooLarge: "As dimensões são grandes demais para processar com segurança neste dispositivo.", readError: "Não foi possível ler a imagem. Ela pode estar corrompida ou não ser compatível.", processingError: "Não foi possível redimensionar a imagem. Tente dimensões menores ou outra imagem.", resizerVsCompressor: "Redimensionar altera largura e altura; comprimir reduz principalmente o peso do arquivo.", compressorLink: "Abrir Compressor de imagem", privacyTitle: "Privacidade", privacy: "Sua imagem é processada somente neste navegador. Nenhum arquivo é enviado para nossos servidores.", originalFormat: "Formato original", previewAlt: "Prévia da imagem selecionada", outputPreviewAlt: "Prévia da imagem redimensionada",
+} : locale === "es" ? {
+  title: "Redimensionador de imagen", eyebrow: "Herramientas › Archivos", intro: "Cambia el ancho y la altura de imágenes sin enviar nada a un servidor.", upload: "Arrastra y suelta una imagen aquí o haz clic para seleccionarla", formats: "Acepta JPG, PNG y WebP. Una imagen por vez.", file: "Archivo", originalSize: "Tamaño original", originalDimensions: "Dimensiones originales", dimensions: "Dimensiones", width: "Ancho (px)", height: "Alto (px)", keepRatio: "Mantener proporción", percentage: "Redimensionar por porcentaje", export: "Exportación", format: "Formato", keepOriginal: "Mantener formato original", jpeg: "JPG", png: "PNG", webp: "WebP", quality: "Calidad", process: "Redimensionar imagen", replace: "Reemplazar imagen", clear: "Limpiar todo", processing: "Procesando imagen…", ready: "Imagen lista para redimensionar.", outputReady: "Imagen redimensionada correctamente.", result: "Resultado", finalDimensions: "Dimensiones finales", finalSize: "Tamaño final", download: "Descargar imagen", noImage: "Selecciona una imagen antes de redimensionar.", unsupportedFile: "Selecciona una imagen JPG, PNG o WebP válida.", invalidDimensions: "Introduce un ancho y alto enteros mayores que cero.", dimensionsTooLarge: "Las dimensiones son demasiado grandes para procesarlas de forma segura en este dispositivo.", readError: "No se pudo leer la imagen. Puede estar dañada o no ser compatible.", processingError: "No se pudo redimensionar la imagen. Prueba dimensiones menores u otra imagen.", resizerVsCompressor: "Redimensionar cambia el ancho y el alto; comprimir reduce principalmente el peso del archivo.", compressorLink: "Abrir Compresor de imagen", privacyTitle: "Privacidad", privacy: "Tu imagen se procesa solo en este navegador. Ningún archivo se envía a nuestros servidores.", originalFormat: "Formato original", previewAlt: "Vista previa de la imagen seleccionada", outputPreviewAlt: "Vista previa de la imagen redimensionada",
+} : {
+  title: "Image Resizer", eyebrow: "Tools › Files", intro: "Change image width and height without sending anything to a server.", upload: "Drag and drop an image here or click to select", formats: "Accepts JPG, PNG, and WebP. One image at a time.", file: "File", originalSize: "Original size", originalDimensions: "Original dimensions", dimensions: "Dimensions", width: "Width (px)", height: "Height (px)", keepRatio: "Keep aspect ratio", percentage: "Resize by percentage", export: "Export", format: "Format", keepOriginal: "Keep original format", jpeg: "JPG", png: "PNG", webp: "WebP", quality: "Quality", process: "Resize image", replace: "Replace image", clear: "Clear all", processing: "Processing image…", ready: "Image ready to resize.", outputReady: "Image resized successfully.", result: "Result", finalDimensions: "Final dimensions", finalSize: "Final size", download: "Download image", noImage: "Select an image before resizing.", unsupportedFile: "Select a valid JPG, PNG, or WebP image.", invalidDimensions: "Enter whole width and height values greater than zero.", dimensionsTooLarge: "The dimensions are too large to process safely on this device.", readError: "The image could not be read. It may be damaged or unsupported.", processingError: "The image could not be resized. Try smaller dimensions or another image.", resizerVsCompressor: "Resizing changes width and height; compression mainly reduces file size.", compressorLink: "Open Image Compressor", privacyTitle: "Privacy", privacy: "Your image is processed only in this browser. No file is sent to our servers.", originalFormat: "Original format", previewAlt: "Selected image preview", outputPreviewAlt: "Resized image preview",
+};
+
+const compressorRoute = locale === "pt-BR" ? "/ferramentas/comprimir-imagem/" : locale === "es" ? "/es/herramientas/comprimir-imagen/" : "/en/tools/compress-image/";
+---
+
+<main class="image-resizer">
+  <div class="container">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.title}</h1>
+    <p class="intro">{copy.intro}</p>
+
+    <form id="imageResizerForm" novalidate>
+      <label id="resizerDropArea" class="drop-area" for="resizerFileInput">
+        <strong>{copy.upload}</strong>
+        <span id="resizerUploadHint">{copy.formats}</span>
+      </label>
+      <input id="resizerFileInput" class="file-input" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-describedby="resizerUploadHint" />
+
+      <section id="resizerImageInfo" class="card image-info" hidden aria-labelledby="resizerImageInfoTitle">
+        <h2 id="resizerImageInfoTitle" class="sr-only">{copy.file}</h2>
+        <img id="resizerPreview" class="preview" alt={copy.previewAlt} />
+        <dl>
+          <div><dt>{copy.file}</dt><dd id="resizerFileName"></dd></div>
+          <div><dt>{copy.originalSize}</dt><dd id="resizerFileSize"></dd></div>
+          <div><dt>{copy.originalDimensions}</dt><dd id="resizerOriginalDimensions"></dd></div>
+        </dl>
+        <div class="image-actions">
+          <label id="resizerReplace" class="button secondary" for="resizerFileInput">{copy.replace}</label>
+          <button id="resizerClear" class="button secondary" type="button">{copy.clear}</button>
+        </div>
+      </section>
+
+      <section id="resizerControls" class="card controls" hidden aria-labelledby="resizerControlsTitle">
+        <h2 id="resizerControlsTitle">{copy.dimensions}</h2>
+        <div class="dimension-fields">
+          <div class="field"><label for="resizerWidth">{copy.width}</label><input id="resizerWidth" type="number" min="1" step="1" inputmode="numeric" /></div>
+          <div class="field"><label for="resizerHeight">{copy.height}</label><input id="resizerHeight" type="number" min="1" step="1" inputmode="numeric" /></div>
+        </div>
+        <label class="checkbox" for="resizerKeepRatio"><input id="resizerKeepRatio" type="checkbox" checked /> {copy.keepRatio}</label>
+
+        <fieldset class="presets"><legend>{copy.percentage}</legend><div><button id="resizerPreset25" type="button" data-percent="25">25%</button><button id="resizerPreset50" type="button" data-percent="50">50%</button><button id="resizerPreset75" type="button" data-percent="75">75%</button><button id="resizerPreset100" type="button" data-percent="100">100%</button></div></fieldset>
+
+        <h2>{copy.export}</h2>
+        <div class="field"><label for="resizerFormat">{copy.format}</label><select id="resizerFormat"><option value="original">{copy.keepOriginal}</option><option value="jpeg">{copy.jpeg}</option><option value="png">{copy.png}</option><option value="webp">{copy.webp}</option></select></div>
+        <div id="resizerQualityRow" class="field"><label for="resizerQuality">{copy.quality}</label><input id="resizerQuality" type="range" min="0.1" max="1" step="0.01" value="0.92" /></div>
+        <button id="resizerProcess" class="button primary" type="button">{copy.process}</button>
+      </section>
+    </form>
+
+    <p id="resizerStatus" class="status" aria-live="polite"></p>
+    <p id="resizerError" class="error" role="alert" hidden></p>
+
+    <section id="resizerResult" class="card result" hidden aria-live="polite" aria-labelledby="resizerResultTitle">
+      <h2 id="resizerResultTitle">{copy.result}</h2>
+      <img id="resizerOutputPreview" class="preview" alt={copy.outputPreviewAlt} />
+      <dl><div><dt>{copy.finalDimensions}</dt><dd id="resizerFinalDimensions"></dd></div><div><dt>{copy.finalSize}</dt><dd id="resizerFinalSize"></dd></div></dl>
+      <a id="resizerDownload" class="button primary download" download>{copy.download}</a>
+    </section>
+
+    <section class="explanation" aria-labelledby="resizerPrivacyTitle">
+      <p>{copy.resizerVsCompressor} <a href={compressorRoute}>{copy.compressorLink}</a>.</p>
+      <h2 id="resizerPrivacyTitle">{copy.privacyTitle}</h2>
+      <p>{copy.privacy}</p>
+    </section>
+  </div>
+</main>
+
+<style>
+  .image-resizer { background:#f8f9fc; min-height:100%; padding:48px 20px 80px; }.container { margin:0 auto; max-width:780px; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); line-height:1.1; margin:0; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 30px; }.card,.explanation { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); margin-top:18px; padding:24px; }.drop-area { align-items:center; background:#fff; border:2px dashed #aebce0; border-radius:18px; color:#1c326b; cursor:pointer; display:flex; flex-direction:column; gap:8px; justify-content:center; min-height:146px; padding:22px; text-align:center; user-select:none; -webkit-user-select:none; }.drop-area[data-dragging="true"] { background:#eef2ff; border-color:#315bdc; }.drop-area span { color:#687386; font-size:14px; }.file-input { height:1px; opacity:0; overflow:hidden; position:absolute; width:1px; }.image-info { display:grid; gap:18px; grid-template-columns:minmax(160px,240px) 1fr; }.preview { background:#f3f5f9; border-radius:12px; display:block; max-height:250px; max-width:100%; object-fit:contain; width:100%; }dl { display:grid; gap:12px; margin:0; }dl div { display:flex; gap:16px; justify-content:space-between; }dt { color:#5d687a; }dd { font-weight:700; margin:0; overflow-wrap:anywhere; text-align:right; }.image-actions { align-self:end; display:flex; gap:10px; grid-column:2; }.button { align-items:center; border:0; border-radius:10px; box-sizing:border-box; cursor:pointer; display:inline-flex; font:inherit; font-weight:700; justify-content:center; min-height:44px; padding:11px 16px; text-decoration:none; }.button.primary { background:#315bdc; color:#fff; width:100%; }.button.primary:hover { background:#264bc0; }.button.secondary,.presets button { background:#eef2ff; color:#234cbd; }.button.secondary:hover,.presets button:hover { background:#dce5ff; }.controls h2 { font-size:20px; margin:0 0 16px; }.controls h2:not(:first-child) { margin-top:26px; }.dimension-fields { display:grid; gap:14px; grid-template-columns:repeat(2,minmax(0,1fr)); }.field { margin-bottom:16px; }label { display:block; font-weight:600; margin-bottom:7px; }input,select { border:1px solid #dfe3ea; border-radius:10px; box-sizing:border-box; color:#172033; font:inherit; padding:12px; width:100%; }input:focus,select:focus,button:focus-visible,.button:focus-visible { border-color:#315bdc; outline:2px solid #dce5ff; outline-offset:2px; }.checkbox { align-items:center; display:flex; gap:8px; margin:0; }.checkbox input { width:auto; }.presets { border:0; margin:22px 0 0; padding:0; }.presets legend { font-weight:700; margin-bottom:8px; }.presets div { display:flex; flex-wrap:wrap; gap:8px; }.presets button { border:0; border-radius:8px; cursor:pointer; font:inherit; font-weight:700; min-height:40px; padding:8px 14px; }.status { color:#315bdc; font-weight:600; min-height:1.5em; margin:16px 0 0; }.error { background:#fff1f0; border-radius:10px; color:#8a280d; margin:16px 0 0; padding:12px; }.result { margin-top:18px; }.result h2,.explanation h2 { font-size:20px; margin:0 0 14px; }.result .preview { margin-bottom:18px; max-height:320px; }.download { margin-top:18px; }.explanation { color:#536176; line-height:1.55; }.explanation a { color:#234cbd; font-weight:700; }.sr-only { height:1px; margin:-1px; overflow:hidden; position:absolute; width:1px; clip:rect(0,0,0,0); }@media (max-width:620px) { .image-resizer { padding:32px 16px 64px; }.card,.explanation { padding:20px; }.image-info { grid-template-columns:1fr; }.image-actions { grid-column:auto; }.dimension-fields { grid-template-columns:1fr; }dl div { align-items:flex-start; flex-direction:column; gap:3px; }dd { text-align:left; } }
+</style>
+
+<script id="imageResizerCopy" type="application/json" set:html={JSON.stringify(copy)}></script>
+<script>
+  import { initializeImageResizer } from "../../lib/image-resizer-client";
+
+  const rawCopy = document.getElementById("imageResizerCopy")?.textContent;
+  if (rawCopy) initializeImageResizer(document, JSON.parse(rawCopy));
+</script>

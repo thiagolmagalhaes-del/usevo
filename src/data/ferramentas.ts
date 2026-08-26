@@ -501,6 +501,26 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Redimensionador de imagem",
+    "Altere largura e altura de imagens JPG, PNG e WebP diretamente no navegador.",
+    "Arquivos",
+    "↔",
+    "/ferramentas/redimensionar-imagem",
+    buildTranslations(
+      "Redimensionador de imagem",
+      "Altere largura e altura de imagens JPG, PNG e WebP diretamente no navegador.",
+      "Image Resizer",
+      "Change the width and height of JPG, PNG, and WebP images directly in your browser.",
+      "Redimensionador de imagen",
+      "Cambia el ancho y el alto de imágenes JPG, PNG y WebP directamente en el navegador.",
+    ),
+    {
+      "pt-BR": "redimensionar-imagem",
+      en: "image-resizer",
+      es: "redimensionar-imagen",
+    },
+  ),
+  createFerramenta(
     "Comparador de Texto",
     "Compare dois textos e visualize as diferenças.",
     "Texto",
