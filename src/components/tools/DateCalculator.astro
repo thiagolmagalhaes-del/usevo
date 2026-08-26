@@ -93,43 +93,12 @@ const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : loc
   @media (max-width:720px) { .date-tool { padding:32px 16px 64px; } .calculator-grid { grid-template-columns:1fr; } }
 </style>
 
-<script type="module" define:vars={{ copy }}>
-  import { addPeriod, getDateDifference, getWeekday, parseCivilDate } from "../../lib/date-calculations";
+<script id="dateCalculatorCopy" type="application/json" set:html={JSON.stringify(copy)}></script>
+<script type="module">
+  import { initializeDateCalculator } from "../../lib/date-tools-client";
 
-  const byId = (id) => document.getElementById(id);
-  const formatDate = (date) => new Intl.DateTimeFormat(copy.dateLocale, { dateStyle: "long" }).format(new Date(date.year, date.month - 1, date.day, 12));
-  const formatDifference = (difference) => `${difference.years} ${copy.years.toLowerCase()}, ${difference.months} ${copy.months.toLowerCase()}, ${difference.days} ${copy.days.toLowerCase()}`;
-  const setError = (id, message) => { const element = byId(id); element.textContent = message; element.hidden = !message; };
-
-  byId("differenceForm").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const start = parseCivilDate(byId("differenceStart").value);
-    const end = parseCivilDate(byId("differenceEnd").value);
-    const result = byId("differenceResult");
-    if (!start || !end) { setError("differenceError", copy.required); result.hidden = true; return; }
-    const difference = getDateDifference(start, end, byId("includeEnd").checked);
-    if (!difference) { setError("differenceError", copy.reversed); result.hidden = true; return; }
-    setError("differenceError", "");
-    byId("differenceExact").textContent = formatDifference(difference);
-    byId("differenceDays").textContent = String(difference.totalDays);
-    byId("differenceWeeks").textContent = `${difference.weeks} ${copy.weeks.toLowerCase()} + ${difference.remainingDays} ${copy.days.toLowerCase()}`;
-    byId("differenceStartWeekday").textContent = copy.weekdays[getWeekday(start)];
-    byId("differenceEndWeekday").textContent = copy.weekdays[getWeekday(end)];
-    result.hidden = false;
-  });
-
-  byId("periodForm").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const start = parseCivilDate(byId("periodStart").value);
-    const values = ["Years", "Months", "Weeks", "Days"].map((name) => Number(byId(`period${name}`).value));
-    const result = byId("periodResult");
-    if (!start) { setError("periodError", copy.required); result.hidden = true; return; }
-    if (values.some((value) => !Number.isInteger(value) || value < 0)) { setError("periodError", copy.invalidNumbers); result.hidden = true; return; }
-    const direction = byId("operation").value === "subtract" ? -1 : 1;
-    const end = addPeriod(start, { years: values[0] * direction, months: values[1] * direction, weeks: values[2] * direction, days: values[3] * direction });
-    setError("periodError", "");
-    byId("periodDate").textContent = formatDate(end);
-    byId("periodWeekday").textContent = copy.weekdays[getWeekday(end)];
-    result.hidden = false;
-  });
+  const config = document.getElementById("dateCalculatorCopy");
+  if (config?.textContent) {
+    initializeDateCalculator(document, JSON.parse(config.textContent));
+  }
 </script>
