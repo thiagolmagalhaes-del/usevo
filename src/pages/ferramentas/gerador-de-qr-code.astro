@@ -17,6 +17,8 @@ const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
+const scannerRoute = locale === "pt-BR" ? "/ferramentas/leitor-de-qr-code/" : locale === "es" ? "/es/herramientas/escaner-de-codigo-qr/" : "/en/tools/qr-code-scanner/";
+const scannerLink = locale === "pt-BR" ? "Ler um QR Code" : locale === "es" ? "Leer un código QR" : "Scan a QR Code";
 ---
 
 
@@ -187,6 +189,9 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         font-size: 14px;
       }
 
+      .scanner-link { margin:22px 0 0; text-align:center; }
+      .scanner-link a { color:#234cbd; font-weight:700; }
+
       @media (max-width: 700px) {
         main {
           margin: 40px auto;
@@ -246,6 +251,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
             {ui.downloadQrCode}
           </a>
         </div>
+        <p class="scanner-link"><a href={scannerRoute}>{scannerLink}</a></p>
       </div>
     </main>
 

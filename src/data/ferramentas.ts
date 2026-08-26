@@ -301,6 +301,26 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Leitor de QR Code",
+    "Leia QR Codes por imagem ou câmera diretamente no navegador.",
+    "Utilidades",
+    "⌁",
+    "/ferramentas/leitor-de-qr-code",
+    buildTranslations(
+      "Leitor de QR Code",
+      "Leia QR Codes por imagem ou câmera diretamente no navegador.",
+      "QR Code Scanner",
+      "Read QR Codes from images or your camera directly in the browser.",
+      "Escáner de código QR",
+      "Lee códigos QR desde imágenes o la cámara directamente en el navegador.",
+    ),
+    {
+      "pt-BR": "leitor-de-qr-code",
+      en: "qr-code-scanner",
+      es: "escaner-de-codigo-qr",
+    },
+  ),
+  createFerramenta(
     "JPG para PDF",
     "Converta imagens JPG em documentos PDF.",
     "Arquivos",

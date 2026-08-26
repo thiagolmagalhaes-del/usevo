@@ -1,0 +1,65 @@
+---
+import type { Locale } from "../../data/locales";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  title: "Leitor de QR Code", eyebrow: "Ferramentas › Utilidades", intro: "Leia QR Codes de imagens ou use a câmera. Tudo é processado neste navegador.", imageMode: "Ler imagem", cameraMode: "Usar câmera", upload: "Arraste, cole ou clique para selecionar uma imagem", formats: "Aceita JPG, PNG e WebP. Uma imagem por vez.", replace: "Substituir imagem", clear: "Limpar", startCamera: "Iniciar câmera", stopCamera: "Parar câmera", unsupportedImage: "Selecione uma imagem JPG, PNG ou WebP válida.", readingImage: "Lendo QR Code da imagem…", noQrFound: "Nenhum QR Code foi encontrado nesta imagem.", imageReadError: "Não foi possível ler esta imagem. Tente outro arquivo.", cameraStarting: "Solicitando acesso à câmera…", cameraUnavailable: "Nenhuma câmera compatível está disponível neste dispositivo.", cameraDenied: "O acesso à câmera foi negado. Autorize a câmera nas configurações do navegador para continuar.", insecureContext: "A câmera só pode ser usada em uma conexão segura (HTTPS).", cameraError: "Não foi possível iniciar a câmera. Tente novamente.", detected: "QR Code detectado.", result: "Resultado", contentType: "Tipo", kindLabels: { url: "URL", text: "Texto", email: "E-mail", phone: "Telefone", wifi: "Wi‑Fi" }, copy: "Copiar", copied: "Conteúdo copiado.", copyError: "Não foi possível copiar o conteúdo.", another: "Ler outro", openLink: "Abrir link", destination: "Destino", safety: "Confira o endereço antes de abrir QR Codes desconhecidos.", privacyTitle: "Privacidade", privacy: "Imagens, câmera e conteúdo do QR Code permanecem no seu dispositivo; nada é enviado para nossos servidores.", generatorLink: "Gerar um QR Code", generatorPrompt: "Precisa criar um código?", imagePreviewAlt: "Prévia da imagem para leitura do QR Code", videoLabel: "Prévia da câmera para leitura do QR Code",
+} : locale === "es" ? {
+  title: "Escáner de código QR", eyebrow: "Herramientas › Utilidades", intro: "Lee códigos QR de imágenes o usa la cámara. Todo se procesa en este navegador.", imageMode: "Leer imagen", cameraMode: "Usar cámara", upload: "Arrastra, pega o haz clic para seleccionar una imagen", formats: "Acepta JPG, PNG y WebP. Una imagen por vez.", replace: "Reemplazar imagen", clear: "Limpiar", startCamera: "Iniciar cámara", stopCamera: "Detener cámara", unsupportedImage: "Selecciona una imagen JPG, PNG o WebP válida.", readingImage: "Leyendo el código QR de la imagen…", noQrFound: "No se encontró ningún código QR en esta imagen.", imageReadError: "No se pudo leer esta imagen. Prueba con otro archivo.", cameraStarting: "Solicitando acceso a la cámara…", cameraUnavailable: "No hay una cámara compatible disponible en este dispositivo.", cameraDenied: "Se denegó el acceso a la cámara. Autorízala en la configuración del navegador para continuar.", insecureContext: "La cámara solo puede usarse en una conexión segura (HTTPS).", cameraError: "No se pudo iniciar la cámara. Inténtalo de nuevo.", detected: "Código QR detectado.", result: "Resultado", contentType: "Tipo", kindLabels: { url: "URL", text: "Texto", email: "Correo electrónico", phone: "Teléfono", wifi: "Wi‑Fi" }, copy: "Copiar", copied: "Contenido copiado.", copyError: "No se pudo copiar el contenido.", another: "Leer otro", openLink: "Abrir enlace", destination: "Destino", safety: "Comprueba la dirección antes de abrir códigos QR desconocidos.", privacyTitle: "Privacidad", privacy: "Las imágenes, la cámara y el contenido del código QR permanecen en tu dispositivo; no se envía nada a nuestros servidores.", generatorLink: "Generar un código QR", generatorPrompt: "¿Necesitas crear un código?", imagePreviewAlt: "Vista previa de la imagen para leer el código QR", videoLabel: "Vista previa de la cámara para leer el código QR",
+} : {
+  title: "QR Code Scanner", eyebrow: "Tools › Utilities", intro: "Read QR Codes from images or use your camera. Everything is processed in this browser.", imageMode: "Read image", cameraMode: "Use camera", upload: "Drag, paste, or click to select an image", formats: "Accepts JPG, PNG, and WebP. One image at a time.", replace: "Replace image", clear: "Clear", startCamera: "Start camera", stopCamera: "Stop camera", unsupportedImage: "Select a valid JPG, PNG, or WebP image.", readingImage: "Reading QR Code from image…", noQrFound: "No QR Code was found in this image.", imageReadError: "This image could not be read. Try another file.", cameraStarting: "Requesting camera access…", cameraUnavailable: "No compatible camera is available on this device.", cameraDenied: "Camera access was denied. Allow it in your browser settings to continue.", insecureContext: "The camera can only be used on a secure connection (HTTPS).", cameraError: "The camera could not be started. Please try again.", detected: "QR Code detected.", result: "Result", contentType: "Type", kindLabels: { url: "URL", text: "Text", email: "Email", phone: "Phone", wifi: "Wi‑Fi" }, copy: "Copy", copied: "Content copied.", copyError: "The content could not be copied.", another: "Scan another", openLink: "Open link", destination: "Destination", safety: "Check the address before opening unknown QR Codes.", privacyTitle: "Privacy", privacy: "Images, camera, and QR Code content stay on your device; nothing is sent to our servers.", generatorLink: "Generate a QR Code", generatorPrompt: "Need to create a code?", imagePreviewAlt: "Image preview for reading the QR Code", videoLabel: "Camera preview for reading the QR Code",
+};
+
+const generatorRoute = locale === "pt-BR" ? "/ferramentas/gerador-de-qr-code/" : locale === "es" ? "/es/herramientas/generador-de-codigos-qr/" : "/en/tools/qr-code-generator/";
+---
+
+<main id="qrScanner" class="qr-scanner">
+  <div class="container">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.title}</h1>
+    <p class="intro">{copy.intro}</p>
+
+    <div class="mode-tabs" role="group" aria-label={copy.title}>
+      <button id="qrScannerImageMode" type="button" aria-pressed="true">{copy.imageMode}</button>
+      <button id="qrScannerCameraMode" type="button" aria-pressed="false">{copy.cameraMode}</button>
+    </div>
+
+    <section id="qrScannerImageModePanel" class="card" aria-labelledby="qrScannerImageMode">
+      <label id="qrScannerDropArea" class="drop-area" for="qrScannerFileInput"><strong>{copy.upload}</strong><span id="qrScannerUploadHint">{copy.formats}</span></label>
+      <input id="qrScannerFileInput" class="file-input" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-describedby="qrScannerUploadHint" />
+      <section id="qrScannerImagePreviewPanel" class="preview-panel" hidden aria-label={copy.imagePreviewAlt}>
+        <img id="qrScannerImagePreview" class="preview" alt={copy.imagePreviewAlt} />
+        <div class="actions"><label class="button secondary" for="qrScannerFileInput">{copy.replace}</label><button id="qrScannerClearImage" class="button secondary" type="button">{copy.clear}</button></div>
+      </section>
+    </section>
+
+    <section id="qrScannerCameraModePanel" class="card" hidden aria-labelledby="qrScannerCameraMode">
+      <video id="qrScannerVideo" class="preview video" autoplay muted playsinline aria-label={copy.videoLabel}></video>
+      <div class="actions"><button id="qrScannerStartCamera" class="button primary" type="button">{copy.startCamera}</button><button id="qrScannerStopCamera" class="button secondary" type="button" hidden>{copy.stopCamera}</button></div>
+    </section>
+
+    <p id="qrScannerStatus" class="status" aria-live="polite"></p>
+    <p id="qrScannerError" class="error" role="alert" hidden></p>
+    <section id="qrScannerResult" class="card result" hidden aria-live="polite" aria-labelledby="qrScannerResultTitle">
+      <h2 id="qrScannerResultTitle">{copy.result}</h2>
+      <dl><div><dt>{copy.contentType}</dt><dd id="qrScannerResultKind"></dd></div></dl>
+      <p id="qrScannerResultContent" class="result-content"></p>
+      <p id="qrScannerDestination" class="destination" hidden></p>
+      <div class="actions result-actions"><button id="qrScannerCopy" class="button secondary" type="button">{copy.copy}</button><a id="qrScannerOpenLink" class="button primary" target="_blank" rel="noopener noreferrer" hidden></a><button id="qrScannerAnother" class="button primary" type="button">{copy.another}</button></div>
+    </section>
+
+    <section class="explanation" aria-labelledby="qrScannerPrivacyTitle"><p>{copy.safety}</p><p>{copy.generatorPrompt} <a href={generatorRoute}>{copy.generatorLink}</a>.</p><h2 id="qrScannerPrivacyTitle">{copy.privacyTitle}</h2><p>{copy.privacy}</p></section>
+  </div>
+</main>
+
+<style>
+  .qr-scanner { background:#f8f9fc; min-height:100%; padding:48px 20px 80px; }.container { margin:0 auto; max-width:760px; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); line-height:1.1; margin:0; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 30px; }.mode-tabs { display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)); }.mode-tabs button,.button { align-items:center; border:0; border-radius:10px; box-sizing:border-box; cursor:pointer; display:inline-flex; font:inherit; font-weight:700; justify-content:center; min-height:44px; padding:11px 16px; text-decoration:none; }.mode-tabs button { background:#e7ecf8; color:#234cbd; }.mode-tabs button[aria-pressed="true"],.button.primary { background:#315bdc; color:#fff; }.card,.explanation { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); margin-top:18px; padding:24px; }.drop-area { align-items:center; border:2px dashed #aebce0; border-radius:16px; color:#1c326b; cursor:pointer; display:flex; flex-direction:column; gap:8px; justify-content:center; min-height:146px; padding:22px; text-align:center; user-select:none; -webkit-user-select:none; }.drop-area[data-dragging="true"] { background:#eef2ff; border-color:#315bdc; }.drop-area span { color:#687386; font-size:14px; }.file-input { height:1px; opacity:0; overflow:hidden; position:absolute; width:1px; }.preview-panel { margin-top:18px; }.preview { background:#f3f5f9; border-radius:12px; display:block; margin:0 auto; max-height:360px; max-width:100%; object-fit:contain; width:100%; }.video { min-height:180px; }.actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }.button.secondary { background:#eef2ff; color:#234cbd; }.status { color:#315bdc; font-weight:600; min-height:1.5em; margin:16px 0 0; }.error { background:#fff1f0; border-radius:10px; color:#8a280d; margin:16px 0 0; padding:12px; }.result h2,.explanation h2 { font-size:20px; margin:0 0 14px; }dl { margin:0; }dl div { display:flex; gap:12px; justify-content:space-between; }dt { color:#5d687a; }dd { font-weight:700; margin:0; }.result-content { background:#f4f7ff; border-radius:10px; overflow-wrap:anywhere; padding:13px; white-space:pre-wrap; }.destination { color:#536176; font-size:14px; }.result-actions .button { flex:1 1 150px; }.explanation { color:#536176; line-height:1.55; }.explanation a { color:#234cbd; font-weight:700; }button:focus-visible,.button:focus-visible,.drop-area:focus-within { outline:2px solid #315bdc; outline-offset:2px; }@media (max-width:560px) { .qr-scanner { padding:32px 16px 64px; }.card,.explanation { padding:20px; }.mode-tabs { grid-template-columns:1fr; }.actions .button { width:100%; } }
+</style>
+
+<script id="qrScannerCopy" type="application/json" set:html={JSON.stringify(copy)}></script>
+<script>
+  import { initializeQrScanner } from "../../lib/qr-scanner-client";
+
+  const rawCopy = document.getElementById("qrScannerCopy")?.textContent;
+  if (rawCopy) initializeQrScanner(document, JSON.parse(rawCopy));
+</script>
