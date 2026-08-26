@@ -12,7 +12,7 @@ type ConsentElement = {
 
 type AnalyticsRuntime = {
   localStorage?: Pick<Storage, "getItem" | "setItem">;
-  dataLayer?: unknown[][];
+  dataLayer?: IArguments[];
   gtag?: (...args: unknown[]) => void;
   __usevoAnalyticsInitialized?: boolean;
   [key: string]: unknown;
@@ -80,13 +80,14 @@ export const createAnalyticsConsentController = (
       return;
     }
 
-    runtime.__usevoAnalyticsInitialized = true;
     runtime.dataLayer = runtime.dataLayer ?? [];
-    runtime.gtag = runtime.gtag ?? ((...args: unknown[]) => {
-      runtime.dataLayer?.push(args);
-    });
+    runtime.gtag = runtime.gtag ?? function () {
+      runtime.dataLayer?.push(arguments);
+    };
 
-    runtime.gtag("consent", "default", { analytics_storage: "granted" });
+    runtime.__usevoAnalyticsInitialized = true;
+    runtime.gtag("consent", "default", { analytics_storage: "denied" });
+    runtime.gtag("consent", "update", { analytics_storage: "granted" });
     runtime.gtag("js", new Date());
     runtime.gtag("config", ANALYTICS_MEASUREMENT_ID, {
       allow_google_signals: false,
