@@ -19,12 +19,12 @@ const generatorRoute = locale === "pt-BR" ? "/ferramentas/gerador-de-qr-code/" :
     <h1>{copy.title}</h1>
     <p class="intro">{copy.intro}</p>
 
-    <div class="mode-tabs" role="group" aria-label={copy.title}>
-      <button id="qrScannerImageMode" type="button" aria-pressed="true">{copy.imageMode}</button>
-      <button id="qrScannerCameraMode" type="button" aria-pressed="false">{copy.cameraMode}</button>
+    <div class="mode-tabs" role="tablist" aria-label={copy.title}>
+      <button id="qrScannerImageMode" type="button" role="tab" aria-selected="true" aria-pressed="true" aria-controls="qrScannerImageModePanel">{copy.imageMode}</button>
+      <button id="qrScannerCameraMode" type="button" role="tab" aria-selected="false" aria-pressed="false" aria-controls="qrScannerCameraModePanel">{copy.cameraMode}</button>
     </div>
 
-    <section id="qrScannerImageModePanel" class="card" aria-labelledby="qrScannerImageMode">
+    <section id="qrScannerImageModePanel" class="card" role="tabpanel" aria-labelledby="qrScannerImageMode">
       <label id="qrScannerDropArea" class="drop-area" for="qrScannerFileInput"><strong>{copy.upload}</strong><span id="qrScannerUploadHint">{copy.formats}</span></label>
       <input id="qrScannerFileInput" class="file-input" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-describedby="qrScannerUploadHint" />
       <section id="qrScannerImagePreviewPanel" class="preview-panel" hidden aria-label={copy.imagePreviewAlt}>
@@ -33,7 +33,7 @@ const generatorRoute = locale === "pt-BR" ? "/ferramentas/gerador-de-qr-code/" :
       </section>
     </section>
 
-    <section id="qrScannerCameraModePanel" class="card" hidden aria-labelledby="qrScannerCameraMode">
+    <section id="qrScannerCameraModePanel" class="card" role="tabpanel" hidden aria-labelledby="qrScannerCameraMode">
       <video id="qrScannerVideo" class="preview video" autoplay muted playsinline aria-label={copy.videoLabel}></video>
       <div class="actions"><button id="qrScannerStartCamera" class="button primary" type="button">{copy.startCamera}</button><button id="qrScannerStopCamera" class="button secondary" type="button" hidden>{copy.stopCamera}</button></div>
     </section>
@@ -53,13 +53,13 @@ const generatorRoute = locale === "pt-BR" ? "/ferramentas/gerador-de-qr-code/" :
 </main>
 
 <style>
-  .qr-scanner { background:#f8f9fc; min-height:100%; padding:48px 20px 80px; }.container { margin:0 auto; max-width:760px; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); line-height:1.1; margin:0; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 30px; }.mode-tabs { display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)); }.mode-tabs button,.button { align-items:center; border:0; border-radius:10px; box-sizing:border-box; cursor:pointer; display:inline-flex; font:inherit; font-weight:700; justify-content:center; min-height:44px; padding:11px 16px; text-decoration:none; }.mode-tabs button { background:#e7ecf8; color:#234cbd; }.mode-tabs button[aria-pressed="true"],.button.primary { background:#315bdc; color:#fff; }.card,.explanation { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); margin-top:18px; padding:24px; }.drop-area { align-items:center; border:2px dashed #aebce0; border-radius:16px; color:#1c326b; cursor:pointer; display:flex; flex-direction:column; gap:8px; justify-content:center; min-height:146px; padding:22px; text-align:center; user-select:none; -webkit-user-select:none; }.drop-area[data-dragging="true"] { background:#eef2ff; border-color:#315bdc; }.drop-area span { color:#687386; font-size:14px; }.file-input { height:1px; opacity:0; overflow:hidden; position:absolute; width:1px; }.preview-panel { margin-top:18px; }.preview { background:#f3f5f9; border-radius:12px; display:block; margin:0 auto; max-height:360px; max-width:100%; object-fit:contain; width:100%; }.video { min-height:180px; }.actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }.button.secondary { background:#eef2ff; color:#234cbd; }.status { color:#315bdc; font-weight:600; min-height:1.5em; margin:16px 0 0; }.error { background:#fff1f0; border-radius:10px; color:#8a280d; margin:16px 0 0; padding:12px; }.result h2,.explanation h2 { font-size:20px; margin:0 0 14px; }dl { margin:0; }dl div { display:flex; gap:12px; justify-content:space-between; }dt { color:#5d687a; }dd { font-weight:700; margin:0; }.result-content { background:#f4f7ff; border-radius:10px; overflow-wrap:anywhere; padding:13px; white-space:pre-wrap; }.destination { color:#536176; font-size:14px; }.result-actions .button { flex:1 1 150px; }.explanation { color:#536176; line-height:1.55; }.explanation a { color:#234cbd; font-weight:700; }button:focus-visible,.button:focus-visible,.drop-area:focus-within { outline:2px solid #315bdc; outline-offset:2px; }@media (max-width:560px) { .qr-scanner { padding:32px 16px 64px; }.card,.explanation { padding:20px; }.mode-tabs { grid-template-columns:1fr; }.actions .button { width:100%; } }
+  .qr-scanner { background:#f8f9fc; min-height:100%; padding:48px 20px 80px; }.qr-scanner [hidden] { display:none !important; }.container { margin:0 auto; max-width:760px; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); line-height:1.1; margin:0; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 30px; }.mode-tabs { display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)); }.mode-tabs button,.button { align-items:center; border:0; border-radius:10px; box-sizing:border-box; cursor:pointer; display:inline-flex; font:inherit; font-weight:700; justify-content:center; min-height:44px; padding:11px 16px; text-decoration:none; }.mode-tabs button { background:#e7ecf8; color:#234cbd; }.mode-tabs button[aria-pressed="true"],.button.primary { background:#315bdc; color:#fff; }.card,.explanation { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); margin-top:18px; padding:24px; }.drop-area { align-items:center; border:2px dashed #aebce0; border-radius:16px; color:#1c326b; cursor:pointer; display:flex; flex-direction:column; gap:8px; justify-content:center; min-height:146px; padding:22px; text-align:center; user-select:none; -webkit-user-select:none; }.drop-area[data-dragging="true"] { background:#eef2ff; border-color:#315bdc; }.drop-area span { color:#687386; font-size:14px; }.file-input { height:1px; opacity:0; overflow:hidden; position:absolute; width:1px; }.preview-panel { margin-top:18px; }.preview { background:#f3f5f9; border-radius:12px; display:block; margin:0 auto; max-height:360px; max-width:100%; object-fit:contain; width:100%; }.video { min-height:180px; }.actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }.button.secondary { background:#eef2ff; color:#234cbd; }.status { color:#315bdc; font-weight:600; min-height:1.5em; margin:16px 0 0; }.error { background:#fff1f0; border-radius:10px; color:#8a280d; margin:16px 0 0; padding:12px; }.result h2,.explanation h2 { font-size:20px; margin:0 0 14px; }dl { margin:0; }dl div { display:flex; gap:12px; justify-content:space-between; }dt { color:#5d687a; }dd { font-weight:700; margin:0; }.result-content { background:#f4f7ff; border-radius:10px; overflow-wrap:anywhere; padding:13px; white-space:pre-wrap; }.destination { color:#536176; font-size:14px; }.result-actions .button { flex:1 1 150px; }.explanation { color:#536176; line-height:1.55; }.explanation a { color:#234cbd; font-weight:700; }button:focus-visible,.button:focus-visible,.drop-area:focus-within { outline:2px solid #315bdc; outline-offset:2px; }@media (max-width:560px) { .qr-scanner { padding:32px 16px 64px; }.card,.explanation { padding:20px; }.mode-tabs { grid-template-columns:1fr; }.actions .button { width:100%; } }
 </style>
 
-<script id="qrScannerCopy" type="application/json" set:html={JSON.stringify(copy)}></script>
+<script id="qrScannerConfig" type="application/json" set:html={JSON.stringify(copy)}></script>
 <script>
   import { initializeQrScanner } from "../../lib/qr-scanner-client";
 
-  const rawCopy = document.getElementById("qrScannerCopy")?.textContent;
+  const rawCopy = document.getElementById("qrScannerConfig")?.textContent;
   if (rawCopy) initializeQrScanner(document, JSON.parse(rawCopy));
 </script>

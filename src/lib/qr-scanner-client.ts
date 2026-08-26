@@ -134,6 +134,8 @@ export const initializeQrScanner = (documentRef: ElementLookup, copy: QrScannerC
     cameraMode.hidden = mode !== "camera";
     imageModeButton.setAttribute("aria-pressed", String(mode === "image"));
     cameraModeButton.setAttribute("aria-pressed", String(mode === "camera"));
+    imageModeButton.setAttribute("aria-selected", String(mode === "image"));
+    cameraModeButton.setAttribute("aria-selected", String(mode === "camera"));
     if (mode === "image") stopCamera();
     else clearImage();
     clearError();
