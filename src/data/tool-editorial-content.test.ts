@@ -16,6 +16,8 @@ const editorialToolIds = [
   "calculadora",
   "calculadora-de-datas",
   "calculadora-de-idade",
+  "conversor-de-unidades",
+  "conversor-de-moedas",
 ] as const;
 const locales: Locale[] = ["pt-BR", "en", "es"];
 
@@ -42,6 +44,16 @@ describe("tool editorial content", () => {
         en: "How to use the age calculator",
         es: "Cómo usar la calculadora de edad",
       },
+      "conversor-de-unidades": {
+        "pt-BR": "Como usar o conversor de unidades",
+        en: "How to use the unit converter",
+        es: "Cómo usar el convertidor de unidades",
+      },
+      "conversor-de-moedas": {
+        "pt-BR": "Como usar o conversor de moedas",
+        en: "How to use the currency converter",
+        es: "Cómo usar el convertidor de moneda",
+      },
     };
 
     for (const toolId of editorialToolIds) {
@@ -58,7 +70,7 @@ describe("tool editorial content", () => {
   });
 
   it("does not provide editorial content or related links for tools without data", () => {
-    const content = getToolEditorialContent("conversor-de-unidades", "pt-BR");
+    const content = getToolEditorialContent("contador-de-palavras", "pt-BR");
     expect(content).toBeUndefined();
     expect(getEditorialRelatedTools(content, "pt-BR")).toEqual([]);
   });
@@ -89,6 +101,8 @@ describe("tool editorial content", () => {
       "../pages/ferramentas/calculadora.astro",
       "../pages/ferramentas/calculadora-de-datas.astro",
       "../pages/ferramentas/calculadora-de-idade.astro",
+      "../pages/ferramentas/conversor-de-unidades.astro",
+      "../pages/ferramentas/conversor-de-moedas.astro",
     ].map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
     const component = readFileSync(
       new URL("../components/tools/ToolEditorialContent.astro", import.meta.url),
