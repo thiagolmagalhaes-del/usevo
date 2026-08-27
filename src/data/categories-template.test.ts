@@ -42,6 +42,7 @@ describe("category page templates", () => {
   it("keeps CTA contrast and focus treatment in the shared header", () => {
     const header = readTemplate("../components/SiteHeader.astro");
 
+    expect(header).toContain("nav .nav-button {");
     expect(header).toContain("nav .nav-button:hover");
     expect(header).toContain("nav .nav-button:focus-visible");
     expect(header).toContain("color: #ffffff");
