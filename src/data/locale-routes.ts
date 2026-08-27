@@ -8,7 +8,7 @@ export const localeRouteConfig = {
     categories: "/en/categories/",
   },
   "pt-BR": {
-    home: "/",
+    home: "/pt-br/",
     tools: "/ferramentas/",
     categories: "/categorias/",
   },
@@ -52,11 +52,12 @@ export const getSiteAlternates = (pathname: string) => {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";
   const homeAlternates = {
     en: "https://usevo.tools/",
+    "pt-BR": "https://usevo.tools/pt-br/",
     es: "https://usevo.tools/es/",
     "x-default": "https://usevo.tools/",
   };
 
-  if (["/", "/en", "/es"].includes(normalizedPath)) {
+  if (["/", "/en", "/pt-br", "/es"].includes(normalizedPath)) {
     return homeAlternates;
   }
 
@@ -156,9 +157,9 @@ export const getSiteAlternates = (pathname: string) => {
 export const getLocaleNavigationRoutes = (pathname: string) => {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";
 
-  if (["/", "/en", "/es"].includes(normalizedPath)) {
+  if (["/", "/en", "/pt-br", "/es"].includes(normalizedPath)) {
     return {
-      "pt-BR": localeRouteConfig["pt-BR"].tools,
+      "pt-BR": localeRouteConfig["pt-BR"].home,
       en: localeRouteConfig.en.home,
       es: localeRouteConfig.es.home,
     };

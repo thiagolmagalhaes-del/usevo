@@ -6,6 +6,7 @@ describe("resolveLocaleFromPath", () => {
     expect(resolveLocaleFromPath("/", "pt-BR")).toBe("en");
     expect(resolveLocaleFromPath("/en", "pt-BR")).toBe("en");
     expect(resolveLocaleFromPath("/en/tools/clt-vs-freelance-calculator/", "pt-BR")).toBe("en");
+    expect(resolveLocaleFromPath("/pt-br", "en")).toBe("pt-BR");
     expect(resolveLocaleFromPath("/es", "en")).toBe("es");
     expect(resolveLocaleFromPath("/es/herramientas/calculadora-clt-vs-autonomo/", "en")).toBe("es");
     expect(resolveLocaleFromPath("/ferramentas", "en")).toBe("pt-BR");
