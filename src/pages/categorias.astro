@@ -1,8 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { ferramentas } from "../data/ferramentas";
+import { ferramentas, getFerramentaTranslation } from "../data/ferramentas";
 import { getTranslations, getCategoryTranslation } from "../data/i18n";
-import { getFerramentaTranslation } from "../data/ferramentas";
 import { getSiteAlternates } from "../data/locale-routes";
 
 const t = getTranslations("pt-BR");
@@ -20,8 +19,8 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
 ---
 
 <Layout
-  title="Categories — USEVO TOOLS"
-  description="Browse USEVO TOOLS by category. Find exactly what you need."
+  title="Categorias | USEVO TOOLS"
+  description="Explore as ferramentas online da USEVO TOOLS por categoria e encontre a solução certa para sua tarefa."
   locale="pt-BR"
   canonical="https://usevo.tools/categorias/"
   alternateUrls={alternateUrls}
@@ -119,8 +118,14 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
 
       .categories-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 24px;
+      }
+
+      .section-heading {
+        margin: 0 0 28px;
+        font-size: 28px;
+        letter-spacing: -1px;
       }
 
       .category-card {
@@ -212,7 +217,7 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
 
       @media (max-width: 900px) {
         .categories-grid {
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
@@ -261,19 +266,20 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
       <section class="page-header">
         <div class="container">
           <h1>{t.categories}</h1>
-          <p>Explore our tools organized by topic. Find exactly what you need.</p>
+          <p>Explore nossas ferramentas por categoria e encontre rapidamente o que você precisa.</p>
         </div>
       </section>
 
-      <section class="categories-section">
+      <section class="categories-section" aria-labelledby="categories-list-title">
         <div class="container">
+          <h2 id="categories-list-title" class="section-heading">Ferramentas por categoria</h2>
           <div class="categories-grid">
             {categoriasOrdenadas.map((categoria) => (
-              <div class="category-card">
+              <article class="category-card">
                 <div class="category-header">
-                  <h3 class="category-name">{getCategoryTranslation(categoria, "en")}</h3>
+                  <h3 class="category-name">{getCategoryTranslation(categoria, "pt-BR")}</h3>
                   <p class="category-count">
-                    {categorias[categoria].length} {categorias[categoria].length === 1 ? 'tool' : 'tools'}
+                    {categorias[categoria].length} {categorias[categoria].length === 1 ? 'ferramenta' : 'ferramentas'}
                   </p>
                 </div>
 
@@ -281,17 +287,17 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
                   {categorias[categoria].map((ferramenta) => (
                     <li>
                       <a href={ferramenta.url}>
-                        {ferramenta.icone} {getFerramentaTranslation(ferramenta, "en").title}
+                        {ferramenta.icone} {getFerramentaTranslation(ferramenta, "pt-BR").title}
                       </a>
                     </li>
                   ))}
                 </ul>
-              </div>
+              </article>
             ))}
           </div>
 
           <div class="view-all-link">
-            <a href="/ferramentas">{t.allTools}</a>
+            <a href="/ferramentas/">{t.allTools}</a>
           </div>
         </div>
       </section>

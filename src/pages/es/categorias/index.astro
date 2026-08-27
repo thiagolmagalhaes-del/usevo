@@ -17,24 +17,42 @@ const getToolHref = (ferramenta: (typeof ferramentas)[number]) => `/es/herramien
 ---
 
 <Layout title={t.categories} description="Explora USEVO TOOLS por categorías." locale="es" canonical={canonical} alternateUrls={alternateUrls}>
+  <style>
+    .container { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .page-header { padding: 60px 0 40px; text-align: center; }
+    .page-header h1 { margin: 0 auto 15px; font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+    .categories-section { padding: 40px 0 100px; }
+    .section-heading { margin: 0 0 28px; font-size: 28px; letter-spacing: -1px; }
+    .categories-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .category-card { padding: 32px; border: 1px solid #e7e9ee; border-radius: 16px; background: #fff; }
+    .category-card h3 { margin: 0 0 8px; font-size: 22px; }
+    .tools-list { margin: 0; padding: 0; list-style: none; }
+    .tools-list li + li { margin-top: 12px; }
+    .tools-list a { display: block; padding: 12px; border-radius: 8px; background: #f8fafc; color: #315bea; font-size: 14px; font-weight: 600; }
+    @media (max-width: 900px) { .categories-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 650px) { .container { width: min(100% - 28px, 1180px); } .page-header { padding: 50px 0 30px; } .page-header h1 { font-size: 32px; } .categories-grid { grid-template-columns: 1fr; } }
+  </style>
   <main>
-    <section style="padding: 60px 0 40px; text-align:center;">
-      <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;">
-        <h1 style="margin:0 auto 15px;font-size:42px;letter-spacing:-1px;font-weight:800;">{t.categories}</h1>
+    <section class="page-header">
+      <div class="container">
+        <h1>{t.categories}</h1>
       </div>
     </section>
-    <section style="padding:40px 0 100px;">
-      <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;">
-        {Array.from(categorias.entries()).map(([categoria, itens]) => (
-          <div style="padding:32px;border:1px solid #e7e9ee;border-radius:16px;background:#fff;">
-            <h2 style="margin:0 0 8px;font-size:22px;">{getCategoryTranslation(categoria, "es")}</h2>
-            <ul style="list-style:none;padding:0;margin:0;">
+    <section class="categories-section" aria-labelledby="categories-list-title">
+      <div class="container">
+        <h2 id="categories-list-title" class="section-heading">Explorar por categoría</h2>
+        <div class="categories-grid">
+          {Array.from(categorias.entries()).map(([categoria, itens]) => (
+            <article class="category-card">
+              <h3>{getCategoryTranslation(categoria, "es")}</h3>
+              <ul class="tools-list">
               {itens.map((ferramenta) => (
-                <li style="margin-bottom:12px;"><a href={getToolHref(ferramenta)} style="display:block;padding:12px;border-radius:8px;background:#f8fafc;color:#315bea;font-size:14px;font-weight:600;">{ferramenta.translations.es?.title ?? ferramenta.nome}</a></li>
+                <li><a href={getToolHref(ferramenta)}>{ferramenta.translations.es?.title ?? ferramenta.nome}</a></li>
               ))}
-            </ul>
-          </div>
-        ))}
+              </ul>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   </main>
