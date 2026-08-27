@@ -74,6 +74,7 @@ const ageRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-idade/" : loc
     </div>
 
     <aside class="related"><span>{copy.related}</span> <a href={ageRoute}>{copy.relatedLink}</a></aside>
+    <slot />
   </div>
 </main>
 

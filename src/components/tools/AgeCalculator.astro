@@ -48,6 +48,7 @@ const dateRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-datas/" : lo
       </div>
     </section>
     <aside class="related"><span>{copy.related}</span> <a href={dateRoute}>{copy.relatedLink}</a></aside>
+    <slot />
   </div>
 </main>
 

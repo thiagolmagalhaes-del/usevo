@@ -1,7 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DateCalculator from "../../components/tools/DateCalculator.astro";
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import { getSiteAlternates } from "../../data/locale-routes";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 
@@ -9,9 +11,13 @@ const { locale: localeProp } = Astro.props as { locale?: Locale };
 const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
 const ferramenta = getFerramentaByPath("/ferramentas/calculadora-de-datas");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 ---
 
 <Layout title={toolMeta.title} description={toolMeta.description} canonical={canonicalUrl} alternateUrls={getSiteAlternates(Astro.url.pathname)} locale={locale}>
-  <DateCalculator locale={locale} />
+  <DateCalculator locale={locale}>
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
+  </DateCalculator>
 </Layout>
