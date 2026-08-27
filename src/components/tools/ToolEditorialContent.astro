@@ -1,0 +1,217 @@
+---
+import type {
+  ResolvedEditorialRelatedTool,
+  ToolEditorialContent,
+} from "../../data/tool-editorial-content";
+
+type Props = {
+  content?: ToolEditorialContent;
+  relatedTools?: ResolvedEditorialRelatedTool[];
+};
+
+const { content, relatedTools = [] } = Astro.props;
+---
+
+{content && (
+  <section class="tool-editorial" aria-label={content.howTo.title}>
+    <section class="editorial-section" aria-labelledby="editorial-how-to">
+      <h2 id="editorial-how-to">{content.howTo.title}</h2>
+      <ol class="steps">
+        {content.howTo.steps.map((step) => <li>{step}</li>)}
+      </ol>
+    </section>
+
+    <section class="editorial-section" aria-labelledby="editorial-example">
+      <h2 id="editorial-example">{content.example.title}</h2>
+      <p>{content.example.description}</p>
+      <p class="calculation">{content.example.calculation}</p>
+      <p>{content.example.result}</p>
+    </section>
+
+    <section class="editorial-section" aria-labelledby="editorial-use-cases">
+      <h2 id="editorial-use-cases">{content.useCases.title}</h2>
+      <ul>
+        {content.useCases.items.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <section class="editorial-section" aria-labelledby="editorial-notes">
+      <h2 id="editorial-notes">{content.notes.title}</h2>
+      <ul>
+        {content.notes.items.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <section class="editorial-section" aria-labelledby="editorial-faq">
+      <h2 id="editorial-faq">{content.faq.title}</h2>
+      <div class="faq-list">
+        {content.faq.items.map((item) => (
+          <article class="faq-item">
+            <h3>{item.question}</h3>
+            <p>{item.answer}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {relatedTools.length > 0 && (
+      <section class="editorial-section" aria-labelledby="editorial-related-tools">
+        <h2 id="editorial-related-tools">{content.relatedTools.title}</h2>
+        <ul class="related-tools">
+          {relatedTools.map((tool) => (
+            <li>
+              <a class="related-link" href={tool.href}>{tool.label}</a>
+              <p>{tool.description}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </section>
+)}
+
+<style>
+  .tool-editorial {
+    margin-top: 56px;
+    max-width: 760px;
+  }
+
+  .editorial-section + .editorial-section {
+    margin-top: 40px;
+  }
+
+  h2,
+  h3,
+  p,
+  ul,
+  ol {
+    margin-top: 0;
+  }
+
+  h2 {
+    color: #172033;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    color: #172033;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  p,
+  li {
+    color: #3f4758;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  ul,
+  ol {
+    margin-bottom: 0;
+    padding-left: 1.3rem;
+  }
+
+  li + li {
+    margin-top: 10px;
+  }
+
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 2rem 1fr;
+  }
+
+  .steps li::before {
+    align-items: center;
+    background: #e7edff;
+    border-radius: 999px;
+    color: #172033;
+    content: counter(step);
+    display: flex;
+    font-weight: 700;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+  }
+
+  .calculation {
+    background: #eef2f8;
+    border-radius: 10px;
+    color: #172033;
+    font-weight: 700;
+    margin: 16px 0;
+    overflow-wrap: anywhere;
+    padding: 12px 14px;
+  }
+
+  .faq-list {
+    display: grid;
+    gap: 20px;
+  }
+
+  .faq-item {
+    border-left: 3px solid #c8d4f5;
+    padding-left: 16px;
+  }
+
+  .faq-item p,
+  .related-tools p {
+    margin-bottom: 0;
+  }
+
+  .related-tools {
+    display: grid;
+    gap: 18px;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .related-tools li {
+    background: #ffffff;
+    border: 1px solid #dbe1ec;
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .related-link {
+    color: #193b92;
+    font-weight: 700;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  .related-link:hover {
+    color: #122b6b;
+  }
+
+  .related-link:focus-visible {
+    border-radius: 3px;
+    outline: 3px solid #f4a261;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 480px) {
+    .tool-editorial {
+      margin-top: 40px;
+    }
+
+    .editorial-section + .editorial-section {
+      margin-top: 32px;
+    }
+
+    .related-tools li {
+      padding: 16px;
+    }
+  }
+</style>
