@@ -1,7 +1,9 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import TextDiff from "../../components/tools/TextDiff.astro";
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import { getSiteAlternates } from "../../data/locale-routes";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 const { locale: localeProp } = Astro.props as { locale?: Locale };
@@ -10,6 +12,8 @@ const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/comparador-de-texto");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
@@ -19,5 +23,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 <Layout title={title} description={description} canonical={new URL(Astro.url.pathname, "https://usevo.tools").href} alternateUrls={alternateUrls} locale={locale}>
   <div style="padding:28px; max-width:1100px; margin:0 auto">
     <TextDiff locale={locale} />
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
   </div>
 </Layout>
