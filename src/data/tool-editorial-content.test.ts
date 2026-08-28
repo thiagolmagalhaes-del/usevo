@@ -20,6 +20,11 @@ const editorialToolIds = [
   "conversor-de-moedas",
   "contador-de-palavras",
   "comparador-de-texto",
+  "gerador-de-senhas",
+  "gerador-de-qr-code",
+  "leitor-de-qr-code",
+  "uuid-generator",
+  "base64",
 ] as const;
 const locales: Locale[] = ["pt-BR", "en", "es"];
 
@@ -66,6 +71,11 @@ describe("tool editorial content", () => {
         en: "How to use the text comparator",
         es: "Cómo usar el comparador de texto",
       },
+      "gerador-de-senhas": { "pt-BR": "Como usar o gerador de senhas", en: "How to use the password generator", es: "C?mo usar el generador de contrase?as" },
+      "gerador-de-qr-code": { "pt-BR": "Como usar o gerador de QR Code", en: "How to use the QR Code generator", es: "C?mo usar el generador de c?digos QR" },
+      "leitor-de-qr-code": { "pt-BR": "Como usar o leitor de QR Code", en: "How to use the QR Code scanner", es: "C?mo usar el esc?ner de c?digos QR" },
+      "uuid-generator": { "pt-BR": "Como usar o gerador de UUID", en: "How to use the UUID generator", es: "C?mo usar el generador de UUID" },
+      base64: { "pt-BR": "Como usar Base64", en: "How to use Base64", es: "C?mo usar Base64" },
     };
 
     for (const toolId of editorialToolIds) {
@@ -82,9 +92,21 @@ describe("tool editorial content", () => {
   });
 
   it("does not provide editorial content or related links for tools without data", () => {
-    const content = getToolEditorialContent("gerador-de-senhas", "pt-BR");
+    const content = getToolEditorialContent("jpg-para-pdf", "pt-BR");
     expect(content).toBeUndefined();
     expect(getEditorialRelatedTools(content, "pt-BR")).toEqual([]);
+  });
+
+  it("keeps the Phase 3E security wording aligned with the implemented behavior", () => {
+    for (const locale of locales) {
+      const password = getToolEditorialContent("gerador-de-senhas", locale)!;
+      expect(password.notes.items.join(" ").toLowerCase()).toContain(locale === "en" ? "estimate" : locale === "es" ? "estimaci" : "estimativa");
+      const uuid = getToolEditorialContent("uuid-generator", locale)!;
+      expect(uuid.notes.items.join(" ")).toContain("crypto.randomUUID");
+      expect(uuid.notes.items.join(" ")).toContain("Math.random");
+      const base64 = getToolEditorialContent("base64", locale)!;
+      expect(base64.notes.items.join(" ").toLowerCase()).toMatch(/text|texto/);
+    }
   });
 
   it("resolves related tools to existing routes in the current locale", () => {
@@ -117,6 +139,11 @@ describe("tool editorial content", () => {
       "../pages/ferramentas/conversor-de-moedas.astro",
       "../pages/ferramentas/contador-de-palavras.astro",
       "../pages/ferramentas/comparador-de-texto.astro",
+      "../pages/ferramentas/gerador-de-senhas.astro",
+      "../pages/ferramentas/gerador-de-qr-code.astro",
+      "../pages/ferramentas/leitor-de-qr-code.astro",
+      "../pages/ferramentas/uuid-generator.astro",
+      "../pages/ferramentas/base64.astro",
     ].map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
     const component = readFileSync(
       new URL("../components/tools/ToolEditorialContent.astro", import.meta.url),

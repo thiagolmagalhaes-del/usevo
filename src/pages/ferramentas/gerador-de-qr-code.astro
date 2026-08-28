@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import { getSiteAlternates } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
@@ -13,6 +15,8 @@ const qrMessages = { emptyInputError: ui.emptyInputError, generationError: ui.ge
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/gerador-de-qr-code");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -252,6 +256,7 @@ const scannerLink = locale === "pt-BR" ? "Ler um QR Code" : locale === "es" ? "L
           </a>
         </div>
         <p class="scanner-link"><a href={scannerRoute}>{scannerLink}</a></p>
+        <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
       </div>
     </main>
 

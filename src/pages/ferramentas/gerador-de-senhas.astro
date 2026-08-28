@@ -1,6 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import { getSiteAlternates } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
@@ -20,6 +22,8 @@ const passwordMessages = {
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/gerador-de-senhas");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
@@ -281,6 +285,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         {ui.generateNewPassword}
       </button>
     </section>
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
   </main>
 
   <script define:vars={{ passwordMessages }}>
