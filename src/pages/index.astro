@@ -4,6 +4,7 @@ import ToolGrid from "../components/tool/ToolGrid.astro";
 import { ferramentas } from "../data/ferramentas";
 import { getTranslations } from "../data/i18n";
 import { getSiteAlternates } from "../data/locale-routes";
+import { websiteJsonLd } from "../data/structured-data";
 
 const t = getTranslations("en");
 const alternateUrls = getSiteAlternates("/");
@@ -15,6 +16,7 @@ const alternateUrls = getSiteAlternates("/");
   locale="en"
   canonical="https://usevo.tools/"
   alternateUrls={alternateUrls}
+  structuredData={websiteJsonLd}
 >
 
     <style>

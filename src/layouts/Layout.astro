@@ -4,6 +4,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import AnalyticsConsent from "../components/AnalyticsConsent.astro";
 import { resolveLocale, type Locale } from "../data/locales";
 import { getCanonicalUrl } from "../data/locale-routes";
+import { serializeJsonLd, type WebsiteJsonLd } from "../data/structured-data";
 
 const {
   title = "USEVO TOOLS",
@@ -12,6 +13,7 @@ const {
   canonical,
   alternateUrls,
   robots = "index, follow",
+  structuredData,
 } = Astro.props as {
   title?: string;
   description?: string;
@@ -19,12 +21,14 @@ const {
   canonical?: string;
   alternateUrls?: Partial<Record<Locale, string>>;
   robots?: string;
+  structuredData?: WebsiteJsonLd;
 };
 
 const resolvedLocale = resolveLocale(locale ?? "en") as Locale;
 const canonicalUrl = getCanonicalUrl(canonical ?? Astro.url.pathname);
 const pageTitle = title.includes("USEVO TOOLS") ? title : `${title} | USEVO TOOLS`;
 const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string][];
+const serializedStructuredData = structuredData ? serializeJsonLd(structuredData) : undefined;
 ---
 
 <!doctype html>
@@ -46,6 +50,7 @@ const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string]
       <link rel="alternate" hreflang={lang} href={href} />
     ))}
     <link rel="canonical" href={canonicalUrl} />
+    {serializedStructuredData && <script type="application/ld+json" set:html={serializedStructuredData} />}
     <title>{pageTitle}</title>
   </head>
   <body>
