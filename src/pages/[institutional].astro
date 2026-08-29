@@ -1,0 +1,8 @@
+---
+import InstitutionalPage from "../components/InstitutionalPage.astro";
+import Layout from "../layouts/Layout.astro";
+import { getInstitutionalAlternates, getInstitutionalContent, institutionalKeys, institutionalRoutes, type InstitutionalKey } from "../data/institutional-content";
+export const getStaticPaths=()=>institutionalKeys.map(key=>({params:{institutional:institutionalRoutes[key].en.slice(1)},props:{key}}));
+const { key }=Astro.props as {key:InstitutionalKey}; const content=getInstitutionalContent(key,"en");
+---
+<Layout title={content.title} description={content.description} canonical={institutionalRoutes[key].en} alternateUrls={getInstitutionalAlternates(key)} locale="en"><InstitutionalPage content={content}/></Layout>

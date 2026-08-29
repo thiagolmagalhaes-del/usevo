@@ -1,0 +1,7 @@
+---
+import type { InstitutionalContent } from "../data/institutional-content";
+const { content } = Astro.props as { content: InstitutionalContent };
+const linkEmail=(text:string)=>text.split("contato@usevo.tools");
+---
+<main class="institutional"><h1>{content.h1}</h1>{content.updated&&<p class="updated">{content.updated}</p>}{content.sections.map(section=><section><h2>{section.heading}</h2>{section.paragraphs.map(paragraph=>{const parts=linkEmail(paragraph);return <p>{parts.map((part,index)=><>{part}{index<parts.length-1&&<a href="mailto:contato@usevo.tools">contato@usevo.tools</a>}</>)}</p>})}</section>)}</main>
+<style>.institutional{max-width:820px;margin:0 auto;padding:56px 20px 80px}.institutional h1{font-size:clamp(2rem,5vw,3rem)}.institutional h2{margin-top:38px}.institutional p{color:#475467;line-height:1.65}.institutional a{color:#315bea;text-decoration:underline}.updated{font-weight:600}</style>

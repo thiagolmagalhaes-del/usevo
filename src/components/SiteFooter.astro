@@ -1,15 +1,26 @@
 ---
 import { getTranslations } from "../data/i18n";
 import type { Locale } from "../data/locales";
+import { getInstitutionalContent, institutionalKeys, institutionalRoutes } from "../data/institutional-content";
+import { localeRouteConfig } from "../data/locale-routes";
 
 const { locale } = Astro.props as { locale: Locale };
 const t = getTranslations(locale);
+const routes = localeRouteConfig[locale];
+const institutionalLinks = institutionalKeys.map((key) => ({ href: institutionalRoutes[key][locale], label: getInstitutionalContent(key, locale).footerLabel }));
 ---
 
 <footer>
   <div class="container footer-inner">
     <div>© 2026 USEVO TOOLS. {t.freeOnlineTools}.</div>
-    <div>{t.footerTools}. {t.footerCategories}. {t.home}.</div>
+    <nav aria-label={locale === "en" ? "Footer navigation" : locale === "es" ? "Navegación del pie de página" : "Navegação do rodapé"}>
+      <ul>
+        <li><a href={routes.home}>{t.home}</a></li>
+        <li><a href={routes.tools}>{t.footerTools}</a></li>
+        <li><a href={routes.categories}>{t.footerCategories}</a></li>
+        {institutionalLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+      </ul>
+    </nav>
   </div>
 </footer>
 
@@ -29,8 +40,14 @@ const t = getTranslations(locale);
   .footer-inner {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
   }
+
+  ul { display:flex; flex-wrap:wrap; gap:8px 14px; justify-content:flex-end; list-style:none; margin:0; padding:0; }
+  a { color:#526174; text-decoration:underline; text-underline-offset:2px; }
+  a:hover { color:#315bea; }
+  a:focus-visible { border-radius:3px; outline:2px solid #315bea; outline-offset:3px; }
 
   @media (max-width: 650px) {
     .container {
@@ -40,5 +57,7 @@ const t = getTranslations(locale);
     .footer-inner {
       flex-direction: column;
     }
+
+    ul { justify-content:flex-start; }
   }
 </style>

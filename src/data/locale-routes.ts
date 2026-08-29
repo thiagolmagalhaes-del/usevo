@@ -1,5 +1,6 @@
 import { type Locale } from "./locales";
 import { ferramentas, getFerramentaByPath, getFerramentaTranslation } from "./ferramentas";
+import { institutionalKeys, institutionalRoutes } from "./institutional-content";
 
 export const SITE_ORIGIN = "https://usevo.tools";
 
@@ -126,6 +127,15 @@ export const resolveToolByLocaleSlug = (slug: string | undefined, locale: Locale
 
 export const getSiteAlternates = (pathname: string) => {
   const normalizedPath = normalizeSitePath(pathname).split(/[?#]/, 1)[0] || "/";
+  for (const key of institutionalKeys) {
+    if (Object.values(institutionalRoutes[key]).includes(normalizedPath)) {
+      return {
+        en: toSiteUrl(institutionalRoutes[key].en),
+        "pt-BR": toSiteUrl(institutionalRoutes[key]["pt-BR"]),
+        es: toSiteUrl(institutionalRoutes[key].es),
+      };
+    }
+  }
   const homeAlternates = {
     en: toSiteUrl("/"),
     "pt-BR": toSiteUrl("/pt-br"),

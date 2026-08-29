@@ -11,6 +11,7 @@ import {
   toSiteUrl,
 } from "./locale-routes";
 import { getFerramentaTranslation } from "./ferramentas";
+import { institutionalKeys, institutionalRoutes } from "./institutional-content";
 
 const homeAlternates = {
   en: "https://usevo.tools/",
@@ -43,6 +44,14 @@ describe("canonical URL policy", () => {
 });
 
 describe("international route architecture", () => {
+  it("keeps all institutional routes canonical and localized", () => {
+    expect(institutionalKeys).toHaveLength(5);
+    for (const key of institutionalKeys) for (const route of Object.values(institutionalRoutes[key])) {
+      expect(route).not.toBe("/en");
+      expect(route).not.toMatch(/\/$/);
+      expect(route).toMatch(/^\//);
+    }
+  });
   it.each(["/", "/pt-br/", "/es/", "/en/"])("uses normalized homepage alternates for %s", (pathname) => {
     expect(getSiteAlternates(pathname)).toEqual(homeAlternates);
   });
