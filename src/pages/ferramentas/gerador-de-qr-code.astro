@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
-import { getSiteAlternates } from "../../data/locale-routes";
+import { getSiteAlternates, getToolLocaleRouteById } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 const { locale: localeProp } = Astro.props as { locale?: Locale };
@@ -21,7 +21,7 @@ const title = toolMeta.title;
 const description = toolMeta.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
-const scannerRoute = locale === "pt-BR" ? "/ferramentas/leitor-de-qr-code/" : locale === "es" ? "/es/herramientas/escaner-de-codigo-qr/" : "/en/tools/qr-code-scanner/";
+const scannerRoute = getToolLocaleRouteById("leitor-de-qr-code", locale);
 const scannerLink = locale === "pt-BR" ? "Ler um QR Code" : locale === "es" ? "Leer un código QR" : "Scan a QR Code";
 ---
 

@@ -7,8 +7,8 @@ const expectedTools = [
     id: "calculadora-de-datas",
     routes: {
       "pt-BR": "/ferramentas/calculadora-de-datas",
-      en: "/en/tools/date-calculator/",
-      es: "/es/herramientas/calculadora-de-fechas/",
+      en: "/en/tools/date-calculator",
+      es: "/es/herramientas/calculadora-de-fechas",
     },
     titles: { "pt-BR": "Calculadora de datas", en: "Date Calculator", es: "Calculadora de fechas" },
   },
@@ -16,8 +16,8 @@ const expectedTools = [
     id: "calculadora-de-idade",
     routes: {
       "pt-BR": "/ferramentas/calculadora-de-idade",
-      en: "/en/tools/age-calculator/",
-      es: "/es/herramientas/calculadora-de-edad/",
+      en: "/en/tools/age-calculator",
+      es: "/es/herramientas/calculadora-de-edad",
     },
     titles: { "pt-BR": "Calculadora de idade", en: "Age Calculator", es: "Calculadora de edad" },
   },

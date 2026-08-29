@@ -2,7 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import { ferramentas } from "../../../data/ferramentas";
 import { getTranslations, getCategoryTranslation } from "../../../data/i18n";
-import { getSiteAlternates } from "../../../data/locale-routes";
+import { getSiteAlternates, getToolLocaleRoute } from "../../../data/locale-routes";
 
 const t = getTranslations("es");
 const categorias = new Map<string, typeof ferramentas>();
@@ -13,7 +13,7 @@ for (const ferramenta of ferramentas) {
 }
 const canonical = "https://usevo.tools/es/categorias/";
 const alternateUrls = getSiteAlternates("/es/categorias/");
-const getToolHref = (ferramenta: (typeof ferramentas)[number]) => `/es/herramientas/${ferramenta.localeSlugs.es}/`;
+const getToolHref = (ferramenta: (typeof ferramentas)[number]) => getToolLocaleRoute(ferramenta, "es");
 ---
 
 <Layout title={t.categories} description="Explora USEVO TOOLS por categorías." locale="es" canonical={canonical} alternateUrls={alternateUrls}>

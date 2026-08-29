@@ -1,5 +1,6 @@
 ---
 import type { Locale } from "../../data/locales";
+import { getToolLocaleRouteById, localeRouteConfig } from "../../data/locale-routes";
 
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const baseCopy = locale === "pt-BR" ? {
@@ -16,8 +17,8 @@ const clearCopy = locale === "pt-BR"
     : { clear: "Clear", clearBirthDate: "Clear date of birth", clearReferenceDate: "Clear reference date" };
 const copy = { ...baseCopy, ...clearCopy };
 
-const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
-const dateRoute = locale === "pt-BR" ? "/ferramentas/calculadora-de-datas/" : locale === "es" ? "/es/herramientas/calculadora-de-fechas/" : "/en/tools/date-calculator/";
+const backRoute = localeRouteConfig[locale].tools;
+const dateRoute = getToolLocaleRouteById("calculadora-de-datas", locale);
 ---
 
 <main class="age-tool">

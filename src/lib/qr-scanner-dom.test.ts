@@ -135,8 +135,8 @@ describe("QR scanner routes and translations", () => {
     if (!tool) return;
     expect(tool.categoryKey).toBe("utilidades");
     expect(getToolLocaleRoute(tool, "pt-BR")).toBe("/ferramentas/leitor-de-qr-code");
-    expect(getToolLocaleRoute(tool, "en")).toBe("/en/tools/qr-code-scanner/");
-    expect(getToolLocaleRoute(tool, "es")).toBe("/es/herramientas/escaner-de-codigo-qr/");
+    expect(getToolLocaleRoute(tool, "en")).toBe("/en/tools/qr-code-scanner");
+    expect(getToolLocaleRoute(tool, "es")).toBe("/es/herramientas/escaner-de-codigo-qr");
     expect(getFerramentaTranslation(tool, "pt-BR").title).toBe("Leitor de QR Code");
     expect(getFerramentaTranslation(tool, "en").title).toBe("QR Code Scanner");
     expect(getFerramentaTranslation(tool, "es").title).toBe("Escáner de código QR");

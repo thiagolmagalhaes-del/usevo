@@ -1,5 +1,6 @@
 ---
 import type { Locale } from "../../data/locales";
+import { getToolLocaleRouteById } from "../../data/locale-routes";
 
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const copy = locale === "pt-BR" ? {
@@ -10,7 +11,7 @@ const copy = locale === "pt-BR" ? {
   title: "QR Code Scanner", eyebrow: "Tools › Utilities", intro: "Read QR Codes from images or use your camera. Everything is processed in this browser.", imageMode: "Read image", cameraMode: "Use camera", upload: "Drag, paste, or click to select an image", formats: "Accepts JPG, PNG, and WebP. One image at a time.", replace: "Replace image", clear: "Clear", startCamera: "Start camera", stopCamera: "Stop camera", unsupportedImage: "Select a valid JPG, PNG, or WebP image.", readingImage: "Reading QR Code from image…", noQrFound: "No QR Code was found in this image.", imageReadError: "This image could not be read. Try another file.", cameraStarting: "Requesting camera access…", cameraUnavailable: "No compatible camera is available on this device.", cameraDenied: "Camera access was denied. Allow it in your browser settings to continue.", insecureContext: "The camera can only be used on a secure connection (HTTPS).", cameraError: "The camera could not be started. Please try again.", detected: "QR Code detected.", result: "Result", contentType: "Type", kindLabels: { url: "URL", text: "Text", email: "Email", phone: "Phone", wifi: "Wi‑Fi" }, copy: "Copy", copied: "Content copied.", copyError: "The content could not be copied.", another: "Scan another", openLink: "Open link", destination: "Destination", safety: "Check the address before opening unknown QR Codes.", privacyTitle: "Privacy", privacy: "Images, camera, and QR Code content stay on your device; nothing is sent to our servers.", generatorLink: "Generate a QR Code", generatorPrompt: "Need to create a code?", imagePreviewAlt: "Image preview for reading the QR Code", videoLabel: "Camera preview for reading the QR Code",
 };
 
-const generatorRoute = locale === "pt-BR" ? "/ferramentas/gerador-de-qr-code/" : locale === "es" ? "/es/herramientas/generador-de-codigos-qr/" : "/en/tools/qr-code-generator/";
+const generatorRoute = getToolLocaleRouteById("gerador-de-qr-code", locale);
 ---
 
 <main id="qrScanner" class="qr-scanner">

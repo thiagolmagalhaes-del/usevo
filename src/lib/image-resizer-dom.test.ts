@@ -45,8 +45,8 @@ describe("image resizer catalog routes and translations", () => {
     expect(tool.categoryKey).toBe("arquivos");
     expect(tool.url).toBe("/ferramentas/redimensionar-imagem");
     expect(getToolLocaleRoute(tool, "pt-BR")).toBe("/ferramentas/redimensionar-imagem");
-    expect(getToolLocaleRoute(tool, "en")).toBe("/en/tools/image-resizer/");
-    expect(getToolLocaleRoute(tool, "es")).toBe("/es/herramientas/redimensionar-imagen/");
+    expect(getToolLocaleRoute(tool, "en")).toBe("/en/tools/image-resizer");
+    expect(getToolLocaleRoute(tool, "es")).toBe("/es/herramientas/redimensionar-imagen");
     expect(getFerramentaTranslation(tool, "pt-BR").title).toBe("Redimensionador de imagem");
     expect(getFerramentaTranslation(tool, "en").title).toBe("Image Resizer");
     expect(getFerramentaTranslation(tool, "es").title).toBe("Redimensionador de imagen");

@@ -1,5 +1,6 @@
 ---
 import type { Locale } from "../../data/locales";
+import { getToolLocaleRouteById } from "../../data/locale-routes";
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const copy = locale === "pt-BR" ? {
   title: "Comprimir imagem", drop: "Arraste e solte uma imagem aqui ou clique para selecionar", file: "Arquivo", original: "Tamanho original", quality: "Qualidade", processing: "Processando...", final: "Tamanho final", reduction: "Redução", download: "Baixar imagem", formats: "Formatos aceitos: JPG, PNG, WebP", noFile: "Nenhum arquivo selecionado.", tooLarge: "O arquivo excede o limite de {size} MB.", noReduction: "Não foi obtida uma redução efetiva.", error: "Erro ao comprimir a imagem. O arquivo pode ser muito grande ou inválido.",
@@ -8,7 +9,7 @@ const copy = locale === "pt-BR" ? {
 } : {
   title: "Compress Image", drop: "Drag and drop an image here or click to select", file: "File", original: "Original size", quality: "Quality", processing: "Processing...", final: "Final size", reduction: "Reduction", download: "Download Image", formats: "Supported formats: JPG, PNG, WebP", noFile: "No file selected.", tooLarge: "File exceeds the limit of {size} MB.", noReduction: "No effective reduction was achieved.", error: "Error compressing the image. The file may be too large or invalid.",
 };
-const resizerRoute = locale === "pt-BR" ? "/ferramentas/redimensionar-imagem/" : locale === "es" ? "/es/herramientas/redimensionar-imagen/" : "/en/tools/image-resizer/";
+const resizerRoute = getToolLocaleRouteById("redimensionar-imagem", locale);
 const resizerLink = locale === "pt-BR" ? "Precisa alterar largura e altura? Abra o Redimensionador de imagem." : locale === "es" ? "¿Necesitas cambiar el ancho y el alto? Abre el Redimensionador de imagen." : "Need to change width and height? Open Image Resizer.";
 ---
 <div class="tool-card card">

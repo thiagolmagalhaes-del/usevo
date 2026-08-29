@@ -1,5 +1,6 @@
 ---
 import type { Locale } from "../../data/locales";
+import { getToolLocaleRouteById } from "../../data/locale-routes";
 
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const copy = locale === "pt-BR" ? {
@@ -10,7 +11,7 @@ const copy = locale === "pt-BR" ? {
   title: "Image Resizer", eyebrow: "Tools › Files", intro: "Change image width and height without sending anything to a server.", upload: "Drag and drop an image here or click to select", formats: "Accepts JPG, PNG, and WebP. One image at a time.", file: "File", originalSize: "Original size", originalDimensions: "Original dimensions", dimensions: "Dimensions", width: "Width (px)", height: "Height (px)", keepRatio: "Keep aspect ratio", percentage: "Resize by percentage", export: "Export", format: "Format", keepOriginal: "Keep original format", jpeg: "JPG", png: "PNG", webp: "WebP", quality: "Quality", process: "Resize image", replace: "Replace image", clear: "Clear all", processing: "Processing image…", ready: "Image ready to resize.", outputReady: "Image resized successfully.", result: "Result", finalDimensions: "Final dimensions", finalSize: "Final size", download: "Download image", noImage: "Select an image before resizing.", unsupportedFile: "Select a valid JPG, PNG, or WebP image.", invalidDimensions: "Enter whole width and height values greater than zero.", dimensionsTooLarge: "The dimensions are too large to process safely on this device.", readError: "The image could not be read. It may be damaged or unsupported.", processingError: "The image could not be resized. Try smaller dimensions or another image.", resizerVsCompressor: "Resizing changes width and height; compression mainly reduces file size.", compressorLink: "Open Image Compressor", privacyTitle: "Privacy", privacy: "Your image is processed only in this browser. No file is sent to our servers.", originalFormat: "Original format", previewAlt: "Selected image preview", outputPreviewAlt: "Resized image preview",
 };
 
-const compressorRoute = locale === "pt-BR" ? "/ferramentas/comprimir-imagem/" : locale === "es" ? "/es/herramientas/comprimir-imagen/" : "/en/tools/compress-image/";
+const compressorRoute = getToolLocaleRouteById("comprimir-imagem", locale);
 ---
 
 <main class="image-resizer">

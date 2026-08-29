@@ -1,16 +1,24 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { getSiteAlternates } from './src/data/locale-routes';
+import { getSiteAlternates, normalizeSitePath, toSiteUrl } from './src/data/locale-routes';
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://usevo.tools",
+  trailingSlash: "never",
+  build: {
+    format: "file",
+  },
   integrations: [
     sitemap({
-      filter: (page) => !page.endsWith("/404") && !page.endsWith("/en/"),
+      filter: (page) => {
+        const pathname = normalizeSitePath(new URL(page).pathname);
+        return pathname !== "/404" && pathname !== "/en";
+      },
       serialize: (item) => {
-        const pathname = new URL(item.url).pathname;
+        const pathname = normalizeSitePath(new URL(item.url).pathname);
+        item.url = toSiteUrl(pathname);
         item.links = Object.entries(getSiteAlternates(pathname))
           .filter(([lang]) => lang !== "x-default")
           .map(([lang, url]) => ({ lang, url }));

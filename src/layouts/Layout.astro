@@ -3,6 +3,7 @@ import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import AnalyticsConsent from "../components/AnalyticsConsent.astro";
 import { resolveLocale, type Locale } from "../data/locales";
+import { getCanonicalUrl } from "../data/locale-routes";
 
 const {
   title = "USEVO TOOLS",
@@ -21,7 +22,7 @@ const {
 };
 
 const resolvedLocale = resolveLocale(locale ?? "en") as Locale;
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://usevo.tools").href;
+const canonicalUrl = getCanonicalUrl(canonical ?? Astro.url.pathname);
 const pageTitle = title.includes("USEVO TOOLS") ? title : `${title} | USEVO TOOLS`;
 const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string][];
 ---

@@ -1,21 +1,53 @@
 import { type Locale } from "./locales";
 import { ferramentas, getFerramentaByPath } from "./ferramentas";
 
+export const SITE_ORIGIN = "https://usevo.tools";
+
+const splitPathSuffix = (value: string) => {
+  const match = value.match(/^([^?#]*)(.*)$/);
+  return [match?.[1] ?? value, match?.[2] ?? ""] as const;
+};
+
+/**
+ * Normalizes only application page paths. It preserves query strings and
+ * fragments for navigation, while canonical URLs intentionally remove both.
+ */
+export const normalizeSitePath = (value: string) => {
+  const [path, suffix] = splitPathSuffix(value);
+  const withoutOutputExtension = path
+    .replace(/\/index\.html$/i, "")
+    .replace(/\.html$/i, "");
+  const normalizedPath = withoutOutputExtension.replace(/\/+$/, "") || "/";
+  return `${normalizedPath}${suffix}`;
+};
+
+export const toSiteUrl = (path: string) => new URL(normalizeSitePath(path), SITE_ORIGIN).href;
+
+export const getCanonicalUrl = (value: string) => {
+  const url = new URL(value, SITE_ORIGIN);
+  if (url.origin !== SITE_ORIGIN) return url.href;
+
+  url.pathname = normalizeSitePath(url.pathname);
+  url.search = "";
+  url.hash = "";
+  return url.href;
+};
+
 export const localeRouteConfig = {
   en: {
     home: "/",
-    tools: "/en/tools/",
-    categories: "/en/categories/",
+    tools: "/en/tools",
+    categories: "/en/categories",
   },
   "pt-BR": {
-    home: "/pt-br/",
-    tools: "/ferramentas/",
-    categories: "/categorias/",
+    home: "/pt-br",
+    tools: "/ferramentas",
+    categories: "/categorias",
   },
   es: {
-    home: "/es/",
-    tools: "/es/herramientas/",
-    categories: "/es/categorias/",
+    home: "/es",
+    tools: "/es/herramientas",
+    categories: "/es/categorias",
   },
 } as const;
 
@@ -26,19 +58,22 @@ const asLocaleSlug = (tool: (typeof ferramentas)[number], locale: Locale) => {
 };
 
 export const getToolLocaleRoute = (tool: (typeof ferramentas)[number], locale: Locale) => {
-  if (locale === "pt-BR") return tool.url;
+  if (locale === "pt-BR") return normalizeSitePath(tool.url);
 
   const slug = asLocaleSlug(tool, locale);
-  if (!slug) {
-    return undefined;
-  }
+  if (!slug) return undefined;
 
-  return locale === "en" ? `/en/tools/${slug}/` : `/es/herramientas/${slug}/`;
+  return locale === "en" ? `/en/tools/${slug}` : `/es/herramientas/${slug}`;
+};
+
+export const getToolLocaleRouteById = (toolId: string, locale: Locale) => {
+  const tool = ferramentas.find((candidate) => candidate.id === toolId);
+  return tool ? getToolLocaleRoute(tool, locale) : undefined;
 };
 
 export const getCategoryLocaleRoute = (categoryKey: string, locale: Locale) => {
-  if (locale === "pt-BR") return "/categorias/";
-  return locale === "en" ? `/en/categories/` : `/es/categorias/`;
+  if (locale === "pt-BR") return "/categorias";
+  return locale === "en" ? "/en/categories" : "/es/categorias";
 };
 
 export const resolveToolByLocaleSlug = (slug: string | undefined, locale: Locale) => {
@@ -46,34 +81,30 @@ export const resolveToolByLocaleSlug = (slug: string | undefined, locale: Locale
   return ferramentas.find((tool) => tool.localeSlugs[locale] === slug);
 };
 
-const withTrailingSlash = (value: string) => `${value.replace(/\/+$/, "")}/`;
-
 export const getSiteAlternates = (pathname: string) => {
-  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+  const normalizedPath = normalizeSitePath(pathname).split(/[?#]/, 1)[0] || "/";
   const homeAlternates = {
-    en: "https://usevo.tools/",
-    "pt-BR": "https://usevo.tools/pt-br/",
-    es: "https://usevo.tools/es/",
-    "x-default": "https://usevo.tools/",
+    en: toSiteUrl("/"),
+    "pt-BR": toSiteUrl("/pt-br"),
+    es: toSiteUrl("/es"),
+    "x-default": toSiteUrl("/"),
   };
 
-  if (["/", "/en", "/pt-br", "/es"].includes(normalizedPath)) {
-    return homeAlternates;
-  }
+  if (["/", "/en", "/pt-br", "/es"].includes(normalizedPath)) return homeAlternates;
 
   if (["/ferramentas", "/en/tools", "/es/herramientas"].includes(normalizedPath)) {
     return {
-      "pt-BR": "https://usevo.tools/ferramentas/",
-      en: "https://usevo.tools/en/tools/",
-      es: "https://usevo.tools/es/herramientas/",
+      "pt-BR": toSiteUrl("/ferramentas"),
+      en: toSiteUrl("/en/tools"),
+      es: toSiteUrl("/es/herramientas"),
     };
   }
 
   if (["/categorias", "/en/categories", "/es/categorias"].includes(normalizedPath)) {
     return {
-      "pt-BR": "https://usevo.tools/categorias/",
-      en: "https://usevo.tools/en/categories/",
-      es: "https://usevo.tools/es/categorias/",
+      "pt-BR": toSiteUrl("/categorias"),
+      en: toSiteUrl("/en/categories"),
+      es: toSiteUrl("/es/categorias"),
     };
   }
 
@@ -81,73 +112,59 @@ export const getSiteAlternates = (pathname: string) => {
     const tool = getFerramentaByPath(normalizedPath);
     if (tool) {
       return {
-        "pt-BR": `https://usevo.tools${withTrailingSlash(tool.url)}`,
-        en: `https://usevo.tools/en/tools/${tool.localeSlugs.en}/`,
-        es: `https://usevo.tools/es/herramientas/${tool.localeSlugs.es}/`,
+        "pt-BR": toSiteUrl(tool.url),
+        en: toSiteUrl(`/en/tools/${tool.localeSlugs.en}`),
+        es: toSiteUrl(`/es/herramientas/${tool.localeSlugs.es}`),
       };
     }
-
     return homeAlternates;
   }
 
   const toolForPath = (prefix: "/en/tools/" | "/es/herramientas/") => {
-    const suffix = normalizedPath.startsWith(prefix)
-      ? normalizedPath.slice(prefix.length)
-      : "";
+    const suffix = normalizedPath.startsWith(prefix) ? normalizedPath.slice(prefix.length) : "";
     if (!suffix) return undefined;
-
-    const tool = prefix === "/en/tools/"
+    return prefix === "/en/tools/"
       ? resolveToolByLocaleSlug(suffix, "en")
       : resolveToolByLocaleSlug(suffix, "es");
-
-    return tool;
   };
 
   if (normalizedPath.startsWith("/en/tools/")) {
     const tool = toolForPath("/en/tools/");
     if (tool) {
       return {
-        en: `https://usevo.tools${withTrailingSlash(normalizedPath)}`,
-        "pt-BR": `https://usevo.tools${withTrailingSlash(tool.url)}`,
-        es: `https://usevo.tools/es/herramientas/${tool.localeSlugs.es}/`,
+        en: toSiteUrl(normalizedPath),
+        "pt-BR": toSiteUrl(tool.url),
+        es: toSiteUrl(`/es/herramientas/${tool.localeSlugs.es}`),
       };
     }
-    return {
-      en: `https://usevo.tools${normalizedPath}`,
-      "pt-BR": "https://usevo.tools",
-      es: "https://usevo.tools/es/",
-    };
+    return { en: toSiteUrl(normalizedPath), "pt-BR": toSiteUrl("/"), es: toSiteUrl("/es") };
   }
 
   if (normalizedPath.startsWith("/es/herramientas/")) {
     const tool = toolForPath("/es/herramientas/");
     if (tool) {
       return {
-        en: `https://usevo.tools/en/tools/${tool.localeSlugs.en}/`,
-        "pt-BR": `https://usevo.tools${withTrailingSlash(tool.url)}`,
-        es: `https://usevo.tools${withTrailingSlash(normalizedPath)}`,
+        en: toSiteUrl(`/en/tools/${tool.localeSlugs.en}`),
+        "pt-BR": toSiteUrl(tool.url),
+        es: toSiteUrl(normalizedPath),
       };
     }
-    return {
-      en: "https://usevo.tools/en/",
-      "pt-BR": "https://usevo.tools",
-      es: `https://usevo.tools${normalizedPath}`,
-    };
+    return { en: toSiteUrl("/"), "pt-BR": toSiteUrl("/"), es: toSiteUrl(normalizedPath) };
   }
 
   if (normalizedPath.startsWith("/en/categories/")) {
     return {
-      en: `https://usevo.tools${normalizedPath}`,
-      "pt-BR": "https://usevo.tools/categorias/",
-      es: "https://usevo.tools/es/categorias/",
+      en: toSiteUrl(normalizedPath),
+      "pt-BR": toSiteUrl("/categorias"),
+      es: toSiteUrl("/es/categorias"),
     };
   }
 
   if (normalizedPath.startsWith("/es/categorias/")) {
     return {
-      en: "https://usevo.tools/en/categories/",
-      "pt-BR": "https://usevo.tools/categorias/",
-      es: `https://usevo.tools${normalizedPath}`,
+      en: toSiteUrl("/en/categories"),
+      "pt-BR": toSiteUrl("/categorias"),
+      es: toSiteUrl(normalizedPath),
     };
   }
 
@@ -155,7 +172,7 @@ export const getSiteAlternates = (pathname: string) => {
 };
 
 export const getLocaleNavigationRoutes = (pathname: string) => {
-  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+  const normalizedPath = normalizeSitePath(pathname).split(/[?#]/, 1)[0] || "/";
 
   if (["/", "/en", "/pt-br", "/es"].includes(normalizedPath)) {
     return {
@@ -181,5 +198,5 @@ export const getLocaleNavigationRoutes = (pathname: string) => {
     };
   }
 
-  return getSiteAlternates(pathname);
+  return getSiteAlternates(normalizedPath);
 };

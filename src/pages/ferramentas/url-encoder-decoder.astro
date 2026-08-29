@@ -3,7 +3,7 @@ import ToolEditorialContent from "../../components/tools/ToolEditorialContent.as
 import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
-import { getSiteAlternates } from "../../data/locale-routes";
+import { getSiteAlternates, localeRouteConfig } from "../../data/locale-routes";
 import { getToolUi, getCategoryTranslation } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 const { locale: localeProp } = Astro.props as { locale?: Locale };
@@ -21,7 +21,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 const toolUi = getToolUi(locale);
 const category = getCategoryTranslation("development", locale);
 const ui = toolUi.tools["url-encoder-decoder"];
-const backRoute = locale === "pt-BR" ? "/ferramentas/" : locale === "es" ? "/es/herramientas/" : "/en/tools/";
+const backRoute = localeRouteConfig[locale].tools;
 ---
 
 
