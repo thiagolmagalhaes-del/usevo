@@ -2,9 +2,14 @@
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import AnalyticsConsent from "../components/AnalyticsConsent.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 import { resolveLocale, type Locale } from "../data/locales";
-import { getCanonicalUrl } from "../data/locale-routes";
-import { serializeJsonLd, type WebsiteJsonLd } from "../data/structured-data";
+import { getCanonicalUrl, getToolBreadcrumb } from "../data/locale-routes";
+import {
+  createBreadcrumbListJsonLd,
+  serializeJsonLd,
+  type WebsiteJsonLd,
+} from "../data/structured-data";
 
 const {
   title = "USEVO TOOLS",
@@ -28,7 +33,12 @@ const resolvedLocale = resolveLocale(locale ?? "en") as Locale;
 const canonicalUrl = getCanonicalUrl(canonical ?? Astro.url.pathname);
 const pageTitle = title.includes("USEVO TOOLS") ? title : `${title} | USEVO TOOLS`;
 const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string][];
-const serializedStructuredData = structuredData ? serializeJsonLd(structuredData) : undefined;
+const breadcrumb = getToolBreadcrumb(Astro.url.pathname, resolvedLocale);
+const structuredDataItems = [
+  ...(structuredData ? [structuredData] : []),
+  ...(breadcrumb ? [createBreadcrumbListJsonLd(breadcrumb.items)] : []),
+];
+const serializedStructuredData = structuredDataItems.map(serializeJsonLd);
 ---
 
 <!doctype html>
@@ -50,11 +60,12 @@ const serializedStructuredData = structuredData ? serializeJsonLd(structuredData
       <link rel="alternate" hreflang={lang} href={href} />
     ))}
     <link rel="canonical" href={canonicalUrl} />
-    {serializedStructuredData && <script type="application/ld+json" set:html={serializedStructuredData} />}
+    {serializedStructuredData.map((data) => <script type="application/ld+json" set:html={data} />)}
     <title>{pageTitle}</title>
   </head>
   <body>
     <SiteHeader locale={resolvedLocale} />
+    {breadcrumb && <Breadcrumbs breadcrumb={breadcrumb} />}
     <slot />
     <SiteFooter locale={resolvedLocale} />
     <AnalyticsConsent locale={resolvedLocale} />

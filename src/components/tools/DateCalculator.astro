@@ -1,6 +1,6 @@
 ---
 import type { Locale } from "../../data/locales";
-import { getToolLocaleRouteById, localeRouteConfig } from "../../data/locale-routes";
+import { getToolLocaleRouteById } from "../../data/locale-routes";
 
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const baseCopy = locale === "pt-BR" ? {
@@ -17,13 +17,11 @@ const clearCopy = locale === "pt-BR"
     : { clear: "Clear", clearStartDate: "Clear start date", clearEndDate: "Clear end date", clearPeriodStartDate: "Clear period start date" };
 const copy = { ...baseCopy, ...clearCopy };
 
-const backRoute = localeRouteConfig[locale].tools;
 const ageRoute = getToolLocaleRouteById("calculadora-de-idade", locale);
 ---
 
 <main class="date-tool">
   <div class="container">
-    <a class="back" href={backRoute}>← {copy.back}</a>
     <p class="eyebrow">{copy.title}</p>
     <h1>{copy.title}</h1>
     <p class="intro">{copy.description}</p>
@@ -82,7 +80,6 @@ const ageRoute = getToolLocaleRouteById("calculadora-de-idade", locale);
 <style>
   .date-tool { background:#f8f9fc; padding:48px 20px 80px; }
   .container { max-width:980px; margin:0 auto; }
-  .back { display:inline-block; color:#526174; font-size:14px; margin-bottom:22px; }
   .eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }
   h1 { font-size:clamp(32px,5vw,46px); margin:0; line-height:1.1; }
   .intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 32px; }

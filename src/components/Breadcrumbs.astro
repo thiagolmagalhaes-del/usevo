@@ -1,0 +1,79 @@
+---
+import type { ToolBreadcrumb } from "../data/locale-routes";
+
+const { breadcrumb } = Astro.props as { breadcrumb: ToolBreadcrumb };
+---
+
+<nav class="breadcrumbs" aria-label={breadcrumb.label}>
+  <ol>
+    {breadcrumb.items.map((item, index) => (
+      <li>
+        {index > 0 && <span class="separator" aria-hidden="true">›</span>}
+        {item.href ? (
+          <a href={item.href}>{item.name}</a>
+        ) : (
+          <span aria-current="page">{item.name}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin: 0 auto;
+    max-width: 1180px;
+    padding: 18px 20px 0;
+  }
+
+  ol {
+    align-items: baseline;
+    color: #526174;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    align-items: baseline;
+    display: inline-flex;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  a {
+    color: #315bea;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  a:hover {
+    color: #234cbd;
+  }
+
+  a:focus-visible {
+    border-radius: 4px;
+    outline: 2px solid #315bea;
+    outline-offset: 3px;
+  }
+
+  .separator {
+    color: #98a2b3;
+    margin: 0 6px;
+  }
+
+  [aria-current="page"] {
+    color: #475467;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 650px) {
+    .breadcrumbs {
+      padding: 14px 16px 0;
+    }
+  }
+</style>

@@ -65,14 +65,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         color: #111827;
       }
 
-      .back {
-        display: block;
-        color: #475467;
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 16px;
-      }
-
       main {
         padding: 56px 0 80px;
       }
@@ -357,10 +349,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
           grid-template-columns: repeat(2, minmax(120px, 1fr));
         }
 
-        .back {
-          display: none;
-        }
-
         .buttons {
           flex-direction: column;
         }
@@ -374,7 +362,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <main>
     <div class="container">
-      <a href="/ferramentas" class="back">← {copy.back}</a>
         <div class="eyebrow">{copy.eyebrow}</div>
 
         <h1>{pageTitle}</h1>

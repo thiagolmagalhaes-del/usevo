@@ -8,6 +8,20 @@ export type WebsiteJsonLd = {
   inLanguage: readonly ["en", "pt-BR", "es"];
 };
 
+export type BreadcrumbListJsonLd = {
+  "@context": "https://schema.org";
+  "@type": "BreadcrumbList";
+  itemListElement: readonly [
+    { "@type": "ListItem"; position: 1; name: string; item: string },
+    { "@type": "ListItem"; position: 2; name: string; item: string },
+    { "@type": "ListItem"; position: 3; name: string },
+  ];
+};
+
+export type StructuredData = WebsiteJsonLd | BreadcrumbListJsonLd;
+
+type BreadcrumbItem = { name: string; href?: string; url?: string };
+
 export const websiteJsonLd: WebsiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -18,7 +32,24 @@ export const websiteJsonLd: WebsiteJsonLd = {
   inLanguage: ["en", "pt-BR", "es"],
 };
 
-export const serializeJsonLd = (data: WebsiteJsonLd) =>
+export const createBreadcrumbListJsonLd = (
+  items: readonly [BreadcrumbItem, BreadcrumbItem, BreadcrumbItem],
+): BreadcrumbListJsonLd => {
+  const [home, tools, current] = items;
+  if (!home.url || !tools.url) throw new Error("Breadcrumb URLs are required for home and tools.");
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: home.name, item: home.url },
+      { "@type": "ListItem", position: 2, name: tools.name, item: tools.url },
+      { "@type": "ListItem", position: 3, name: current.name },
+    ],
+  };
+};
+
+export const serializeJsonLd = (data: StructuredData) =>
   JSON.stringify(data)
     .replace(/</g, "\\u003c")
     .replace(/>/g, "\\u003e")

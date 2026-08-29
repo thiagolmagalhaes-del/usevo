@@ -61,14 +61,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         color: #111111;
       }
 
-      .back {
-        display: block;
-        text-decoration: none;
-        color: #555;
-        font-size: 14px;
-        margin-bottom: 16px;
-      }
-
       main {
         padding: 56px 0 80px;
       }
@@ -180,7 +172,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <main>
     <div class="container">
-      <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
         <div class="eyebrow">{ui.onlineTools} › {ui.category}</div>
 
         <h1>{ui.title}</h1>

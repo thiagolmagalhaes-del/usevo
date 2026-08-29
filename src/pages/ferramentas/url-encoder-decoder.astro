@@ -3,7 +3,7 @@ import ToolEditorialContent from "../../components/tools/ToolEditorialContent.as
 import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
-import { getSiteAlternates, localeRouteConfig } from "../../data/locale-routes";
+import { getSiteAlternates } from "../../data/locale-routes";
 import { getToolUi, getCategoryTranslation } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 const { locale: localeProp } = Astro.props as { locale?: Locale };
@@ -21,14 +21,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 const toolUi = getToolUi(locale);
 const category = getCategoryTranslation("development", locale);
 const ui = toolUi.tools["url-encoder-decoder"];
-const backRoute = localeRouteConfig[locale].tools;
 ---
 
 
 
 <Layout title={title} description={description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
     <main class="container">
-      <a class="back" href={backRoute}>← {toolUi.common.back}</a>
 
       <div class="category">{category}</div>
 
@@ -173,19 +171,6 @@ const backRoute = localeRouteConfig[locale].tools;
         padding: 45px 0 80px;
       }
 
-      .back {
-        display: block;
-        text-align: right;
-        margin-bottom: 70px;
-        color: #555;
-        text-decoration: none;
-        font-size: 14px;
-      }
-
-      .back:hover {
-        text-decoration: underline;
-      }
-
       .category {
         color: #1266d6;
         font-size: 14px;
@@ -316,10 +301,6 @@ const backRoute = localeRouteConfig[locale].tools;
         .container {
           width: min(100% - 24px, 900px);
           padding-top: 25px;
-        }
-
-        .back {
-          margin-bottom: 45px;
         }
 
         .tool-card {

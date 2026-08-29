@@ -1,6 +1,6 @@
 ---
 import type { Locale } from "../../data/locales";
-import { getToolLocaleRouteById, localeRouteConfig } from "../../data/locale-routes";
+import { getToolLocaleRouteById } from "../../data/locale-routes";
 
 const { locale = "en" } = Astro.props as { locale?: Locale };
 const baseCopy = locale === "pt-BR" ? {
@@ -17,13 +17,11 @@ const clearCopy = locale === "pt-BR"
     : { clear: "Clear", clearBirthDate: "Clear date of birth", clearReferenceDate: "Clear reference date" };
 const copy = { ...baseCopy, ...clearCopy };
 
-const backRoute = localeRouteConfig[locale].tools;
 const dateRoute = getToolLocaleRouteById("calculadora-de-datas", locale);
 ---
 
 <main class="age-tool">
   <div class="container">
-    <a class="back" href={backRoute}>← {copy.back}</a>
     <p class="eyebrow">{copy.title}</p>
     <h1>{copy.title}</h1>
     <p class="intro">{copy.description}</p>
@@ -54,7 +52,7 @@ const dateRoute = getToolLocaleRouteById("calculadora-de-datas", locale);
 </main>
 
 <style>
-  .age-tool { background:#f8f9fc; padding:48px 20px 80px; }.container { max-width:700px; margin:0 auto; }.back { color:#526174; display:inline-block; font-size:14px; margin-bottom:22px; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); margin:0; line-height:1.1; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 32px; }.card { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); padding:26px; }h2 { font-size:23px; margin:0 0 20px; }h3 { font-size:17px; margin:0 0 14px; }.field { margin-bottom:17px; }label { display:block; font-weight:600; margin-bottom:7px; }input { border:1px solid #dfe3ea; border-radius:10px; color:#172033; font:inherit; padding:12px; width:100%; }input:focus { border-color:#315bdc; outline:2px solid #dce5ff; outline-offset:1px; }button { background:#315bdc; border:0; border-radius:10px; color:#fff; cursor:pointer; font:inherit; font-weight:700; padding:13px 18px; width:100%; }button:hover { background:#264bc0; }.error { background:#fff1f0; border-radius:8px; color:#8a280d; margin:16px 0 0; padding:10px; }.result { background:#f4f7ff; border-radius:12px; margin-top:18px; padding:18px; }dl { display:grid; gap:11px; margin:0; }dl div { display:flex; gap:12px; justify-content:space-between; }dt { color:#536176; }dd { font-weight:700; margin:0; text-align:right; }.related { background:#eef2ff; border-radius:12px; margin-top:26px; padding:16px 18px; }.related a { color:#234cbd; font-weight:700; text-decoration:underline; }@media (max-width:520px) { .age-tool { padding:32px 16px 64px; }.card { padding:20px; }dl div { align-items:flex-start; flex-direction:column; gap:3px; }dd { text-align:left; } }
+  .age-tool { background:#f8f9fc; padding:48px 20px 80px; }.container { max-width:700px; margin:0 auto; }.eyebrow { color:#315bdc; font-size:14px; font-weight:700; margin:0 0 8px; }h1 { font-size:clamp(32px,5vw,46px); margin:0; line-height:1.1; }.intro { color:#687386; font-size:18px; line-height:1.55; margin:14px 0 32px; }.card { background:#fff; border:1px solid #e5e8ef; border-radius:18px; box-shadow:0 8px 30px rgba(20,30,50,.06); padding:26px; }h2 { font-size:23px; margin:0 0 20px; }h3 { font-size:17px; margin:0 0 14px; }.field { margin-bottom:17px; }label { display:block; font-weight:600; margin-bottom:7px; }input { border:1px solid #dfe3ea; border-radius:10px; color:#172033; font:inherit; padding:12px; width:100%; }input:focus { border-color:#315bdc; outline:2px solid #dce5ff; outline-offset:1px; }button { background:#315bdc; border:0; border-radius:10px; color:#fff; cursor:pointer; font:inherit; font-weight:700; padding:13px 18px; width:100%; }button:hover { background:#264bc0; }.error { background:#fff1f0; border-radius:8px; color:#8a280d; margin:16px 0 0; padding:10px; }.result { background:#f4f7ff; border-radius:12px; margin-top:18px; padding:18px; }dl { display:grid; gap:11px; margin:0; }dl div { display:flex; gap:12px; justify-content:space-between; }dt { color:#536176; }dd { font-weight:700; margin:0; text-align:right; }.related { background:#eef2ff; border-radius:12px; margin-top:26px; padding:16px 18px; }.related a { color:#234cbd; font-weight:700; text-decoration:underline; }@media (max-width:520px) { .age-tool { padding:32px 16px 64px; }.card { padding:20px; }dl div { align-items:flex-start; flex-direction:column; gap:3px; }dd { text-align:left; } }
   .date-input { align-items:center; display:flex; gap:8px; }.date-input input { min-width:0; }.clear-date { background:#eef2ff; color:#234cbd; min-height:44px; padding:10px 14px; width:auto; }.clear-date:hover { background:#dce5ff; }
 </style>
 

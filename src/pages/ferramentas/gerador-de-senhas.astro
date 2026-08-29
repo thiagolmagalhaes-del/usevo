@@ -66,15 +66,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       font-weight: 800;
     }
 
-    .back {
-      display: block;
-      color: #172033;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -227,7 +218,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   </style>
 
   <main class="container">
-    <a href="/ferramentas" class="back">← {toolUi.common.back}</a>
     <div class="category">{ui.category}</div>
 
     <h1>{ui.title}</h1>

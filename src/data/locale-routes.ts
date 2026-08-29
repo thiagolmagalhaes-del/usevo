@@ -1,5 +1,5 @@
 import { type Locale } from "./locales";
-import { ferramentas, getFerramentaByPath } from "./ferramentas";
+import { ferramentas, getFerramentaByPath, getFerramentaTranslation } from "./ferramentas";
 
 export const SITE_ORIGIN = "https://usevo.tools";
 
@@ -69,6 +69,49 @@ export const getToolLocaleRoute = (tool: (typeof ferramentas)[number], locale: L
 export const getToolLocaleRouteById = (toolId: string, locale: Locale) => {
   const tool = ferramentas.find((candidate) => candidate.id === toolId);
   return tool ? getToolLocaleRoute(tool, locale) : undefined;
+};
+
+export type ToolBreadcrumbItem = {
+  name: string;
+  href?: string;
+  url?: string;
+};
+
+export type ToolBreadcrumb = {
+  label: string;
+  items: readonly [ToolBreadcrumbItem, ToolBreadcrumbItem, ToolBreadcrumbItem];
+};
+
+const breadcrumbCopy = {
+  en: { label: "Breadcrumb", home: "Home", tools: "Tools" },
+  "pt-BR": { label: "Trilha de navegação", home: "Início", tools: "Ferramentas" },
+  es: { label: "Ruta de navegación", home: "Inicio", tools: "Herramientas" },
+} as const;
+
+const getToolForLocalePath = (pathname: string, locale: Locale) => {
+  const normalizedPath = normalizeSitePath(pathname).split(/[?#]/, 1)[0] || "/";
+  if (locale === "pt-BR") return getFerramentaByPath(normalizedPath);
+
+  const prefix = locale === "en" ? "/en/tools/" : "/es/herramientas/";
+  if (!normalizedPath.startsWith(prefix)) return undefined;
+  return resolveToolByLocaleSlug(normalizedPath.slice(prefix.length), locale);
+};
+
+export const getToolBreadcrumb = (pathname: string, locale: Locale): ToolBreadcrumb | undefined => {
+  const tool = getToolForLocalePath(pathname, locale);
+  if (!tool) return undefined;
+
+  const copy = breadcrumbCopy[locale];
+  const homeRoute = localeRouteConfig[locale].home;
+  const toolsRoute = localeRouteConfig[locale].tools;
+  return {
+    label: copy.label,
+    items: [
+      { name: copy.home, href: homeRoute, url: toSiteUrl(homeRoute) },
+      { name: copy.tools, href: toolsRoute, url: toSiteUrl(toolsRoute) },
+      { name: getFerramentaTranslation(tool, locale).title },
+    ],
+  };
 };
 
 export const getCategoryLocaleRoute = (categoryKey: string, locale: Locale) => {

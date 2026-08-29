@@ -6,7 +6,7 @@ import {
   getFerramentaByPath,
   getFerramentaTranslation
 } from "../../data/ferramentas";
-import { getSiteAlternates, localeRouteConfig } from "../../data/locale-routes";
+import { getSiteAlternates } from "../../data/locale-routes";
 import { getToolUi } from "../../data/i18n";
 import { resolveLocaleFromPath, type Locale } from "../../data/locales";
 
@@ -68,14 +68,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       color: #172033;
       font-size: 24px;
       font-weight: 800;
-    }
-
-    .back {
-      display: block;
-      text-decoration: none;
-      color: #667085;
-      font-size: 15px;
-      margin-bottom: 16px;
     }
 
     main {
@@ -256,10 +248,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   </style>
 
   <main>
-    <a href={localeRouteConfig[locale].tools} class="back">
-      ← {toolUi.common.back}
-    </a>
-
     <span class="category">{ui.category}</span>
 
     <h1>{ui.title}</h1>

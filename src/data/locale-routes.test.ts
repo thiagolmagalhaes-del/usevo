@@ -5,10 +5,12 @@ import {
   getLocaleNavigationRoutes,
   getSiteAlternates,
   getToolLocaleRoute,
+  getToolBreadcrumb,
   localeRouteConfig,
   normalizeSitePath,
   toSiteUrl,
 } from "./locale-routes";
+import { getFerramentaTranslation } from "./ferramentas";
 
 const homeAlternates = {
   en: "https://usevo.tools/",
@@ -71,6 +73,23 @@ describe("international route architecture", () => {
       for (const url of Object.values(alternates)) {
         expect(hasUnexpectedTrailingSlash(url)).toBe(false);
       }
+    }
+  });
+
+  it("builds localized three-item breadcrumbs from the same tool data used by pages", () => {
+    const expected = {
+      en: { label: "Breadcrumb", home: "/", tools: "/en/tools" },
+      "pt-BR": { label: "Trilha de navegação", home: "/pt-br", tools: "/ferramentas" },
+      es: { label: "Ruta de navegación", home: "/es", tools: "/es/herramientas" },
+    } as const;
+    for (const tool of ferramentas) for (const locale of ["pt-BR", "en", "es"] as const) {
+      const breadcrumb = getToolBreadcrumb(getToolLocaleRoute(tool, locale)!, locale)!;
+      expect(breadcrumb.label).toBe(expected[locale].label);
+      expect(breadcrumb.items).toHaveLength(3);
+      expect(breadcrumb.items[0]).toMatchObject({ name: locale === "en" ? "Home" : locale === "es" ? "Inicio" : "Início", href: expected[locale].home });
+      expect(breadcrumb.items[1]).toMatchObject({ name: locale === "en" ? "Tools" : locale === "es" ? "Herramientas" : "Ferramentas", href: expected[locale].tools });
+      expect(breadcrumb.items[2]).toEqual({ name: getFerramentaTranslation(tool, locale).title });
+      expect(breadcrumb.items[0].href).not.toBe("/en");
     }
   });
 });
