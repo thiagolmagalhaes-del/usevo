@@ -42,22 +42,30 @@ const institutionalLinks = institutionalKeys.map((key) => ({ href: institutional
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
+    box-sizing: border-box;
+    padding-right: 220px;
   }
 
+  nav { flex: 1; min-width: 0; }
   ul { display:flex; flex-wrap:wrap; gap:8px 14px; justify-content:flex-end; list-style:none; margin:0; padding:0; }
   a { color:#526174; text-decoration:underline; text-underline-offset:2px; }
   a:hover { color:#315bea; }
   a:focus-visible { border-radius:3px; outline:2px solid #315bea; outline-offset:3px; }
+
+  @media (max-width: 900px) {
+    .footer-inner {
+      flex-direction: column;
+      padding-right: 0;
+      padding-bottom: 72px;
+    }
+
+    ul { justify-content:flex-start; }
+  }
 
   @media (max-width: 650px) {
     .container {
       width: min(100% - 28px, 1180px);
     }
 
-    .footer-inner {
-      flex-direction: column;
-    }
-
-    ul { justify-content:flex-start; }
   }
 </style>
