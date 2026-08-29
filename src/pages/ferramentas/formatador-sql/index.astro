@@ -1,4 +1,6 @@
 ---
+import ToolEditorialContent from "../../../components/tools/ToolEditorialContent.astro";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../../data/tool-editorial-content";
 import Layout from "../../../layouts/Layout.astro";
 import SqlFormatter from "../../../components/tools/SqlFormatter.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../../data/ferramentas";
@@ -10,6 +12,8 @@ const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/formatador-sql");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
@@ -19,5 +23,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 <Layout title={title} description={description} canonical={new URL(Astro.url.pathname, "https://usevo.tools").href} alternateUrls={alternateUrls} locale={locale}>
   <div style="padding:28px; max-width:900px; margin:0 auto">
     <SqlFormatter locale={locale} />
+  </div>
+  <div style="padding: 0 28px 80px; max-width: 900px; margin: 0 auto">
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
   </div>
 </Layout>

@@ -1,4 +1,6 @@
 ---
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import Layout from "../../layouts/Layout.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
 import { getSiteAlternates } from "../../data/locale-routes";
@@ -10,6 +12,8 @@ const copy = locale === "pt-BR" ? { back: "Todas as ferramentas", eyebrow: "Ferr
 // so the lookup must use this tool's canonical path, not the current route's pathname.
 const ferramenta = getFerramentaByPath("/ferramentas/json-inspector");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const title = toolMeta.title;
 const description = toolMeta.description;
 const pageTitle = title;
@@ -728,4 +732,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         }
       });
     </script>
+  <div style="padding: 0 28px 80px; max-width: 900px; margin: 0 auto">
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
+  </div>
 </Layout>

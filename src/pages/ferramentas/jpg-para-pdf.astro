@@ -1,4 +1,6 @@
 ---
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import Layout from "../../layouts/Layout.astro";
 import {
   getFerramentaByPath,
@@ -16,6 +18,8 @@ const ui = toolUi.tools["jpg-para-pdf"];
 
 const ferramenta = getFerramentaByPath("/ferramentas/jpg-para-pdf");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 
 const title = toolMeta.title;
 const description = toolMeta.description;
@@ -582,4 +586,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       convertBtn.disabled = !selectedFile;
     }
   </script>
+  <div style="padding: 0 28px 80px; max-width: 900px; margin: 0 auto">
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
+  </div>
 </Layout>

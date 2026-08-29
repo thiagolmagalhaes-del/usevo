@@ -1,4 +1,6 @@
 ---
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
 import Layout from "../../layouts/Layout.astro";
 import ImageResizer from "../../components/tools/ImageResizer.astro";
 import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
@@ -9,9 +11,14 @@ const { locale: localeProp } = Astro.props as { locale?: Locale };
 const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
 const ferramenta = getFerramentaByPath("/ferramentas/redimensionar-imagem");
 const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 ---
 
 <Layout title={toolMeta.title} description={toolMeta.description} canonical={canonicalUrl} alternateUrls={getSiteAlternates(Astro.url.pathname)} locale={locale}>
   <ImageResizer locale={locale} />
+  <div style="padding: 0 28px 80px; max-width: 900px; margin: 0 auto">
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
+  </div>
 </Layout>

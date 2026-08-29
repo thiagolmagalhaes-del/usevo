@@ -1,0 +1,262 @@
+import type { ToolEditorialContentCatalog } from "./types";
+
+export const calculatorsEditorialContent: ToolEditorialContentCatalog = {
+calculadora: {
+    "pt-BR": {
+      howTo: { title: "Como usar a calculadora", steps: [
+        "Selecione os números e operadores para montar a expressão no visor.",
+        "Use parênteses quando quiser definir qual parte da conta deve ser resolvida primeiro.",
+        "Selecione = para calcular ou Limpar para começar uma nova expressão.",
+      ] },
+      example: { title: "Exemplo: (12 + 8) × 3", description: "Digite (12+8)*3 no visor usando as teclas da calculadora.", calculation: "(12 + 8) × 3 = 60", result: "Os parênteses fazem a soma acontecer antes da multiplicação, e o resultado exibido é 60." },
+      useCases: { title: "Quando usar", items: [
+        "Conferir somas, subtrações, multiplicações e divisões do dia a dia.",
+        "Resolver uma conta com mais de uma operação e parênteses.",
+        "Fazer uma conta intermediária antes de usar uma ferramenta específica.",
+      ] },
+      notes: { title: "Observações e limitações", items: [
+        "A interface oferece números, ponto decimal, +, −, ×, ÷, parênteses, = e Limpar.",
+        "Ela não inclui funções científicas, memória, histórico, porcentagem automática ou conversão de unidades.",
+        "Expressões inválidas e resultados que não são números finitos mostram uma mensagem de erro.",
+      ] },
+      faq: { title: "Perguntas frequentes", items: [
+        { question: "Quais operações posso fazer?", answer: "Você pode somar, subtrair, multiplicar, dividir e usar parênteses para organizar a ordem da conta." },
+        { question: "Posso usar números decimais?", answer: "Sim. Use o ponto como separador decimal no visor da calculadora." },
+        { question: "Por que aparece uma expressão inválida?", answer: "Isso acontece quando a conta está incompleta ou tem uma combinação que não pode ser calculada, como parênteses sem fechamento." },
+        { question: "A calculadora guarda minhas contas?", answer: "Não há histórico ou memória de cálculos na interface atual; Limpar remove a expressão mostrada no visor." },
+      ] },
+      relatedTools: { title: "Ferramentas relacionadas", items: [
+        { toolId: "calculadora-de-porcentagem", label: "Calculadora de Porcentagem", description: "Encontre quanto uma porcentagem representa de um valor." },
+        { toolId: "conversor-de-unidades", label: "Conversor de Unidades", description: "Converta medidas de comprimento, peso, temperatura e outras unidades." },
+      ] },
+    },
+    en: {
+      howTo: { title: "How to use the calculator", steps: [
+        "Select numbers and operators to build an expression on the display.",
+        "Use parentheses when you need to decide which part of the calculation is evaluated first.",
+        "Select = to calculate, or Clear to start a new expression.",
+      ] },
+      example: { title: "Example: (12 + 8) × 3", description: "Enter (12+8)*3 on the display using the calculator keys.", calculation: "(12 + 8) × 3 = 60", result: "The parentheses make the addition happen before the multiplication, so the displayed result is 60." },
+      useCases: { title: "Useful situations", items: [
+        "Check everyday additions, subtractions, multiplications, and divisions.",
+        "Solve an expression with more than one operation and parentheses.",
+        "Work out an intermediate value before using a more specific tool.",
+      ] },
+      notes: { title: "Notes and limitations", items: [
+        "The interface provides numbers, a decimal point, +, −, ×, ÷, parentheses, =, and Clear.",
+        "It does not include scientific functions, memory, history, automatic percentages, or unit conversion.",
+        "Invalid expressions and results that are not finite numbers display an error message.",
+      ] },
+      faq: { title: "Frequently asked questions", items: [
+        { question: "Which operations can I use?", answer: "You can add, subtract, multiply, divide, and use parentheses to control the order of an expression." },
+        { question: "Can I use decimal numbers?", answer: "Yes. Use a period as the decimal separator on the calculator display." },
+        { question: "Why does an invalid-expression message appear?", answer: "It appears when a calculation is incomplete or cannot be evaluated, such as when parentheses are left open." },
+        { question: "Does the calculator save my calculations?", answer: "The current interface has no calculation history or memory; Clear removes the expression from the display." },
+      ] },
+      relatedTools: { title: "Related tools", items: [
+        { toolId: "calculadora-de-porcentagem", label: "Percentage Calculator", description: "Find the amount represented by a percentage of a value." },
+        { toolId: "conversor-de-unidades", label: "Unit Converter", description: "Convert length, weight, temperature, and other measurements." },
+      ] },
+    },
+    es: {
+      howTo: { title: "Cómo usar la calculadora", steps: [
+        "Selecciona números y operadores para crear la expresión en la pantalla.",
+        "Usa paréntesis cuando necesites decidir qué parte de la operación se resuelve primero.",
+        "Selecciona = para calcular o Limpiar para empezar una expresión nueva.",
+      ] },
+      example: { title: "Ejemplo: (12 + 8) × 3", description: "Introduce (12+8)*3 en la pantalla con las teclas de la calculadora.", calculation: "(12 + 8) × 3 = 60", result: "Los paréntesis hacen que la suma se realice antes de la multiplicación, por lo que el resultado mostrado es 60." },
+      useCases: { title: "Cuándo resulta útil", items: [
+        "Comprobar sumas, restas, multiplicaciones y divisiones cotidianas.",
+        "Resolver una expresión con más de una operación y paréntesis.",
+        "Obtener un valor intermedio antes de usar una herramienta más específica.",
+      ] },
+      notes: { title: "Notas y limitaciones", items: [
+        "La interfaz incluye números, punto decimal, +, −, ×, ÷, paréntesis, = y Limpiar.",
+        "No incluye funciones científicas, memoria, historial, porcentajes automáticos ni conversión de unidades.",
+        "Las expresiones no válidas y los resultados que no son números finitos muestran un mensaje de error.",
+      ] },
+      faq: { title: "Preguntas frecuentes", items: [
+        { question: "¿Qué operaciones puedo realizar?", answer: "Puedes sumar, restar, multiplicar, dividir y usar paréntesis para organizar el orden de la expresión." },
+        { question: "¿Puedo usar números decimales?", answer: "Sí. Usa el punto como separador decimal en la pantalla de la calculadora." },
+        { question: "¿Por qué aparece una expresión no válida?", answer: "Aparece cuando la operación está incompleta o no se puede calcular, por ejemplo si dejas paréntesis sin cerrar." },
+        { question: "¿La calculadora guarda mis operaciones?", answer: "La interfaz actual no tiene historial ni memoria de cálculos; Limpiar elimina la expresión de la pantalla." },
+      ] },
+      relatedTools: { title: "Herramientas relacionadas", items: [
+        { toolId: "calculadora-de-porcentagem", label: "Calculadora de porcentajes", description: "Obtén el importe que representa un porcentaje de un valor." },
+        { toolId: "conversor-de-unidades", label: "Convertidor de unidades", description: "Convierte longitud, peso, temperatura y otras medidas." },
+      ] },
+    },
+  }
+,"calculadora-de-datas": {
+    "pt-BR": {
+      howTo: { title: "Como usar a calculadora de datas", steps: [
+        "Para comparar datas, informe uma data inicial e uma final e escolha se quer incluir o último dia.",
+        "Para chegar a outra data, informe a data inicial, escolha adicionar ou subtrair e preencha anos, meses, semanas ou dias.",
+        "Selecione o botão de cálculo do modo escolhido para ver o resultado e o dia da semana.",
+      ] },
+      example: { title: "Adicionar duas semanas a 10 de maio de 2024", description: "No modo de períodos, informe 10/05/2024, selecione Adicionar e preencha 2 em Semanas.", calculation: "10/05/2024 + 2 semanas = 24/05/2024", result: "A ferramenta mostra 24 de maio de 2024 e o dia da semana correspondente." },
+      useCases: { title: "Quando usar", items: [
+        "Medir o intervalo entre duas datas válidas, inclusive em dias e semanas.",
+        "Planejar uma data futura ou anterior com anos, meses, semanas e dias.",
+        "Conferir o dia da semana de uma data inicial, final ou calculada.",
+      ] },
+      notes: { title: "Observações e limitações", items: [
+        "O modo de intervalo exige que a data final seja igual ou posterior à data inicial; caso contrário, mostra um aviso.",
+        "Marcar Incluir o último dia altera a contagem total de dias do intervalo.",
+        "No modo de períodos, os campos aceitam apenas números inteiros não negativos; a operação escolhida define se eles são adicionados ou subtraídos.",
+      ] },
+      faq: { title: "Perguntas frequentes", items: [
+        { question: "Quais modos a calculadora oferece?", answer: "Ela calcula a diferença entre duas datas e também adiciona ou subtrai anos, meses, semanas e dias de uma data inicial." },
+        { question: "Posso informar a data final antes da inicial?", answer: "Não. O modo de intervalo pede que a data final seja igual ou posterior à inicial." },
+        { question: "O que muda ao incluir o último dia?", answer: "Essa opção inclui a data final na contagem total de dias do intervalo." },
+        { question: "Posso usar períodos negativos?", answer: "Não. Informe valores não negativos e escolha Subtrair quando quiser voltar no tempo." },
+      ] },
+      relatedTools: { title: "Ferramentas relacionadas", items: [
+        { toolId: "calculadora-de-idade", label: "Calculadora de idade", description: "Calcule a idade entre uma data de nascimento e uma data de referência." },
+        { toolId: "calculadora", label: "Calculadora", description: "Faça contas rápidas ao planejar períodos ou quantidades." },
+      ] },
+    },
+    en: {
+      howTo: { title: "How to use the date calculator", steps: [
+        "To compare dates, enter a start date and an end date, then choose whether to include the last day.",
+        "To reach another date, enter the start date, choose add or subtract, and fill in years, months, weeks, or days.",
+        "Select the calculate button for the chosen mode to view the result and weekday.",
+      ] },
+      example: { title: "Add two weeks to May 10, 2024", description: "In period mode, enter May 10, 2024, select Add, and enter 2 in Weeks.", calculation: "May 10, 2024 + 2 weeks = May 24, 2024", result: "The tool displays May 24, 2024 and its corresponding weekday." },
+      useCases: { title: "Useful situations", items: [
+        "Measure the interval between two valid dates, including days and weeks.",
+        "Plan a future or earlier date with years, months, weeks, and days.",
+        "Check the weekday for a start date, end date, or calculated date.",
+      ] },
+      notes: { title: "Notes and limitations", items: [
+        "Interval mode requires the end date to be the same as or later than the start date; otherwise it shows a notice.",
+        "Selecting Include the last day changes the interval's total day count.",
+        "In period mode, fields accept only non-negative integers; the selected operation determines whether they are added or subtracted.",
+      ] },
+      faq: { title: "Frequently asked questions", items: [
+        { question: "Which modes does the calculator provide?", answer: "It calculates the difference between two dates and can also add or subtract years, months, weeks, and days from a start date." },
+        { question: "Can I enter an end date before the start date?", answer: "No. Interval mode requires the end date to be the same as or later than the start date." },
+        { question: "What does including the last day change?", answer: "That option includes the end date in the interval's total day count." },
+        { question: "Can I use negative periods?", answer: "No. Enter non-negative values and select Subtract when you need to move backward in time." },
+      ] },
+      relatedTools: { title: "Related tools", items: [
+        { toolId: "calculadora-de-idade", label: "Age Calculator", description: "Calculate age between a date of birth and a reference date." },
+        { toolId: "calculadora", label: "Calculator", description: "Handle quick arithmetic while planning periods or quantities." },
+      ] },
+    },
+    es: {
+      howTo: { title: "Cómo usar la calculadora de fechas", steps: [
+        "Para comparar fechas, introduce una fecha inicial y una final, y decide si quieres incluir el último día.",
+        "Para obtener otra fecha, introduce la fecha inicial, elige sumar o restar y completa años, meses, semanas o días.",
+        "Selecciona el botón de cálculo del modo elegido para ver el resultado y el día de la semana.",
+      ] },
+      example: { title: "Sumar dos semanas al 10 de mayo de 2024", description: "En el modo de períodos, introduce el 10/05/2024, selecciona Sumar y escribe 2 en Semanas.", calculation: "10/05/2024 + 2 semanas = 24/05/2024", result: "La herramienta muestra el 24 de mayo de 2024 y el día de la semana correspondiente." },
+      useCases: { title: "Cuándo resulta útil", items: [
+        "Medir el intervalo entre dos fechas válidas, incluso en días y semanas.",
+        "Planificar una fecha futura o anterior con años, meses, semanas y días.",
+        "Comprobar el día de la semana de una fecha inicial, final o calculada.",
+      ] },
+      notes: { title: "Notas y limitaciones", items: [
+        "El modo de intervalo exige que la fecha final sea igual o posterior a la fecha inicial; de lo contrario muestra un aviso.",
+        "Marcar Incluir el último día modifica el total de días del intervalo.",
+        "En el modo de períodos, los campos aceptan solo números enteros no negativos; la operación elegida determina si se suman o se restan.",
+      ] },
+      faq: { title: "Preguntas frecuentes", items: [
+        { question: "¿Qué modos ofrece la calculadora?", answer: "Calcula la diferencia entre dos fechas y también suma o resta años, meses, semanas y días a una fecha inicial." },
+        { question: "¿Puedo introducir una fecha final anterior a la inicial?", answer: "No. El modo de intervalo requiere que la fecha final sea igual o posterior a la inicial." },
+        { question: "¿Qué cambia al incluir el último día?", answer: "Esa opción incluye la fecha final en el total de días del intervalo." },
+        { question: "¿Puedo usar períodos negativos?", answer: "No. Introduce valores no negativos y selecciona Restar cuando quieras retroceder en el tiempo." },
+      ] },
+      relatedTools: { title: "Herramientas relacionadas", items: [
+        { toolId: "calculadora-de-idade", label: "Calculadora de edad", description: "Calcula la edad entre una fecha de nacimiento y una fecha de referencia." },
+        { toolId: "calculadora", label: "Calculadora", description: "Realiza operaciones rápidas al planificar períodos o cantidades." },
+      ] },
+    },
+  }
+,"calculadora-de-idade": {
+    "pt-BR": {
+      howTo: { title: "Como usar a calculadora de idade", steps: [
+        "Informe a data de nascimento no primeiro campo.",
+        "Confira ou altere a data de referência no segundo campo; ela é preenchida com a data atual ao abrir a ferramenta.",
+        "Selecione Calcular idade para ver a idade entre as duas datas e as informações de aniversário.",
+      ] },
+      example: { title: "Nascimento em 15 de junho de 2000", description: "Use 15/06/2000 como data de nascimento e 15/06/2024 como data de referência.", calculation: "15/06/2000 → 15/06/2024 = 24 anos, 0 meses e 0 dias", result: "Como a referência é explícita, o exemplo não depende da data em que a página é aberta." },
+      useCases: { title: "Quando usar", items: [
+        "Ver a idade entre uma data de nascimento e uma data de referência escolhida.",
+        "Conferir total de dias, meses e semanas aproximados e dia da semana do nascimento.",
+        "Consultar a próxima data de aniversário calculada pela ferramenta.",
+      ] },
+      notes: { title: "Observações e limitações", items: [
+        "O resultado depende da data de referência informada. Ao abrir a página, ela recebe a data atual, mas pode ser alterada.",
+        "A data de nascimento não pode ser posterior à data de referência.",
+        "Use o resultado apenas como apoio informativo; ele não substitui cálculos médicos, jurídicos, oficiais ou previstos em contrato.",
+      ] },
+      faq: { title: "Perguntas frequentes", items: [
+        { question: "Qual data a calculadora usa como referência?", answer: "Ela preenche a data atual ao iniciar, mas você pode informar outra data de referência antes de calcular." },
+        { question: "Posso calcular a idade em uma data passada ou futura?", answer: "Sim, desde que a data de referência seja igual ou posterior à data de nascimento." },
+        { question: "Quais informações aparecem no resultado?", answer: "A ferramenta mostra idade em anos, meses e dias, totais de dias, meses e semanas aproximados, dia de nascimento e dados do próximo aniversário." },
+        { question: "O resultado serve para uso oficial?", answer: "Não. Para situações médicas, jurídicas, oficiais ou contratuais, siga a regra e a documentação aplicáveis." },
+      ] },
+      relatedTools: { title: "Ferramentas relacionadas", items: [
+        { toolId: "calculadora-de-datas", label: "Calculadora de datas", description: "Compare datas ou some e subtraia períodos em um calendário." },
+        { toolId: "calculadora", label: "Calculadora", description: "Resolva contas rápidas relacionadas a planejamento e datas." },
+      ] },
+    },
+    en: {
+      howTo: { title: "How to use the age calculator", steps: [
+        "Enter the date of birth in the first field.",
+        "Check or change the reference date in the second field; it is filled with the current date when the tool opens.",
+        "Select Calculate age to view the age between the two dates and birthday information.",
+      ] },
+      example: { title: "Born on June 15, 2000", description: "Use June 15, 2000 as the date of birth and June 15, 2024 as the reference date.", calculation: "June 15, 2000 → June 15, 2024 = 24 years, 0 months, and 0 days", result: "Because the reference date is explicit, this example does not depend on the day the page is opened." },
+      useCases: { title: "Useful situations", items: [
+        "View age between a date of birth and a chosen reference date.",
+        "Check total days, approximate months and weeks, and the birth weekday.",
+        "See the next birthday date calculated by the tool.",
+      ] },
+      notes: { title: "Notes and limitations", items: [
+        "The result depends on the reference date entered. When the page opens, that field receives the current date, but you can change it.",
+        "The date of birth cannot be later than the reference date.",
+        "Use the result as informational support only; it does not replace medical, legal, official, or contractual calculations.",
+      ] },
+      faq: { title: "Frequently asked questions", items: [
+        { question: "Which date does the calculator use as its reference?", answer: "It fills in the current date when it starts, but you can enter a different reference date before calculating." },
+        { question: "Can I calculate age on a past or future date?", answer: "Yes, as long as the reference date is the same as or later than the date of birth." },
+        { question: "What information appears in the result?", answer: "The tool shows age in years, months, and days, total days, approximate months and weeks, birth weekday, and next-birthday details." },
+        { question: "Is the result suitable for official use?", answer: "No. For medical, legal, official, or contractual situations, follow the relevant rules and documentation." },
+      ] },
+      relatedTools: { title: "Related tools", items: [
+        { toolId: "calculadora-de-datas", label: "Date Calculator", description: "Compare dates or add and subtract periods in a calendar." },
+        { toolId: "calculadora", label: "Calculator", description: "Handle quick arithmetic for planning and date-related tasks." },
+      ] },
+    },
+    es: {
+      howTo: { title: "Cómo usar la calculadora de edad", steps: [
+        "Introduce la fecha de nacimiento en el primer campo.",
+        "Comprueba o cambia la fecha de referencia en el segundo campo; al abrir la herramienta se completa con la fecha actual.",
+        "Selecciona Calcular edad para ver la edad entre ambas fechas y la información del cumpleaños.",
+      ] },
+      example: { title: "Nacimiento el 15 de junio de 2000", description: "Usa el 15/06/2000 como fecha de nacimiento y el 15/06/2024 como fecha de referencia.", calculation: "15/06/2000 → 15/06/2024 = 24 años, 0 meses y 0 días", result: "Como la fecha de referencia es explícita, el ejemplo no depende del día en que se abre la página." },
+      useCases: { title: "Cuándo resulta útil", items: [
+        "Ver la edad entre una fecha de nacimiento y una fecha de referencia elegida.",
+        "Comprobar el total de días, meses y semanas aproximados y el día de la semana del nacimiento.",
+        "Consultar la próxima fecha de cumpleaños calculada por la herramienta.",
+      ] },
+      notes: { title: "Notas y limitaciones", items: [
+        "El resultado depende de la fecha de referencia indicada. Al abrir la página, el campo recibe la fecha actual, pero puedes cambiarla.",
+        "La fecha de nacimiento no puede ser posterior a la fecha de referencia.",
+        "Usa el resultado solo como apoyo informativo; no sustituye cálculos médicos, jurídicos, oficiales ni contractuales.",
+      ] },
+      faq: { title: "Preguntas frecuentes", items: [
+        { question: "¿Qué fecha usa la calculadora como referencia?", answer: "Al iniciarse completa la fecha actual, pero puedes indicar otra fecha de referencia antes de calcular." },
+        { question: "¿Puedo calcular la edad en una fecha pasada o futura?", answer: "Sí, siempre que la fecha de referencia sea igual o posterior a la fecha de nacimiento." },
+        { question: "¿Qué información aparece en el resultado?", answer: "La herramienta muestra edad en años, meses y días, total de días, meses y semanas aproximados, día de nacimiento y datos del próximo cumpleaños." },
+        { question: "¿El resultado sirve para uso oficial?", answer: "No. Para situaciones médicas, jurídicas, oficiales o contractuales, sigue las reglas y documentos correspondientes." },
+      ] },
+      relatedTools: { title: "Herramientas relacionadas", items: [
+        { toolId: "calculadora-de-datas", label: "Calculadora de fechas", description: "Compara fechas o suma y resta períodos en un calendario." },
+        { toolId: "calculadora", label: "Calculadora", description: "Realiza operaciones rápidas para tareas de planificación y fechas." },
+      ] },
+    },
+  },
+};
