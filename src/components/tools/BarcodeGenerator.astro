@@ -1,0 +1,113 @@
+---
+import type { Locale } from "../../data/locales";
+import { barcodeFormats } from "../../lib/barcode-generator";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR"
+  ? {
+      inputLabel: "Conteúdo do código de barras", formatLabel: "Formato", valueLabel: "Exibir valor abaixo das barras", widthLabel: "Largura das barras", heightLabel: "Altura", backgroundLabel: "Fundo", white: "Branco", transparent: "Transparente", clear: "Limpar", png: "Baixar PNG", svg: "Baixar SVG", empty: "Digite um conteúdo para gerar o código de barras.", ready: "Código de barras pronto para baixar.", invalid: "Conteúdo inválido para este formato.", downloadError: "Não foi possível preparar o download. Tente novamente.", formats: { CODE128: "CODE128", EAN13: "EAN-13", EAN8: "EAN-8", UPC: "UPC-A", CODE39: "CODE39", ITF14: "ITF-14" }, errors: { empty: "Digite um conteúdo.", code128Characters: "CODE128 aceita caracteres ASCII imprimíveis.", digits: "Este formato aceita somente dígitos.", length: "A quantidade de dígitos não corresponde a este formato.", checkDigit: "O dígito verificador não confere.", code39Characters: "CODE39 aceita apenas A–Z, números, espaço e - . $ / + %." }, aria: "Prévia do código de barras" }
+  : locale === "es"
+    ? {
+        inputLabel: "Contenido del código de barras", formatLabel: "Formato", valueLabel: "Mostrar valor debajo de las barras", widthLabel: "Ancho de las barras", heightLabel: "Altura", backgroundLabel: "Fondo", white: "Blanco", transparent: "Transparente", clear: "Limpiar", png: "Descargar PNG", svg: "Descargar SVG", empty: "Escribe un contenido para generar el código de barras.", ready: "Código de barras listo para descargar.", invalid: "El contenido no es válido para este formato.", downloadError: "No se pudo preparar la descarga. Inténtalo de nuevo.", formats: { CODE128: "CODE128", EAN13: "EAN-13", EAN8: "EAN-8", UPC: "UPC-A", CODE39: "CODE39", ITF14: "ITF-14" }, errors: { empty: "Escribe un contenido.", code128Characters: "CODE128 acepta caracteres ASCII imprimibles.", digits: "Este formato solo acepta dígitos.", length: "La cantidad de dígitos no corresponde a este formato.", checkDigit: "El dígito de control no coincide.", code39Characters: "CODE39 acepta A–Z, números, espacio y - . $ / + %." }, aria: "Vista previa del código de barras" }
+    : {
+        inputLabel: "Barcode content", formatLabel: "Format", valueLabel: "Show value below bars", widthLabel: "Bar width", heightLabel: "Height", backgroundLabel: "Background", white: "White", transparent: "Transparent", clear: "Clear", png: "Download PNG", svg: "Download SVG", empty: "Enter content to generate a barcode.", ready: "Barcode ready to download.", invalid: "This content is invalid for the selected format.", downloadError: "The download could not be prepared. Try again.", formats: { CODE128: "CODE128", EAN13: "EAN-13", EAN8: "EAN-8", UPC: "UPC-A", CODE39: "CODE39", ITF14: "ITF-14" }, errors: { empty: "Enter some content.", code128Characters: "CODE128 accepts printable ASCII characters.", digits: "This format accepts digits only.", length: "The number of digits does not match this format.", checkDigit: "The check digit is not valid.", code39Characters: "CODE39 accepts A–Z, digits, spaces, and - . $ / + %." }, aria: "Barcode preview" };
+const initialValue = "USEVO-2026";
+---
+
+<section class="barcode-generator">
+  <div class="field">
+    <label for="barcodeInput">{copy.inputLabel}</label>
+    <input id="barcodeInput" type="text" value={initialValue} autocomplete="off" />
+  </div>
+  <div class="controls-grid">
+    <div class="field"><label for="barcodeFormat">{copy.formatLabel}</label><select id="barcodeFormat">{barcodeFormats.map((format) => <option value={format} selected={format === "CODE128"}>{copy.formats[format]}</option>)}</select></div>
+    <label class="check-field" for="barcodeShowValue"><input id="barcodeShowValue" type="checkbox" checked /> <span>{copy.valueLabel}</span></label>
+    <div class="field"><label for="barcodeWidth">{copy.widthLabel} <output id="barcodeWidthValue">2</output></label><input id="barcodeWidth" type="range" min="1" max="4" step="1" value="2" /></div>
+    <div class="field"><label for="barcodeHeight">{copy.heightLabel} <output id="barcodeHeightValue">100</output></label><input id="barcodeHeight" type="range" min="40" max="180" step="10" value="100" /></div>
+    <div class="field"><label for="barcodeBackground">{copy.backgroundLabel}</label><select id="barcodeBackground"><option value="white">{copy.white}</option><option value="transparent">{copy.transparent}</option></select></div>
+  </div>
+  <div class="actions"><button id="barcodeClear" class="secondary" type="button">{copy.clear}</button></div>
+  <p id="barcodeError" class="message error" role="alert" aria-live="polite"></p>
+  <p id="barcodeStatus" class="sr-only" role="status" aria-live="polite"></p>
+  <div class="preview-panel"><canvas id="barcodeCanvas" aria-label={copy.aria}></canvas><svg id="barcodeSvg" aria-hidden="true"></svg><p id="barcodeEmpty" class="empty-state">{copy.empty}</p></div>
+  <div class="download-actions"><button id="barcodePng" type="button" disabled>{copy.png}</button><button id="barcodeSvgDownload" type="button" disabled>{copy.svg}</button></div>
+</section>
+
+<script id="barcodeCopy" type="application/json" set:html={JSON.stringify({ ...copy, initialValue, locale })}></script>
+<script>
+  import JsBarcode from "jsbarcode";
+  import { getBarcodeFilename, validateBarcode } from "../../lib/barcode-generator";
+
+  const config = JSON.parse(document.getElementById("barcodeCopy")?.textContent ?? "{}");
+  const input = document.getElementById("barcodeInput");
+  const format = document.getElementById("barcodeFormat");
+  const showValue = document.getElementById("barcodeShowValue");
+  const width = document.getElementById("barcodeWidth");
+  const height = document.getElementById("barcodeHeight");
+  const background = document.getElementById("barcodeBackground");
+  const widthValue = document.getElementById("barcodeWidthValue");
+  const heightValue = document.getElementById("barcodeHeightValue");
+  const canvas = document.getElementById("barcodeCanvas");
+  const svg = document.getElementById("barcodeSvg");
+  const error = document.getElementById("barcodeError");
+  const status = document.getElementById("barcodeStatus");
+  const empty = document.getElementById("barcodeEmpty");
+  const png = document.getElementById("barcodePng");
+  const svgDownload = document.getElementById("barcodeSvgDownload");
+
+  const options = () => ({ format: format.value, lineColor: "#172033", width: Number(width.value), height: Number(height.value), displayValue: showValue.checked, background: background.value === "transparent" ? "transparent" : "#ffffff", margin: 12, fontSize: 16 });
+  const resetPreview = () => { canvas.hidden = true; svg.hidden = true; empty.hidden = false; png.disabled = true; svgDownload.disabled = true; svg.replaceChildren(); };
+  const setError = (message) => { error.textContent = message; error.hidden = !message; };
+
+  function render() {
+    widthValue.textContent = width.value;
+    heightValue.textContent = height.value;
+    setError("");
+    const validation = validateBarcode(input.value, format.value);
+    if (!validation.valid) { resetPreview(); if (input.value) setError(config.errors[validation.code] ?? config.invalid); return; }
+    try {
+      const settings = options();
+      JsBarcode(canvas, validation.value, settings);
+      JsBarcode(svg, validation.value, settings);
+      canvas.hidden = false; svg.hidden = true; empty.hidden = true; png.disabled = false; svgDownload.disabled = false;
+      status.textContent = config.ready;
+    } catch { resetPreview(); setError(config.invalid); }
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a"); link.href = url; link.download = filename; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+    status.textContent = config.ready;
+  }
+
+  png.addEventListener("click", () => canvas.toBlob((blob) => blob ? downloadBlob(blob, getBarcodeFilename(config.locale, "png")) : setError(config.downloadError), "image/png"));
+  svgDownload.addEventListener("click", () => { const source = new XMLSerializer().serializeToString(svg); downloadBlob(new Blob([source], { type: "image/svg+xml" }), getBarcodeFilename(config.locale, "svg")); });
+  document.getElementById("barcodeClear").addEventListener("click", () => { input.value = ""; render(); input.focus(); });
+  [input, format, showValue, width, height, background].forEach((control) => control.addEventListener("input", render));
+  format.addEventListener("change", render); background.addEventListener("change", render);
+  render();
+</script>
+
+<style>
+  .barcode-generator { display: grid; gap: 18px; }
+  .field { display: grid; gap: 8px; }
+  label { color: #172033; font-weight: 700; }
+  input[type="text"], select { border: 1px solid #cbd5e1; border-radius: 10px; color: #172033; font: inherit; min-height: 44px; padding: 10px 12px; width: 100%; }
+  input[type="range"] { accent-color: #193b92; width: 100%; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline: 3px solid #f4a261; outline-offset: 3px; }
+  .controls-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .check-field { align-items: center; display: flex; gap: 9px; min-height: 44px; }
+  .check-field input { accent-color: #193b92; block-size: 18px; inline-size: 18px; }
+  .actions, .download-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  button { background: #193b92; border: 0; border-radius: 9px; color: #fff; cursor: pointer; font: inherit; font-weight: 700; min-height: 44px; padding: 10px 16px; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+  .secondary { background: #eef2f8; color: #172033; }
+  .preview-panel { align-items: center; background: #fff; border: 1px solid #dbe1ec; border-radius: 12px; display: flex; justify-content: center; min-height: 190px; overflow: hidden; padding: 20px; }
+  canvas { display: block; height: auto; max-width: 100%; }
+  .empty-state { color: #526174; margin: 0; text-align: center; }
+  .message { margin: 0; }
+  .error { color: #a51d2d; font-weight: 700; }
+  .sr-only { height: 1px; margin: -1px; overflow: hidden; position: absolute; width: 1px; clip: rect(0, 0, 0, 0); }
+  @media (max-width: 560px) { .controls-grid { grid-template-columns: 1fr; } .download-actions button { flex: 1 1 100%; } .preview-panel { padding: 12px; } }
+</style>

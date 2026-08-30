@@ -68,8 +68,8 @@ describe("international route architecture", () => {
     });
   });
 
-  it("keeps all localized tool links and alternates canonical for the 24 published tools", () => {
-    expect(ferramentas).toHaveLength(24);
+  it("keeps all localized tool links and alternates canonical for the 25 published tools", () => {
+    expect(ferramentas).toHaveLength(25);
 
     for (const tool of ferramentas) {
       for (const locale of ["pt-BR", "en", "es"] as const) {
@@ -94,6 +94,18 @@ describe("international route architecture", () => {
       "pt-BR": "https://usevo.tools/ferramentas/gerador-de-letras-diferentes",
       en: "https://usevo.tools/en/tools/font-generator",
       es: "https://usevo.tools/es/herramientas/generador-de-letras-bonitas",
+    });
+  });
+
+  it("maps the barcode generator to reciprocal localized routes", () => {
+    const tool = ferramentas.find((candidate) => candidate.id === "gerador-de-codigo-de-barras")!;
+    expect(getToolLocaleRoute(tool, "pt-BR")).toBe("/ferramentas/gerador-de-codigo-de-barras");
+    expect(getToolLocaleRoute(tool, "en")).toBe("/en/tools/barcode-generator");
+    expect(getToolLocaleRoute(tool, "es")).toBe("/es/herramientas/generador-de-codigo-de-barras");
+    expect(getSiteAlternates(tool.url)).toEqual({
+      "pt-BR": "https://usevo.tools/ferramentas/gerador-de-codigo-de-barras",
+      en: "https://usevo.tools/en/tools/barcode-generator",
+      es: "https://usevo.tools/es/herramientas/generador-de-codigo-de-barras",
     });
   });
 

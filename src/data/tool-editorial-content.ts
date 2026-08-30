@@ -9,6 +9,7 @@ import { filesAndImagesEditorialContent } from "./tool-editorial-content/files-a
 import { financeEditorialContent } from "./tool-editorial-content/finance";
 import { securityEditorialContent } from "./tool-editorial-content/security";
 import { textEditorialContent } from "./tool-editorial-content/text";
+import { utilitiesEditorialContent } from "./tool-editorial-content/utilities";
 import type {
   EditorialRelatedTool,
   ResolvedEditorialRelatedTool,
@@ -51,6 +52,7 @@ export const toolEditorialContent = mergeToolEditorialContentCatalogs(
   filesAndImagesEditorialContent,
   developmentEditorialContent,
   cltPjEditorialContent,
+  utilitiesEditorialContent,
 );
 
 export const getToolEditorialContent = (

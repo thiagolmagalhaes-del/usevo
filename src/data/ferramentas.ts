@@ -321,6 +321,26 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Gerador de Código de Barras",
+    "Crie códigos de barras em PNG ou SVG diretamente no navegador.",
+    "Utilidades",
+    "▥",
+    "/ferramentas/gerador-de-codigo-de-barras",
+    buildTranslations(
+      "Gerador de Código de Barras",
+      "Crie códigos de barras em PNG ou SVG diretamente no navegador.",
+      "Barcode Generator",
+      "Create barcode images in PNG or SVG directly in your browser.",
+      "Generador de Código de Barras",
+      "Crea imágenes de códigos de barras en PNG o SVG directamente en tu navegador.",
+    ),
+    {
+      "pt-BR": "gerador-de-codigo-de-barras",
+      en: "barcode-generator",
+      es: "generador-de-codigo-de-barras",
+    },
+  ),
+  createFerramenta(
     "Leitor de QR Code",
     "Leia QR Codes por imagem ou câmera diretamente no navegador.",
     "Utilidades",

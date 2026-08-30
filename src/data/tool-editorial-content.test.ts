@@ -17,6 +17,7 @@ import { filesAndImagesEditorialContent } from "./tool-editorial-content/files-a
 import { financeEditorialContent } from "./tool-editorial-content/finance";
 import { securityEditorialContent } from "./tool-editorial-content/security";
 import { textEditorialContent } from "./tool-editorial-content/text";
+import { utilitiesEditorialContent } from "./tool-editorial-content/utilities";
 import type { Locale } from "./locales";
 
 const percentageCalculatorId = "calculadora-de-porcentagem";
@@ -32,6 +33,7 @@ const editorialToolIds = [
   "comparador-de-texto",
   "gerador-de-senhas",
   "gerador-de-qr-code",
+  "gerador-de-codigo-de-barras",
   "leitor-de-qr-code",
   "uuid-generator",
   "base64",
@@ -103,6 +105,7 @@ describe("tool editorial content", () => {
       },
       "gerador-de-senhas": { "pt-BR": "Como usar o gerador de senhas", en: "How to use the password generator", es: "Cómo usar el generador de contraseñas" },
       "gerador-de-qr-code": { "pt-BR": "Como criar um QR Code", en: "How to create a QR Code", es: "Como crear un código QR" },
+      "gerador-de-codigo-de-barras": { "pt-BR": "Como criar um código de barras", en: "How to create a barcode", es: "Cómo crear un código de barras" },
       "leitor-de-qr-code": { "pt-BR": "Como ler QR Code pela câmera ou imagem", en: "How to scan a QR Code", es: "Como leer un código QR" },
       "uuid-generator": { "pt-BR": "Como usar o gerador de UUID", en: "How to use the UUID generator", es: "Cómo usar el generador de UUID" },
       base64: { "pt-BR": "Como usar Base64", en: "How to use Base64", es: "Cómo usar Base64" },
@@ -163,11 +166,11 @@ describe("tool editorial content", () => {
     }
   });
 
-  it("covers all 24 published tools with the expected 24 editorial records", () => {
+  it("covers all 25 published tools with the expected 25 editorial records", () => {
     expect(new Set(Object.keys(toolEditorialContent))).toEqual(new Set(editorialToolIds));
-    expect(Object.keys(toolEditorialContent)).toHaveLength(24);
+    expect(Object.keys(toolEditorialContent)).toHaveLength(25);
     expect(new Set(ferramentas.map((tool) => tool.id))).toEqual(new Set(editorialToolIds));
-    expect(ferramentas).toHaveLength(24);
+    expect(ferramentas).toHaveLength(25);
     expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(7);
     expect(Object.keys(filesAndImagesEditorialContent)).toEqual(expect.arrayContaining(qrEditorialToolIds));
     expect(Object.keys(developmentEditorialContent)).toEqual(expect.arrayContaining(["base64", "uuid-generator", "formatador-de-json", "json-inspector", ...developmentPartTwoToolIds]));
@@ -177,13 +180,14 @@ describe("tool editorial content", () => {
     expect(Object.keys(textEditorialContent)).toEqual(["contador-de-palavras", "gerador-de-letras-diferentes", "comparador-de-texto"]);
     expect(Object.keys(convertersEditorialContent)).toEqual(["conversor-de-unidades"]);
     expect(Object.keys(securityEditorialContent)).toEqual(["gerador-de-senhas"]);
+    expect(Object.keys(utilitiesEditorialContent)).toEqual(["gerador-de-codigo-de-barras"]);
   });
 
-  it("keeps the 23 editorial records that existed before the CLT/PJ addition", () => {
+  it("keeps the 24 editorial records that existed before the CLT/PJ addition", () => {
     const preservedToolIds = editorialToolIds.filter(
       (toolId) => !cltPjEditorialToolIds.includes(toolId as (typeof cltPjEditorialToolIds)[number]),
     );
-    expect(preservedToolIds).toHaveLength(23);
+    expect(preservedToolIds).toHaveLength(24);
     for (const toolId of preservedToolIds) {
       for (const locale of locales) {
         expect(getToolEditorialContent(toolId, locale)).toBeDefined();
@@ -219,6 +223,18 @@ describe("tool editorial content", () => {
     }
     expect(getToolEditorialContent("gerador-de-letras-diferentes", "en")?.notes.items.join(" ")).toContain("Unicode");
     expect(getToolEditorialContent("gerador-de-letras-diferentes", "es")?.notes.items.join(" ")).toContain("Unicode");
+  });
+
+  it("provides complete localized editorial records for the barcode generator", () => {
+    for (const locale of locales) {
+      const content = getToolEditorialContent("gerador-de-codigo-de-barras", locale)!;
+      expect(content.howTo.steps).toHaveLength(3);
+      expect(content.example.description).toBeTruthy();
+      expect(content.useCases.items).toHaveLength(4);
+      expect(content.notes.items).toHaveLength(4);
+      expect(content.faq.items).toHaveLength(4);
+      expect(content.relatedTools.items).toHaveLength(2);
+    }
   });
 
   it("fully localizes Base64 and UUID in EN and ES without changing their approved PT-BR content", () => {
@@ -416,6 +432,7 @@ describe("tool editorial content", () => {
       "../pages/ferramentas/gerador-de-senhas.astro",
       "../pages/ferramentas/gerador-de-qr-code.astro",
       "../pages/ferramentas/leitor-de-qr-code.astro",
+      "../pages/ferramentas/gerador-de-codigo-de-barras.astro",
       "../pages/ferramentas/uuid-generator.astro",
       "../pages/ferramentas/base64.astro",
     ].map((path) => readFileSync(new URL(path, import.meta.url), "utf8"));
