@@ -15,6 +15,13 @@ describe("font generator UI contract", () => {
     expect(component).toContain("input.value = \"\"");
   });
 
+  it("keeps each localized placeholder free of language leakage", () => {
+    expect(component).toContain('placeholder: "Digite ou cole seu texto aqui..."');
+    expect(component).not.toMatch(/[\u0530-\u058F]/);
+    expect(component).toContain('placeholder: "Type or paste your text here..."');
+    expect(component).toContain('placeholder: "Escribe o pega tu texto aquí..."');
+  });
+
   it("renders the tool through the shared layout and editorial component without an additional H1", () => {
     expect(page).toContain("<Layout");
     expect(page).toContain("<FontGenerator locale={locale} />");
