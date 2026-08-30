@@ -199,6 +199,96 @@ describe("tool editorial content", () => {
     expect(getToolEditorialContent("formatador-sql", "pt-BR")?.notes.items.join(" ")).toContain("sql-formatter");
   });
 
+  it("fully localizes Base64 and UUID in EN and ES without changing their approved PT-BR content", () => {
+    const toolIds = ["base64", "uuid-generator"] as const;
+    const portugueseMarkers = [
+      "Como usar",
+      "Exemplo",
+      "Principais aplicações",
+      "Dicas práticas e limitações",
+      "Perguntas frequentes",
+      "Ferramentas relacionadas",
+      "não",
+      "senha",
+      "criptografia",
+    ];
+    const localizedMarkers = {
+      en: {
+        base64: ["Base64 is encoding, not encryption.", "encodeURIComponent/unescape"],
+        "uuid-generator": ["crypto.randomUUID", "do not provide absolute uniqueness"],
+      },
+      es: {
+        base64: ["Base64 es codificación, no cifrado.", "encodeURIComponent/unescape"],
+        "uuid-generator": ["crypto.randomUUID", "no ofrecen unicidad absoluta"],
+      },
+    } as const;
+
+    for (const toolId of toolIds) {
+      const pt = getToolEditorialContent(toolId, "pt-BR");
+      expect(pt).toBeDefined();
+      expect(pt?.howTo.title).toBe(toolId === "base64" ? "Como usar Base64" : "Como usar o gerador de UUID");
+      expect(pt?.example.title).toBe(toolId === "base64" ? "Exemplo curto" : "Exemplo de UUID");
+      expect(pt?.useCases.title).toBe("Principais aplicações");
+      expect(pt?.notes.title).toBe("Dicas práticas e limitações");
+      expect(pt?.faq.title).toBe("Perguntas frequentes");
+      expect(pt?.relatedTools.title).toBe("Ferramentas relacionadas");
+
+      for (const locale of ["en", "es"] as const) {
+        const content = getToolEditorialContent(toolId, locale);
+        if (!content) throw new Error(`Missing ${locale} editorial content for ${toolId}`);
+
+        expect(content.howTo.title).toBeTruthy();
+        expect(content.howTo.steps).toHaveLength(3);
+        expect(content.howTo.steps.every(Boolean)).toBe(true);
+        expect(content.example.title).toBeTruthy();
+        expect(content.example.description).toBeTruthy();
+        expect(content.example.calculation).toBeTruthy();
+        expect(content.example.result).toBeTruthy();
+        expect(content.useCases.title).toBeTruthy();
+        expect(content.useCases.items.length).toBeGreaterThan(0);
+        expect(content.useCases.items.every(Boolean)).toBe(true);
+        expect(content.notes.title).toBeTruthy();
+        expect(content.notes.items.length).toBeGreaterThan(0);
+        expect(content.notes.items.every(Boolean)).toBe(true);
+        expect(content.faq.title).toBeTruthy();
+        expect(content.faq.items.length).toBeGreaterThan(0);
+        expect(content.faq.items.every(({ question, answer }) => Boolean(question && answer))).toBe(true);
+        expect(content.relatedTools.title).toBeTruthy();
+        expect(content.relatedTools.items).toHaveLength(2);
+        expect(content.relatedTools.items.every(({ toolId: relatedId, label, description }) => Boolean(relatedId && label && description))).toBe(true);
+        expect(content.relatedTools.items.map(({ toolId: relatedId }) => relatedId)).toEqual(
+          toolId === "base64" ? ["uuid-generator", "url-encoder-decoder"] : ["gerador-de-senhas", "base64"],
+        );
+
+        const localizedText = [
+          content.howTo.title,
+          ...content.howTo.steps,
+          content.example.title,
+          content.example.description,
+          content.example.calculation,
+          content.example.result,
+          content.useCases.title,
+          ...content.useCases.items,
+          content.notes.title,
+          ...content.notes.items,
+          content.faq.title,
+          ...content.faq.items.flatMap(({ question, answer }) => [question, answer]),
+          content.relatedTools.title,
+          ...content.relatedTools.items.flatMap(({ label, description }) => [label, description]),
+        ].join(" ").toLowerCase();
+        for (const marker of portugueseMarkers) {
+          expect(localizedText).not.toContain(marker.toLowerCase());
+        }
+        for (const marker of localizedMarkers[locale][toolId]) {
+          expect(localizedText).toContain(marker.toLowerCase());
+        }
+      }
+    }
+
+    expect(getToolEditorialContent("base64", "pt-BR")?.notes.items.join(" ")).toContain("Base64 não oferece sigilo nem proteção");
+    expect(getToolEditorialContent("uuid-generator", "pt-BR")?.notes.items.join(" ")).toContain("UUIDs não têm unicidade absoluta");
+  });
+
   it("loads the complete CLT versus PJ editorial record from the CLT/PJ catalog", () => {
     const content = getToolEditorialContent("calculadora-clt-pj", "pt-BR");
     expect(cltPjEditorialContent["calculadora-clt-pj"]).toBeDefined();
