@@ -22,6 +22,15 @@ describe("font generator UI contract", () => {
     expect(component).toContain('placeholder: "Escribe o pega tu texto aquí..."');
   });
 
+  it("scopes styles for dynamically rendered results to the tool", () => {
+    expect(component).toContain('heading.className = "result-title"');
+    for (const selector of ["font-result", "result-row", "result-text", "copy-button", "empty-state", "result-title"]) {
+      expect(component).toContain(`.font-generator :global(.${selector})`);
+    }
+    expect(component).toContain('.font-generator :global(.copy-button):focus-visible');
+    expect(component).not.toMatch(/(?:^|[,{]\s*)(?:h2|\.font-result|\.result-row|\.result-text|\.copy-button|\.empty-state|\.result-title)\s*\{/m);
+  });
+
   it("renders the tool through the shared layout and editorial component without an additional H1", () => {
     expect(page).toContain("<Layout");
     expect(page).toContain("<FontGenerator locale={locale} />");
