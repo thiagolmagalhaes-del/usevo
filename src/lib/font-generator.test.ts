@@ -20,6 +20,16 @@ describe("font generator transformations", () => {
     expect(transformText("A B", "underline")).toBe("A̲ B̲");
   });
 
+  it("decorates only Unicode letters and numbers", () => {
+    const input = "Galo doido 2026 🐓,!";
+    expect(transformText(input, "strikethrough")).toBe("G̶a̶l̶o̶ d̶o̶i̶d̶o̶ 2̶0̶2̶6̶ 🐓,!");
+    expect(transformText(input, "underline")).toBe("G̲a̲l̲o̲ d̲o̲i̲d̲o̲ 2̲0̲2̲6̲ 🐓,!");
+    expect(transformText("Áçã 9", "strikethrough")).toBe("Á̶ç̶ã̶ 9̶");
+    expect(transformText("Áçã 9", "underline")).toBe("Á̲ç̲ã̲ 9̲");
+    expect([...transformText(input, "strikethrough")].slice(-3)).toEqual(["🐓", ",", "!"]);
+    expect([...transformText(input, "underline")].slice(-3)).toEqual(["🐓", ",", "!"]);
+  });
+
   it("handles empty input and includes every advertised style", () => {
     expect(transformText("", "sansBold")).toBe("");
     expect(fontStyleIds).toHaveLength(19);

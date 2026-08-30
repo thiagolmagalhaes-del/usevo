@@ -77,7 +77,7 @@ const upsideDown = new Map<string, string>([
   ["1", "Ɩ"], ["2", "ᄅ"], ["3", "Ɛ"], ["4", "ㄣ"], ["5", "ϛ"], ["6", "9"], ["7", "ㄥ"], ["8", "8"], ["9", "6"], ["0", "0"], ["!", "¡"], ["?", "¿"], [".", "˙"], [",", "'"], ["'", ","], ["(", ")"], [")", "("], ["[", "]"], ["]", "["], ["{", "}"], ["}", "{"],
 ]);
 
-const decorate = (text: string, mark: string) => Array.from(text, (character) => /\s/.test(character) ? character : `${character}${mark}`).join("");
+const decorate = (text: string, mark: string) => Array.from(text, (character) => /[\p{L}\p{N}]/u.test(character) ? `${character}${mark}` : character).join("");
 
 export const transformText = (text: string, style: FontStyleId): string => {
   if (!text) return "";
