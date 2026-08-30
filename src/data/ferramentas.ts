@@ -261,6 +261,26 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Gerador de Letras Diferentes",
+    "Transforme texto em letras diferentes para copiar e colar, usando caracteres Unicode.",
+    "Texto",
+    "Aa",
+    "/ferramentas/gerador-de-letras-diferentes",
+    buildTranslations(
+      "Gerador de Letras Diferentes",
+      "Transforme texto em letras diferentes para copiar e colar, usando caracteres Unicode.",
+      "Font Generator",
+      "Create fancy Unicode text to copy and paste with this font generator.",
+      "Generador de Letras Bonitas",
+      "Crea letras bonitas con caracteres Unicode para copiar y pegar.",
+    ),
+    {
+      "pt-BR": "gerador-de-letras-diferentes",
+      en: "font-generator",
+      es: "generador-de-letras-bonitas",
+    },
+  ),
+  createFerramenta(
     "Gerador de Senhas",
     "Crie senhas fortes e aleatórias em poucos segundos.",
     "Segurança",

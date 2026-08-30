@@ -1,0 +1,149 @@
+---
+import type { Locale } from "../../data/locales";
+import { fontStyleIds, type FontStyleId } from "../../lib/font-generator";
+
+const { locale = "en" } = Astro.props as { locale?: Locale };
+
+const copy = locale === "pt-BR"
+  ? {
+      inputLabel: "Texto para transformar",
+      placeholder: "Digite ou cole seu texto այստեղ...",
+      clear: "Limpar texto",
+      empty: "Digite um texto para ver as variações Unicode aqui.",
+      copy: "Copiar",
+      copied: "Variação copiada.",
+      copyFailed: "Não foi possível copiar automaticamente. Selecione o texto e copie novamente.",
+      styles: ["Negrito", "Itálico", "Negrito itálico", "Script", "Script negrito", "Fraktur", "Duplo traço", "Monoespaçado", "Sem serifa", "Sem serifa negrito", "Sem serifa itálico", "Circulado", "Em quadrado", "Largura completa", "Versaletes", "De cabeça para baixo", "Tachado", "Sublinhado", "Maiúsculas alternadas"],
+    }
+  : locale === "es"
+    ? {
+        inputLabel: "Texto para transformar",
+        placeholder: "Escribe o pega tu texto aquí...",
+        clear: "Limpiar texto",
+        empty: "Escribe un texto para ver aquí las variaciones Unicode.",
+        copy: "Copiar",
+        copied: "Variación copiada.",
+        copyFailed: "No se pudo copiar automáticamente. Selecciona el texto e inténtalo de nuevo.",
+        styles: ["Negrita", "Cursiva", "Negrita cursiva", "Script", "Script en negrita", "Fraktur", "Doble trazo", "Monoespaciado", "Sans serif", "Sans serif en negrita", "Sans serif en cursiva", "Con círculo", "En cuadrado", "Ancho completo", "Versalitas", "Al revés", "Tachado", "Subrayado", "Mayúsculas alternas"],
+      }
+    : {
+        inputLabel: "Text to transform",
+        placeholder: "Type or paste your text here...",
+        clear: "Clear text",
+        empty: "Type text to see Unicode variations here.",
+        copy: "Copy",
+        copied: "Variation copied.",
+        copyFailed: "Could not copy automatically. Select the text and try again.",
+        styles: ["Bold", "Italic", "Bold Italic", "Script", "Bold Script", "Fraktur", "Double Struck", "Monospace", "Sans Serif", "Sans Serif Bold", "Sans Serif Italic", "Circled", "Squared", "Fullwidth", "Small Caps", "Upside Down", "Strikethrough", "Underline", "Alternating Case"],
+      };
+
+const styleOptions = fontStyleIds.map((id, index) => ({ id, label: copy.styles[index] ?? id }));
+---
+
+<section class="font-generator" aria-label={locale === "pt-BR" ? "Gerador de letras diferentes" : locale === "es" ? "Generador de letras bonitas" : "Font generator"}>
+  <label for="fontGeneratorInput">{copy.inputLabel}</label>
+  <textarea id="fontGeneratorInput" rows="4" placeholder={copy.placeholder}></textarea>
+  <div class="tool-actions">
+    <button id="fontGeneratorClear" class="secondary" type="button">{copy.clear}</button>
+  </div>
+  <p id="fontGeneratorMessage" class="sr-only" aria-live="polite"></p>
+  <div id="fontGeneratorResults" class="results">
+    <p class="empty-state">{copy.empty}</p>
+  </div>
+</section>
+
+<script id="fontGeneratorCopy" type="application/json" set:html={JSON.stringify({ ...copy, styleOptions })}></script>
+<script>
+  import { copyText, transformText } from "../../lib/font-generator";
+
+  const configElement = document.getElementById("fontGeneratorCopy");
+  const config = JSON.parse(configElement?.textContent ?? "{}");
+  const input = document.getElementById("fontGeneratorInput");
+  const clearButton = document.getElementById("fontGeneratorClear");
+  const results = document.getElementById("fontGeneratorResults");
+  const message = document.getElementById("fontGeneratorMessage");
+
+  function announce(text) {
+    message.textContent = text;
+  }
+
+  async function copyResult(value) {
+    try {
+      if (await copyText(value, navigator.clipboard)) {
+        announce(config.copied);
+        return;
+      }
+    } catch {
+      // Continue to the browser fallback below.
+    }
+
+    const fallback = document.createElement("textarea");
+    fallback.value = value;
+    fallback.setAttribute("aria-hidden", "true");
+    document.body.append(fallback);
+    fallback.select();
+    const copied = document.execCommand("copy");
+    fallback.remove();
+    announce(copied ? config.copied : config.copyFailed);
+  }
+
+  function renderResults() {
+    const value = input.value;
+    results.replaceChildren();
+    if (!value) {
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = config.empty;
+      results.append(empty);
+      return;
+    }
+
+    config.styleOptions.forEach((style) => {
+      const item = document.createElement("article");
+      item.className = "font-result";
+      const heading = document.createElement("h2");
+      heading.textContent = style.label;
+      const row = document.createElement("div");
+      row.className = "result-row";
+      const output = document.createElement("output");
+      output.className = "result-text";
+      output.textContent = transformText(value, style.id);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy-button";
+      button.textContent = config.copy;
+      button.addEventListener("click", () => copyResult(output.textContent ?? ""));
+      row.append(output, button);
+      item.append(heading, row);
+      results.append(item);
+    });
+  }
+
+  input.addEventListener("input", renderResults);
+  clearButton.addEventListener("click", () => {
+    input.value = "";
+    renderResults();
+    input.focus();
+    announce("");
+  });
+</script>
+
+<style>
+  .font-generator { display: grid; gap: 14px; }
+  label, h2 { color: #172033; font-weight: 700; }
+  label { font-size: 1rem; }
+  textarea { min-height: 128px; resize: vertical; width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; color: #172033; font: inherit; line-height: 1.5; padding: 14px; }
+  textarea:focus-visible, button:focus-visible { outline: 3px solid #f4a261; outline-offset: 3px; }
+  .tool-actions { display: flex; justify-content: flex-end; }
+  button { border: 0; border-radius: 9px; cursor: pointer; font: inherit; font-weight: 700; min-height: 42px; padding: 9px 14px; }
+  .secondary { background: #eef2f8; color: #172033; }
+  .copy-button { background: #193b92; color: #fff; flex: 0 0 auto; }
+  .results { display: grid; gap: 12px; min-height: 150px; }
+  .empty-state { align-self: center; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; color: #526174; margin: 0; padding: 20px; text-align: center; }
+  .font-result { background: #fff; border: 1px solid #dbe1ec; border-radius: 12px; padding: 16px; }
+  h2 { font-size: .95rem; margin: 0 0 10px; }
+  .result-row { align-items: center; display: flex; gap: 12px; }
+  .result-text { color: #172033; flex: 1; font-size: clamp(1.05rem, 3vw, 1.35rem); line-height: 1.5; min-width: 0; overflow-wrap: anywhere; }
+  .sr-only { height: 1px; margin: -1px; overflow: hidden; position: absolute; width: 1px; clip: rect(0, 0, 0, 0); }
+  @media (max-width: 560px) { .result-row { align-items: stretch; flex-direction: column; } .copy-button { width: 100%; } }
+</style>

@@ -68,8 +68,8 @@ describe("international route architecture", () => {
     });
   });
 
-  it("keeps all localized tool links and alternates canonical for the 23 published tools", () => {
-    expect(ferramentas).toHaveLength(23);
+  it("keeps all localized tool links and alternates canonical for the 24 published tools", () => {
+    expect(ferramentas).toHaveLength(24);
 
     for (const tool of ferramentas) {
       for (const locale of ["pt-BR", "en", "es"] as const) {
@@ -83,6 +83,18 @@ describe("international route architecture", () => {
         expect(hasUnexpectedTrailingSlash(url)).toBe(false);
       }
     }
+  });
+
+  it("maps the font generator to reciprocal localized routes", () => {
+    const tool = ferramentas.find((candidate) => candidate.id === "gerador-de-letras-diferentes")!;
+    expect(getToolLocaleRoute(tool, "pt-BR")).toBe("/ferramentas/gerador-de-letras-diferentes");
+    expect(getToolLocaleRoute(tool, "en")).toBe("/en/tools/font-generator");
+    expect(getToolLocaleRoute(tool, "es")).toBe("/es/herramientas/generador-de-letras-bonitas");
+    expect(getSiteAlternates(tool.url)).toEqual({
+      "pt-BR": "https://usevo.tools/ferramentas/gerador-de-letras-diferentes",
+      en: "https://usevo.tools/en/tools/font-generator",
+      es: "https://usevo.tools/es/herramientas/generador-de-letras-bonitas",
+    });
   });
 
   it("builds localized three-item breadcrumbs from the same tool data used by pages", () => {

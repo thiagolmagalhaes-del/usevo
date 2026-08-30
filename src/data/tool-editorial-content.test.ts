@@ -28,6 +28,7 @@ const editorialToolIds = [
   "conversor-de-unidades",
   "conversor-de-moedas",
   "contador-de-palavras",
+  "gerador-de-letras-diferentes",
   "comparador-de-texto",
   "gerador-de-senhas",
   "gerador-de-qr-code",
@@ -89,6 +90,11 @@ describe("tool editorial content", () => {
         "pt-BR": "Como usar o contador de palavras",
         en: "How to use the word counter",
         es: "Cómo usar el contador de palabras",
+      },
+      "gerador-de-letras-diferentes": {
+        "pt-BR": "Como usar o gerador de letras diferentes",
+        en: "How to use the font generator",
+        es: "Cómo usar el generador de letras bonitas",
       },
       "comparador-de-texto": {
         "pt-BR": "Como usar o comparador de texto",
@@ -157,27 +163,27 @@ describe("tool editorial content", () => {
     }
   });
 
-  it("covers all 23 published tools with the expected 23 editorial records", () => {
+  it("covers all 24 published tools with the expected 24 editorial records", () => {
     expect(new Set(Object.keys(toolEditorialContent))).toEqual(new Set(editorialToolIds));
-    expect(Object.keys(toolEditorialContent)).toHaveLength(23);
+    expect(Object.keys(toolEditorialContent)).toHaveLength(24);
     expect(new Set(ferramentas.map((tool) => tool.id))).toEqual(new Set(editorialToolIds));
-    expect(ferramentas).toHaveLength(23);
+    expect(ferramentas).toHaveLength(24);
     expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(7);
     expect(Object.keys(filesAndImagesEditorialContent)).toEqual(expect.arrayContaining(qrEditorialToolIds));
     expect(Object.keys(developmentEditorialContent)).toEqual(expect.arrayContaining(["base64", "uuid-generator", "formatador-de-json", "json-inspector", ...developmentPartTwoToolIds]));
     expect(Object.keys(cltPjEditorialContent)).toEqual(cltPjEditorialToolIds);
     expect(Object.keys(calculatorsEditorialContent)).toEqual(["calculadora", "calculadora-de-datas", "calculadora-de-idade"]);
     expect(Object.keys(financeEditorialContent)).toEqual([percentageCalculatorId, "conversor-de-moedas"]);
-    expect(Object.keys(textEditorialContent)).toEqual(["contador-de-palavras", "comparador-de-texto"]);
+    expect(Object.keys(textEditorialContent)).toEqual(["contador-de-palavras", "gerador-de-letras-diferentes", "comparador-de-texto"]);
     expect(Object.keys(convertersEditorialContent)).toEqual(["conversor-de-unidades"]);
     expect(Object.keys(securityEditorialContent)).toEqual(["gerador-de-senhas"]);
   });
 
-  it("keeps the 22 editorial records that existed before the CLT/PJ addition", () => {
+  it("keeps the 23 editorial records that existed before the CLT/PJ addition", () => {
     const preservedToolIds = editorialToolIds.filter(
       (toolId) => !cltPjEditorialToolIds.includes(toolId as (typeof cltPjEditorialToolIds)[number]),
     );
-    expect(preservedToolIds).toHaveLength(22);
+    expect(preservedToolIds).toHaveLength(23);
     for (const toolId of preservedToolIds) {
       for (const locale of locales) {
         expect(getToolEditorialContent(toolId, locale)).toBeDefined();
@@ -197,6 +203,22 @@ describe("tool editorial content", () => {
     expect(getToolEditorialContent("json-inspector", "pt-BR")?.notes.items.join(" ")).toContain("árvore expansível");
     expect(getToolEditorialContent("url-encoder-decoder", "pt-BR")?.notes.items.join(" ")).toContain("encodeURIComponent");
     expect(getToolEditorialContent("formatador-sql", "pt-BR")?.notes.items.join(" ")).toContain("sql-formatter");
+  });
+
+  it("provides complete localized editorial records for the font generator", () => {
+    for (const locale of locales) {
+      const content = getToolEditorialContent("gerador-de-letras-diferentes", locale);
+      expect(content?.howTo.steps).toHaveLength(3);
+      expect(content?.example.description).toBeTruthy();
+      expect(content?.example.calculation).toBeTruthy();
+      expect(content?.example.result).toBeTruthy();
+      expect(content?.useCases.items.length).toBeGreaterThanOrEqual(3);
+      expect(content?.notes.items.length).toBeGreaterThanOrEqual(4);
+      expect(content?.faq.items).toHaveLength(4);
+      expect(content?.relatedTools.items).toHaveLength(2);
+    }
+    expect(getToolEditorialContent("gerador-de-letras-diferentes", "en")?.notes.items.join(" ")).toContain("Unicode");
+    expect(getToolEditorialContent("gerador-de-letras-diferentes", "es")?.notes.items.join(" ")).toContain("Unicode");
   });
 
   it("fully localizes Base64 and UUID in EN and ES without changing their approved PT-BR content", () => {
@@ -389,6 +411,7 @@ describe("tool editorial content", () => {
       "../pages/ferramentas/conversor-de-unidades.astro",
       "../pages/ferramentas/conversor-de-moedas.astro",
       "../pages/ferramentas/contador-de-palavras.astro",
+      "../pages/ferramentas/gerador-de-letras-diferentes.astro",
       "../pages/ferramentas/comparador-de-texto.astro",
       "../pages/ferramentas/gerador-de-senhas.astro",
       "../pages/ferramentas/gerador-de-qr-code.astro",
