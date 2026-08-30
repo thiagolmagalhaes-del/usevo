@@ -14,8 +14,11 @@ describe("barcode generator UI contract", () => {
     expect(component).toContain('role="status" aria-live="polite"');
     expect(component).toContain('value={initialValue}');
     expect(component).toContain('const initialValue = "USEVO-2026"');
-    expect(component).toContain("JsBarcode(canvas");
     expect(component).toContain("JsBarcode(svg");
+    expect(component).toContain('const exportCanvas = document.createElement("canvas")');
+    expect(component).toContain("JsBarcode(exportCanvas");
+    expect(component).toContain("exportCanvas.remove()");
+    expect(component).not.toContain('id="barcodeCanvas"');
     expect(component).toContain('control.addEventListener("input", render)');
     expect(component).toContain('URL.createObjectURL(blob)');
     expect(component).toContain('URL.revokeObjectURL(url)');

@@ -29,7 +29,7 @@ const initialValue = "USEVO-2026";
   <div class="actions"><button id="barcodeClear" class="secondary" type="button">{copy.clear}</button></div>
   <p id="barcodeError" class="message error" role="alert" aria-live="polite"></p>
   <p id="barcodeStatus" class="sr-only" role="status" aria-live="polite"></p>
-  <div class="preview-panel"><canvas id="barcodeCanvas" aria-label={copy.aria}></canvas><svg id="barcodeSvg" aria-hidden="true"></svg><p id="barcodeEmpty" class="empty-state">{copy.empty}</p></div>
+  <div class="preview-panel"><svg id="barcodeSvg" aria-label={copy.aria}></svg><p id="barcodeEmpty" class="empty-state">{copy.empty}</p></div>
   <div class="download-actions"><button id="barcodePng" type="button" disabled>{copy.png}</button><button id="barcodeSvgDownload" type="button" disabled>{copy.svg}</button></div>
 </section>
 
@@ -47,16 +47,17 @@ const initialValue = "USEVO-2026";
   const background = document.getElementById("barcodeBackground");
   const widthValue = document.getElementById("barcodeWidthValue");
   const heightValue = document.getElementById("barcodeHeightValue");
-  const canvas = document.getElementById("barcodeCanvas");
   const svg = document.getElementById("barcodeSvg");
   const error = document.getElementById("barcodeError");
   const status = document.getElementById("barcodeStatus");
   const empty = document.getElementById("barcodeEmpty");
   const png = document.getElementById("barcodePng");
   const svgDownload = document.getElementById("barcodeSvgDownload");
+  let currentValue = "";
+  let currentSettings = null;
 
   const options = () => ({ format: format.value, lineColor: "#172033", width: Number(width.value), height: Number(height.value), displayValue: showValue.checked, background: background.value === "transparent" ? "transparent" : "#ffffff", margin: 12, fontSize: 16 });
-  const resetPreview = () => { canvas.hidden = true; svg.hidden = true; empty.hidden = false; png.disabled = true; svgDownload.disabled = true; svg.replaceChildren(); };
+  const resetPreview = () => { currentValue = ""; currentSettings = null; svg.hidden = true; empty.hidden = false; png.disabled = true; svgDownload.disabled = true; svg.replaceChildren(); };
   const setError = (message) => { error.textContent = message; error.hidden = !message; };
 
   function render() {
@@ -67,9 +68,10 @@ const initialValue = "USEVO-2026";
     if (!validation.valid) { resetPreview(); if (input.value) setError(config.errors[validation.code] ?? config.invalid); return; }
     try {
       const settings = options();
-      JsBarcode(canvas, validation.value, settings);
       JsBarcode(svg, validation.value, settings);
-      canvas.hidden = false; svg.hidden = true; empty.hidden = true; png.disabled = false; svgDownload.disabled = false;
+      currentValue = validation.value;
+      currentSettings = settings;
+      svg.hidden = false; empty.hidden = true; png.disabled = false; svgDownload.disabled = false;
       status.textContent = config.ready;
     } catch { resetPreview(); setError(config.invalid); }
   }
@@ -81,7 +83,19 @@ const initialValue = "USEVO-2026";
     status.textContent = config.ready;
   }
 
-  png.addEventListener("click", () => canvas.toBlob((blob) => blob ? downloadBlob(blob, getBarcodeFilename(config.locale, "png")) : setError(config.downloadError), "image/png"));
+  png.addEventListener("click", () => {
+    const exportCanvas = document.createElement("canvas");
+    try {
+      JsBarcode(exportCanvas, currentValue, currentSettings);
+      exportCanvas.toBlob((blob) => {
+        exportCanvas.remove();
+        blob ? downloadBlob(blob, getBarcodeFilename(config.locale, "png")) : setError(config.downloadError);
+      }, "image/png");
+    } catch {
+      exportCanvas.remove();
+      setError(config.downloadError);
+    }
+  });
   svgDownload.addEventListener("click", () => { const source = new XMLSerializer().serializeToString(svg); downloadBlob(new Blob([source], { type: "image/svg+xml" }), getBarcodeFilename(config.locale, "svg")); });
   document.getElementById("barcodeClear").addEventListener("click", () => { input.value = ""; render(); input.focus(); });
   [input, format, showValue, width, height, background].forEach((control) => control.addEventListener("input", render));
@@ -104,7 +118,7 @@ const initialValue = "USEVO-2026";
   button:disabled { cursor: not-allowed; opacity: .5; }
   .secondary { background: #eef2f8; color: #172033; }
   .preview-panel { align-items: center; background: #fff; border: 1px solid #dbe1ec; border-radius: 12px; display: flex; justify-content: center; min-height: 190px; overflow: hidden; padding: 20px; }
-  canvas { display: block; height: auto; max-width: 100%; }
+  svg { display: block; height: auto; max-width: 100%; }
   .empty-state { color: #526174; margin: 0; text-align: center; }
   .message { margin: 0; }
   .error { color: #a51d2d; font-weight: 700; }
