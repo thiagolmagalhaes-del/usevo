@@ -5,6 +5,18 @@ export const barcodeFormats: readonly BarcodeFormat[] = ["CODE128", "EAN13", "EA
 export const getBarcodeFilename = (locale: "pt-BR" | "en" | "es", extension: "png" | "svg") =>
   `${locale === "en" ? "usevo-barcode" : "usevo-codigo-de-barras"}.${extension}`;
 
+export type BarcodePreviewElement = {
+  replaceChildren: () => void;
+  removeAttribute: (attribute: string) => void;
+};
+
+const barcodeGraphicsAttributes = ["width", "height", "x", "y", "viewBox", "version", "xmlns"] as const;
+
+export const clearBarcodePreview = (preview: BarcodePreviewElement) => {
+  preview.replaceChildren();
+  barcodeGraphicsAttributes.forEach((attribute) => preview.removeAttribute(attribute));
+};
+
 export type BarcodeValidationCode =
   | "empty"
   | "code128Characters"

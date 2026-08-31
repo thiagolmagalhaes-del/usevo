@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { barcodeFormats, calculateCheckDigit, getBarcodeFilename, validateBarcode } from "./barcode-generator";
+import { barcodeFormats, calculateCheckDigit, clearBarcodePreview, getBarcodeFilename, validateBarcode } from "./barcode-generator";
 
 describe("barcode validation", () => {
   it("accepts CODE128 text and rejects unsupported control characters", () => {
@@ -38,5 +38,34 @@ describe("barcode validation", () => {
     expect(getBarcodeFilename("en", "png")).toBe("usevo-barcode.png");
     expect(getBarcodeFilename("pt-BR", "svg")).toBe("usevo-codigo-de-barras.svg");
     expect(getBarcodeFilename("es", "png")).toBe("usevo-codigo-de-barras.png");
+  });
+
+  it("clears every previous SVG node and graphics attribute between states", () => {
+    const removed: string[] = [];
+    const preview = {
+      children: ["old barcode"],
+      attributes: ["width", "viewBox"],
+      replaceChildren() { this.children = []; },
+      removeAttribute(attribute: string) { removed.push(attribute); },
+    };
+    for (const [rawValue, format, expectedValid] of [
+      ["USEVO-2026", "CODE128", true],
+      ["4006381333931", "EAN13", true],
+      ["123", "EAN8", false],
+      ["96385074", "EAN8", true],
+      ["036000291451", "UPC", false],
+      ["036000291452", "UPC", true],
+      ["ABC-39", "CODE39", true],
+      ["abc", "CODE39", false],
+      ["123", "ITF14", false],
+      ["10012345678902", "ITF14", true],
+    ] as const) {
+      clearBarcodePreview(preview);
+      expect(preview.children).toEqual([]);
+      const validation = validateBarcode(rawValue, format);
+      expect(validation.valid).toBe(expectedValid);
+      if (expectedValid) expect(validation.value).toBe(rawValue);
+    }
+    expect(removed).toHaveLength(70);
   });
 });

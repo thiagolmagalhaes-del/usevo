@@ -36,7 +36,7 @@ const initialValue = "USEVO-2026";
 <script id="barcodeCopy" type="application/json" set:html={JSON.stringify({ ...copy, initialValue, locale })}></script>
 <script>
   import JsBarcode from "jsbarcode";
-  import { getBarcodeFilename, validateBarcode } from "../../lib/barcode-generator";
+  import { clearBarcodePreview, getBarcodeFilename, validateBarcode } from "../../lib/barcode-generator";
 
   const config = JSON.parse(document.getElementById("barcodeCopy")?.textContent ?? "{}");
   const input = document.getElementById("barcodeInput");
@@ -57,23 +57,46 @@ const initialValue = "USEVO-2026";
   let currentSettings = null;
 
   const options = () => ({ format: format.value, lineColor: "#172033", width: Number(width.value), height: Number(height.value), displayValue: showValue.checked, background: background.value === "transparent" ? "transparent" : "#ffffff", margin: 12, fontSize: 16 });
-  const resetPreview = () => { currentValue = ""; currentSettings = null; svg.hidden = true; empty.hidden = false; png.disabled = true; svgDownload.disabled = true; svg.replaceChildren(); };
+  const clearPreview = () => {
+    currentValue = "";
+    currentSettings = null;
+    clearBarcodePreview(svg);
+    svg.hidden = true;
+    empty.hidden = true;
+    png.disabled = true;
+    svgDownload.disabled = true;
+  };
   const setError = (message) => { error.textContent = message; error.hidden = !message; };
 
-  function render() {
+  function showEmptyState() {
+    empty.hidden = false;
+  }
+
+  function showInvalidState(message) {
+    setError(message);
+  }
+
+  function renderValidBarcode(value, settings) {
+    JsBarcode(svg, value, settings);
+    currentValue = value;
+    currentSettings = settings;
+    svg.hidden = false;
+    png.disabled = false;
+    svgDownload.disabled = false;
+    status.textContent = config.ready;
+  }
+
+  function updatePreview() {
+    clearPreview();
     widthValue.textContent = width.value;
     heightValue.textContent = height.value;
     setError("");
     const validation = validateBarcode(input.value, format.value);
-    if (!validation.valid) { resetPreview(); if (input.value) setError(config.errors[validation.code] ?? config.invalid); return; }
+    if (!input.value) { showEmptyState(); return; }
+    if (!validation.valid) { showInvalidState(config.errors[validation.code] ?? config.invalid); return; }
     try {
-      const settings = options();
-      JsBarcode(svg, validation.value, settings);
-      currentValue = validation.value;
-      currentSettings = settings;
-      svg.hidden = false; empty.hidden = true; png.disabled = false; svgDownload.disabled = false;
-      status.textContent = config.ready;
-    } catch { resetPreview(); setError(config.invalid); }
+      renderValidBarcode(validation.value, options());
+    } catch { clearPreview(); showInvalidState(config.invalid); }
   }
 
   function downloadBlob(blob, filename) {
@@ -84,6 +107,7 @@ const initialValue = "USEVO-2026";
   }
 
   png.addEventListener("click", () => {
+    if (!currentValue || !currentSettings) return;
     const exportCanvas = document.createElement("canvas");
     try {
       JsBarcode(exportCanvas, currentValue, currentSettings);
@@ -97,10 +121,10 @@ const initialValue = "USEVO-2026";
     }
   });
   svgDownload.addEventListener("click", () => { const source = new XMLSerializer().serializeToString(svg); downloadBlob(new Blob([source], { type: "image/svg+xml" }), getBarcodeFilename(config.locale, "svg")); });
-  document.getElementById("barcodeClear").addEventListener("click", () => { input.value = ""; render(); input.focus(); });
-  [input, format, showValue, width, height, background].forEach((control) => control.addEventListener("input", render));
-  format.addEventListener("change", render); background.addEventListener("change", render);
-  render();
+  document.getElementById("barcodeClear").addEventListener("click", () => { input.value = ""; updatePreview(); input.focus(); });
+  [input, format, showValue, width, height, background].forEach((control) => control.addEventListener("input", updatePreview));
+  format.addEventListener("change", updatePreview); background.addEventListener("change", updatePreview);
+  updatePreview();
 </script>
 
 <style>
