@@ -28,7 +28,7 @@ describe("barcode generator UI contract", () => {
     expect(component).toContain("function showInvalidState(message)");
     expect(component).toContain("function renderValidBarcode(value, settings)");
     expect(component).toContain("function updatePreview()");
-    expect(component).toContain("clearPreview();\n    widthValue");
+    expect(component.replace(/\r\n/g, "\n")).toContain("clearPreview();\n    widthValue");
     expect(component).toContain('input.value = ""; updatePreview(); input.focus();');
     expect(component).not.toContain('id="barcodeCanvas"');
     expect(component).not.toMatch(/\bfetch\s*\(/);

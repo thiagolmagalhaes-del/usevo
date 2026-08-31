@@ -1,0 +1,77 @@
+---
+import type { Locale } from "../../data/locales";
+const { locale = "en" } = Astro.props as { locale?: Locale };
+const copy = locale === "pt-BR" ? {
+  input: "Nomes ou opções, um por linha", spin: "Girar a roleta", spinning: "Girando...", shuffle: "Embaralhar", clear: "Limpar lista", restore: "Restaurar exemplo", count: "participantes válidos", empty: "Adicione pelo menos dois participantes para girar.", limit: "Use no máximo 100 participantes.", winner: "Vencedor", copy: "Copiar vencedor", copied: "Vencedor copiado.", again: "Girar novamente", remove: "Remover vencedor e girar novamente", close: "Fechar resultado", history: "Últimos vencedores", clearHistory: "Limpar histórico", historyEmpty: "Nenhum vencedor nesta sessão.", example: "Ana\nBruno\nCarla\nDiego\nElisa\nFábio", instructions: "A roleta funciona localmente no navegador e não envia seus nomes.", ariaWheel: "Roleta de nomes", tooFew: "São necessários pelo menos dois participantes.", noMore: "Não há participantes suficientes para girar novamente.", reduced: "Movimento reduzido ativado."
+} : locale === "es" ? {
+  input: "Nombres u opciones, uno por línea", spin: "Girar la ruleta", spinning: "Girando...", shuffle: "Mezclar", clear: "Limpiar lista", restore: "Restaurar ejemplo", count: "participantes válidos", empty: "Añade al menos dos participantes para girar.", limit: "Usa como máximo 100 participantes.", winner: "Ganador", copy: "Copiar ganador", copied: "Ganador copiado.", again: "Girar de nuevo", remove: "Eliminar ganador y girar de nuevo", close: "Cerrar resultado", history: "Últimos ganadores", clearHistory: "Limpiar historial", historyEmpty: "Aún no hay ganadores en esta sesión.", example: "Ana\nBruno\nCarla\nDiego\nElena\nFernando", instructions: "La ruleta funciona localmente en el navegador y no envía tus nombres.", ariaWheel: "Ruleta de nombres", tooFew: "Se necesitan al menos dos participantes.", noMore: "No hay suficientes participantes para girar de nuevo.", reduced: "Movimiento reducido activado."
+} : {
+  input: "Names or options, one per line", spin: "Spin the wheel", spinning: "Spinning...", shuffle: "Shuffle", clear: "Clear list", restore: "Restore example", count: "valid participants", empty: "Add at least two participants to spin.", limit: "Use no more than 100 participants.", winner: "Winner", copy: "Copy winner", copied: "Winner copied.", again: "Spin again", remove: "Remove winner and spin again", close: "Close result", history: "Recent winners", clearHistory: "Clear history", historyEmpty: "No winners in this session yet.", example: "Alice\nBen\nClaire\nDaniel\nEmma\nFrank", instructions: "The wheel runs locally in your browser and does not send your names.", ariaWheel: "Wheel of names", tooFew: "At least two participants are required.", noMore: "There are not enough participants to spin again.", reduced: "Reduced motion is enabled."
+};
+---
+<section class="wheel-tool">
+  <div class="wheel-layout">
+    <div class="controls">
+      <label for="wheelInput">{copy.input}</label>
+      <textarea id="wheelInput" rows="9" spellcheck="false">{copy.example}</textarea>
+      <p id="wheelCount" class="count" aria-live="polite"></p>
+      <p id="wheelError" class="message" role="alert" aria-live="polite"></p>
+      <div class="button-row"><button id="wheelSpin" type="button">{copy.spin}</button><button id="wheelShuffle" class="secondary" type="button">{copy.shuffle}</button></div>
+      <div class="button-row"><button id="wheelClear" class="secondary" type="button">{copy.clear}</button><button id="wheelRestore" class="secondary" type="button">{copy.restore}</button></div>
+      <p class="privacy-note">{copy.instructions}</p>
+    </div>
+    <div class="visual-column">
+      <div class="wheel-frame"><div class="pointer" aria-hidden="true"></div><svg id="wheelSvg" viewBox="0 0 400 400" role="img" aria-label={copy.ariaWheel}></svg></div>
+      <p id="wheelStatus" class="sr-only" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+  <section class="history-panel" aria-labelledby="wheelHistoryTitle"><div class="history-heading"><h2 id="wheelHistoryTitle">{copy.history}</h2><button id="wheelClearHistory" class="secondary" type="button">{copy.clearHistory}</button></div><p id="wheelHistoryEmpty">{copy.historyEmpty}</p><ol id="wheelHistory"></ol></section>
+  <section id="wheelWinner" class="winner-panel" aria-labelledby="wheelWinnerTitle" hidden><h2 id="wheelWinnerTitle">{copy.winner}</h2><p id="wheelWinnerName" class="winner-name"></p><div class="button-row"><button id="wheelCopyWinner" type="button">{copy.copy}</button><button id="wheelAgain" type="button">{copy.again}</button></div><div class="button-row"><button id="wheelRemove" class="secondary" type="button">{copy.remove}</button><button id="wheelClose" class="secondary" type="button">{copy.close}</button></div></section>
+</section>
+<script id="wheelCopy" type="application/json" set:html={JSON.stringify({ ...copy, locale })}></script>
+<script>
+  import { addWinnerToHistory, chooseWinnerIndex, createWinnerSnapshot, isWinnerSnapshotCurrent, normalizeParticipants, removeOccurrence, shuffleParticipants, winnerRotation } from "../../lib/wheel-of-names";
+  const config = JSON.parse(document.getElementById("wheelCopy")?.textContent ?? "{}");
+  const input = document.getElementById("wheelInput");
+  const svg = document.getElementById("wheelSvg");
+  const count = document.getElementById("wheelCount");
+  const error = document.getElementById("wheelError");
+  const spinButton = document.getElementById("wheelSpin");
+  const status = document.getElementById("wheelStatus");
+  const winnerPanel = document.getElementById("wheelWinner");
+  const winnerName = document.getElementById("wheelWinnerName");
+  const historyList = document.getElementById("wheelHistory");
+  const historyEmpty = document.getElementById("wheelHistoryEmpty");
+  let participants = [];
+  let history = [];
+  let winnerSnapshot = null;
+  let rotation = 0;
+  let spinning = false;
+  let animationToken = 0;
+  const colors = ["#315bdc", "#e76f51", "#2a9d8f", "#e9c46a", "#6c63a8", "#f4a261", "#457b9d", "#d1495b"];
+  const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  const setError = (message) => { error.textContent = message; error.hidden = !message; };
+  const shorten = (value) => value.length > 18 ? `${value.slice(0, 17)}…` : value;
+  const clearWheel = () => { while (svg.firstChild) svg.removeChild(svg.firstChild); svg.style.transform = "rotate(0deg)"; rotation = 0; };
+  const drawWheel = () => {
+    clearWheel();
+    if (!participants.length) return;
+    const center = 200; const radius = 194; const slice = (Math.PI * 2) / participants.length;
+    participants.forEach((name, index) => {
+      const start = -Math.PI / 2 + index * slice; const end = start + slice; const large = slice > Math.PI ? 1 : 0;
+      const x1 = center + radius * Math.cos(start); const y1 = center + radius * Math.sin(start); const x2 = center + radius * Math.cos(end); const y2 = center + radius * Math.sin(end);
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d", `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2} Z`); path.setAttribute("fill", colors[index % colors.length]); path.setAttribute("stroke", "#ffffff"); path.setAttribute("stroke-width", "2"); svg.appendChild(path);
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text"); const mid = start + slice / 2; text.setAttribute("x", String(center + radius * 0.62 * Math.cos(mid))); text.setAttribute("y", String(center + radius * 0.62 * Math.sin(mid))); text.setAttribute("fill", "#ffffff"); text.setAttribute("font-size", participants.length > 16 ? "10" : "14"); text.setAttribute("font-weight", "700"); text.setAttribute("text-anchor", "middle"); text.setAttribute("dominant-baseline", "middle"); text.setAttribute("transform", `rotate(${mid * 180 / Math.PI + 90} ${center + radius * 0.62 * Math.cos(mid)} ${center + radius * 0.62 * Math.sin(mid)})`); text.textContent = shorten(name); svg.appendChild(text);
+    });
+  };
+  const renderHistory = () => { historyList.replaceChildren(); historyEmpty.hidden = history.length > 0; history.forEach((name) => { const item = document.createElement("li"); item.textContent = name; historyList.appendChild(item); }); };
+  const update = () => { const parsed = normalizeParticipants(input.value); participants = parsed.participants; winnerSnapshot = null; winnerPanel.hidden = true; count.textContent = `${parsed.count} ${config.count}`; setError(parsed.overLimit ? config.limit : participants.length < 2 ? config.empty : ""); spinButton.disabled = parsed.overLimit || participants.length < 2 || spinning; drawWheel(); };
+  const finishSpin = (token, selectedIndex, selectedWinner, target) => { if (token !== animationToken) return; rotation = target; svg.style.transform = `rotate(${rotation}deg)`; spinning = false; input.disabled = false; document.getElementById("wheelShuffle").disabled = false; document.getElementById("wheelClear").disabled = false; document.getElementById("wheelRestore").disabled = false; spinButton.disabled = participants.length < 2; winnerSnapshot = createWinnerSnapshot(participants, selectedIndex); winnerSnapshot = { ...winnerSnapshot, winner: selectedWinner }; winnerName.textContent = selectedWinner; winnerPanel.hidden = false; history = addWinnerToHistory(history, selectedWinner); renderHistory(); status.textContent = `${config.winner}: ${selectedWinner}`; };
+  const spin = () => { if (spinning || participants.length < 2 || participants.length > 100) { if (participants.length < 2) setError(config.tooFew); return; } setError(""); spinning = true; input.disabled = true; document.getElementById("wheelShuffle").disabled = true; document.getElementById("wheelClear").disabled = true; document.getElementById("wheelRestore").disabled = true; spinButton.disabled = true; winnerPanel.hidden = true; spinButton.textContent = config.spinning; let selectedIndex; try { selectedIndex = chooseWinnerIndex(participants); } catch { spinning = false; input.disabled = false; document.getElementById("wheelShuffle").disabled = false; document.getElementById("wheelClear").disabled = false; document.getElementById("wheelRestore").disabled = false; spinButton.disabled = participants.length < 2; spinButton.textContent = config.spin; setError(config.randomError ?? config.invalid); return; } const selectedWinner = participants[selectedIndex]; const target = winnerRotation(selectedIndex, participants.length, rotation); const token = ++animationToken; const start = performance.now(); const duration = reducedMotion() ? 80 : 3600; const initial = rotation; const animate = (now) => { if (token !== animationToken) return; const progress = Math.min(1, (now - start) / duration); const eased = 1 - Math.pow(1 - progress, 3); svg.style.transform = `rotate(${initial + (target - initial) * eased}deg)`; if (progress < 1) requestAnimationFrame(animate); else { spinButton.textContent = config.spin; finishSpin(token, selectedIndex, selectedWinner, target); } }; requestAnimationFrame(animate); };
+  const copyWinner = async () => { const value = winnerName.textContent ?? ""; try { if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(value); else { const helper = document.createElement("textarea"); helper.value = value; helper.setAttribute("readonly", ""); helper.style.position = "fixed"; helper.style.opacity = "0"; document.body.appendChild(helper); helper.select(); document.execCommand("copy"); helper.remove(); } status.textContent = config.copied; } catch { status.textContent = config.copied; } };
+  input.addEventListener("input", update); spinButton.addEventListener("click", spin); document.getElementById("wheelShuffle").addEventListener("click", () => { if (!spinning) { try { input.value = shuffleParticipants(participants).join("\n"); update(); } catch { setError(config.invalid ?? config.empty); } } }); document.getElementById("wheelClear").addEventListener("click", () => { if (!spinning) { input.value = ""; update(); input.focus(); } }); document.getElementById("wheelRestore").addEventListener("click", () => { if (!spinning) { input.value = config.example; update(); } }); document.getElementById("wheelCopyWinner").addEventListener("click", copyWinner); document.getElementById("wheelAgain").addEventListener("click", () => { winnerPanel.hidden = true; spin(); }); document.getElementById("wheelClose").addEventListener("click", () => { winnerPanel.hidden = true; spinButton.focus(); }); document.getElementById("wheelRemove").addEventListener("click", () => { if (!winnerSnapshot || !isWinnerSnapshotCurrent(winnerSnapshot, participants)) { winnerPanel.hidden = true; return; } input.value = removeOccurrence(participants, winnerSnapshot.index).join("\n"); winnerPanel.hidden = true; winnerSnapshot = null; update(); if (participants.length >= 2) spin(); else setError(config.noMore); }); document.getElementById("wheelClearHistory").addEventListener("click", () => { history = []; renderHistory(); });
+  update(); renderHistory();
+</script>
+<style>
+  .wheel-tool { display:grid; gap:28px; } .wheel-layout { display:grid; grid-template-columns:minmax(0, .85fr) minmax(280px, 1.15fr); gap:28px; align-items:start; } .controls { display:grid; gap:12px; } label { color:#172033; font-weight:700; } textarea { width:100%; resize:vertical; border:1px solid #cbd5e1; border-radius:10px; color:#172033; font:inherit; line-height:1.5; padding:12px; } textarea:focus-visible, button:focus-visible { outline:3px solid #f4a261; outline-offset:3px; } .button-row { display:flex; flex-wrap:wrap; gap:10px; } button { flex:1 1 150px; min-height:44px; border:0; border-radius:9px; background:#193b92; color:#fff; cursor:pointer; font:inherit; font-weight:700; padding:10px 16px; } button.secondary { background:#eef2f8; color:#172033; } button:disabled { cursor:not-allowed; opacity:.55; } .count,.privacy-note,.message { margin:0; color:#526174; } .message { color:#a51d2d; font-weight:700; min-height:1.4em; } .privacy-note { font-size:.92rem; } .visual-column { display:grid; justify-items:center; gap:12px; } .wheel-frame { position:relative; width:min(100%, 460px); aspect-ratio:1; } #wheelSvg { display:block; width:100%; height:100%; border-radius:50%; transform-origin:center; transition:transform .1s linear; } .pointer { position:absolute; z-index:2; top:-3px; left:50%; transform:translateX(-50%); border-left:14px solid transparent; border-right:14px solid transparent; border-top:28px solid #172033; border-bottom:0; filter:drop-shadow(0 2px 2px #0003); } .history-panel,.winner-panel { border:1px solid #dbe1ec; border-radius:14px; padding:20px; } .history-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; } h2 { margin:0 0 12px; color:#172033; font-size:1.25rem; } .history-heading h2 { margin:0; } #wheelHistory { margin:12px 0 0; padding-left:1.4rem; } #wheelHistory li+li { margin-top:6px; } .winner-panel { background:#eef2ff; } .winner-name { margin:0 0 18px; color:#172033; font-size:clamp(1.5rem,4vw,2.4rem); font-weight:800; overflow-wrap:anywhere; } .sr-only { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); } @media(max-width:700px) { .wheel-layout { grid-template-columns:1fr; } .visual-column { order:-1; } .wheel-frame { width:min(100%, 380px); } .button-row button { flex-basis:100%; } }
+</style>

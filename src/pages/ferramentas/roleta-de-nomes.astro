@@ -1,0 +1,25 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import WheelOfNames from "../../components/tools/WheelOfNames.astro";
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
+import { getSiteAlternates } from "../../data/locale-routes";
+import { getCategoryTranslation } from "../../data/i18n";
+import { resolveLocaleFromPath, type Locale } from "../../data/locales";
+const { locale: localeProp } = Astro.props as { locale?: Locale };
+const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
+const ferramenta = getFerramentaByPath("/ferramentas/roleta-de-nomes");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
+const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+const category = getCategoryTranslation("utilidades", locale);
+---
+<Layout title={toolMeta.title} description={toolMeta.description} canonical={canonicalUrl} alternateUrls={alternateUrls} locale={locale}>
+  <main class="container"><p class="category">{category}</p><h1>{toolMeta.title}</h1><p class="intro">{toolMeta.description}</p><section class="tool-card"><WheelOfNames locale={locale} /></section><ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} /></main>
+</Layout>
+<style>
+  .container { margin:0 auto; max-width:900px; padding:46px 20px 88px; } .category { color:#193b92; font-size:.9rem; font-weight:700; margin:0 0 10px; } h1 { color:#172033; font-size:clamp(2.25rem,6vw,3.6rem); letter-spacing:-1.8px; line-height:1.08; margin:0; } .intro { color:#526174; font-size:1.12rem; line-height:1.55; margin:18px 0 32px; max-width:720px; } .tool-card { background:#fff; border:1px solid #dbe1ec; border-radius:18px; box-shadow:0 8px 30px rgba(16,24,40,.05); padding:clamp(18px,4vw,30px); }
+</style>

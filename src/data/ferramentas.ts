@@ -361,6 +361,26 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Roleta de Nomes",
+    "Sorteie nomes e opções em uma roleta visual diretamente no navegador.",
+    "Utilidades",
+    "◉",
+    "/ferramentas/roleta-de-nomes",
+    buildTranslations(
+      "Roleta de Nomes",
+      "Sorteie nomes e opções em uma roleta visual diretamente no navegador.",
+      "Wheel of Names",
+      "Spin a wheel of names and options locally in your browser.",
+      "Ruleta de Nombres",
+      "Sortea nombres y opciones con una ruleta visual en tu navegador.",
+    ),
+    {
+      "pt-BR": "roleta-de-nomes",
+      en: "wheel-of-names",
+      es: "ruleta-de-nombres",
+    },
+  ),
+  createFerramenta(
     "JPG para PDF",
     "Converta imagens JPG em documentos PDF.",
     "Arquivos",

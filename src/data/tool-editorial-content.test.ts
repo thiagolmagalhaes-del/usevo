@@ -34,6 +34,7 @@ const editorialToolIds = [
   "gerador-de-senhas",
   "gerador-de-qr-code",
   "gerador-de-codigo-de-barras",
+  "roleta-de-nomes",
   "leitor-de-qr-code",
   "uuid-generator",
   "base64",
@@ -166,11 +167,11 @@ describe("tool editorial content", () => {
     }
   });
 
-  it("covers all 25 published tools with the expected 25 editorial records", () => {
+  it("covers all 26 published tools with the expected 26 editorial records", () => {
     expect(new Set(Object.keys(toolEditorialContent))).toEqual(new Set(editorialToolIds));
-    expect(Object.keys(toolEditorialContent)).toHaveLength(25);
+    expect(Object.keys(toolEditorialContent)).toHaveLength(26);
     expect(new Set(ferramentas.map((tool) => tool.id))).toEqual(new Set(editorialToolIds));
-    expect(ferramentas).toHaveLength(25);
+    expect(ferramentas).toHaveLength(26);
     expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(7);
     expect(Object.keys(filesAndImagesEditorialContent)).toEqual(expect.arrayContaining(qrEditorialToolIds));
     expect(Object.keys(developmentEditorialContent)).toEqual(expect.arrayContaining(["base64", "uuid-generator", "formatador-de-json", "json-inspector", ...developmentPartTwoToolIds]));
@@ -180,14 +181,14 @@ describe("tool editorial content", () => {
     expect(Object.keys(textEditorialContent)).toEqual(["contador-de-palavras", "gerador-de-letras-diferentes", "comparador-de-texto"]);
     expect(Object.keys(convertersEditorialContent)).toEqual(["conversor-de-unidades"]);
     expect(Object.keys(securityEditorialContent)).toEqual(["gerador-de-senhas"]);
-    expect(Object.keys(utilitiesEditorialContent)).toEqual(["gerador-de-codigo-de-barras"]);
+    expect(Object.keys(utilitiesEditorialContent)).toEqual(["gerador-de-codigo-de-barras", "roleta-de-nomes"]);
   });
 
   it("keeps the 24 editorial records that existed before the CLT/PJ addition", () => {
     const preservedToolIds = editorialToolIds.filter(
       (toolId) => !cltPjEditorialToolIds.includes(toolId as (typeof cltPjEditorialToolIds)[number]),
     );
-    expect(preservedToolIds).toHaveLength(24);
+    expect(preservedToolIds).toHaveLength(25);
     for (const toolId of preservedToolIds) {
       for (const locale of locales) {
         expect(getToolEditorialContent(toolId, locale)).toBeDefined();
