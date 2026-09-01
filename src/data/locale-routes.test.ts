@@ -1,7 +1,9 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ferramentas } from "./ferramentas";
 import {
   getCanonicalUrl,
+  getHreflangAlternates,
   getLocaleNavigationRoutes,
   getSiteAlternates,
   getToolLocaleRoute,
@@ -44,6 +46,38 @@ describe("canonical URL policy", () => {
 });
 
 describe("international route architecture", () => {
+  it("adds x-default to every indexable alternate set, using its English equivalent", () => {
+    const groups = [
+      ...["/", "/pt-br", "/es", "/categorias", "/en/categories", "/es/categorias", "/ferramentas", "/en/tools", "/es/herramientas"].map(getSiteAlternates),
+      ...institutionalKeys.flatMap((key) =>
+        Object.values(institutionalRoutes[key]).map(getSiteAlternates),
+      ),
+      ...ferramentas.flatMap((tool) => [
+        getSiteAlternates(tool.url),
+        getSiteAlternates(getToolLocaleRoute(tool, "en")!),
+        getSiteAlternates(getToolLocaleRoute(tool, "es")!),
+      ]),
+    ];
+
+    for (const alternates of groups) {
+      const rendered = getHreflangAlternates(alternates);
+      expect(rendered["x-default"]).toBe(alternates.en);
+      expect(rendered.en).toBe(alternates.en);
+      expect(rendered["pt-BR"]).toBe(alternates["pt-BR"]);
+      expect(rendered.es).toBe(alternates.es);
+    }
+  });
+
+  it("does not render alternates or x-default on noindex pages", () => {
+    expect(getHreflangAlternates(homeAlternates, "noindex, follow")).toEqual({});
+  });
+
+  it("keeps the English 404 call to action on the English tools route", () => {
+    const page = readFileSync(new URL("../pages/404.astro", import.meta.url), "utf8");
+    expect(page).toContain('<a href="/en/tools"');
+    expect(page).not.toContain('<a href="/ferramentas"');
+  });
+
   it("keeps all institutional routes canonical and localized", () => {
     expect(institutionalKeys).toHaveLength(5);
     for (const key of institutionalKeys) for (const route of Object.values(institutionalRoutes[key])) {

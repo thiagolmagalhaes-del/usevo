@@ -4,7 +4,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import AnalyticsConsent from "../components/AnalyticsConsent.astro";
 import Breadcrumbs from "../components/Breadcrumbs.astro";
 import { resolveLocale, type Locale } from "../data/locales";
-import { getCanonicalUrl, getToolBreadcrumb } from "../data/locale-routes";
+import { getCanonicalUrl, getHreflangAlternates, getToolBreadcrumb, type HreflangAlternates } from "../data/locale-routes";
 import {
   createBreadcrumbListJsonLd,
   serializeJsonLd,
@@ -24,7 +24,7 @@ const {
   description?: string;
   locale?: string | null;
   canonical?: string;
-  alternateUrls?: Partial<Record<Locale, string>>;
+  alternateUrls?: HreflangAlternates;
   robots?: string;
   structuredData?: WebsiteJsonLd;
 };
@@ -32,7 +32,7 @@ const {
 const resolvedLocale = resolveLocale(locale ?? "en") as Locale;
 const canonicalUrl = getCanonicalUrl(canonical ?? Astro.url.pathname);
 const pageTitle = title.includes("USEVO TOOLS") ? title : `${title} | USEVO TOOLS`;
-const alternateEntries = Object.entries(alternateUrls ?? {}) as [Locale, string][];
+const alternateEntries = Object.entries(getHreflangAlternates(alternateUrls, robots)) as [string, string][];
 const breadcrumb = getToolBreadcrumb(Astro.url.pathname, resolvedLocale);
 const structuredDataItems = [
   ...(structuredData ? [structuredData] : []),

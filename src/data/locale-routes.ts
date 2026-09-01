@@ -4,6 +4,25 @@ import { institutionalKeys, institutionalRoutes } from "./institutional-content"
 
 export const SITE_ORIGIN = "https://usevo.tools";
 
+export type Hreflang = Locale | "x-default";
+export type HreflangAlternates = Partial<Record<Hreflang, string>>;
+
+/**
+ * Completes a localized alternate set for indexable pages. The English URL is
+ * the site's default experience, so it is also the x-default target.
+ */
+export const getHreflangAlternates = (
+  alternates: HreflangAlternates | undefined,
+  robots = "index, follow",
+): HreflangAlternates => {
+  if (!alternates || robots.toLowerCase().includes("noindex")) return {};
+
+  const { "x-default": _existingDefault, ...localizedAlternates } = alternates;
+  return localizedAlternates.en
+    ? { ...localizedAlternates, "x-default": localizedAlternates.en }
+    : localizedAlternates;
+};
+
 const splitPathSuffix = (value: string) => {
   const match = value.match(/^([^?#]*)(.*)$/);
   return [match?.[1] ?? value, match?.[2] ?? ""] as const;
