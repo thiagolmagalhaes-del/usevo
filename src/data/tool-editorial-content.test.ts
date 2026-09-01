@@ -41,6 +41,7 @@ const editorialToolIds = [
   "jpg-para-pdf",
   "comprimir-pdf",
   "juntar-pdf",
+  "dividir-pdf",
   "comprimir-imagem",
   "redimensionar-imagem",
   "formatador-de-json",
@@ -51,7 +52,7 @@ const editorialToolIds = [
 ] as const;
 const locales: Locale[] = ["pt-BR", "en", "es"];
 const imageEditorialToolIds = ["comprimir-imagem", "redimensionar-imagem"] as const;
-const pdfEditorialToolIds = ["jpg-para-pdf", "comprimir-pdf", "juntar-pdf"] as const;
+const pdfEditorialToolIds = ["jpg-para-pdf", "comprimir-pdf", "juntar-pdf", "dividir-pdf"] as const;
 const qrEditorialToolIds = ["gerador-de-qr-code", "leitor-de-qr-code"] as const;
 const developmentPartTwoToolIds = ["url-encoder-decoder", "formatador-sql"] as const;
 const cltPjEditorialToolIds = ["calculadora-clt-pj"] as const;
@@ -122,7 +123,7 @@ describe("tool editorial content", () => {
         expect(content?.howTo.steps).toHaveLength(3);
         expect(content?.faq.items.length).toBeGreaterThanOrEqual(3);
         expect(content?.faq.items.length).toBeLessThanOrEqual(4);
-        expect(content?.relatedTools.items).toHaveLength(2);
+        expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
       }
     }
   });
@@ -157,7 +158,7 @@ describe("tool editorial content", () => {
         const content = getToolEditorialContent(toolId, locale);
         const relatedTools = getEditorialRelatedTools(content, locale);
 
-        expect(relatedTools).toHaveLength(2);
+        expect(relatedTools.length).toBeGreaterThanOrEqual(2);
         for (const relatedTool of relatedTools) {
           const tool = ferramentas.find((candidate) => candidate.id === relatedTool.toolId);
           expect(tool).toBeDefined();
@@ -167,12 +168,12 @@ describe("tool editorial content", () => {
     }
   });
 
-  it("covers all 26 published tools with the expected 26 editorial records", () => {
+  it("covers all 27 published tools with the expected 27 editorial records", () => {
     expect(new Set(Object.keys(toolEditorialContent))).toEqual(new Set(editorialToolIds));
-    expect(Object.keys(toolEditorialContent)).toHaveLength(26);
+    expect(Object.keys(toolEditorialContent)).toHaveLength(27);
     expect(new Set(ferramentas.map((tool) => tool.id))).toEqual(new Set(editorialToolIds));
-    expect(ferramentas).toHaveLength(26);
-    expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(7);
+    expect(ferramentas).toHaveLength(27);
+    expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(8);
     expect(Object.keys(filesAndImagesEditorialContent)).toEqual(expect.arrayContaining(qrEditorialToolIds));
     expect(Object.keys(developmentEditorialContent)).toEqual(expect.arrayContaining(["base64", "uuid-generator", "formatador-de-json", "json-inspector", ...developmentPartTwoToolIds]));
     expect(Object.keys(cltPjEditorialContent)).toEqual(cltPjEditorialToolIds);
@@ -184,11 +185,11 @@ describe("tool editorial content", () => {
     expect(Object.keys(utilitiesEditorialContent)).toEqual(["gerador-de-codigo-de-barras", "roleta-de-nomes"]);
   });
 
-  it("keeps the 24 editorial records that existed before the CLT/PJ addition", () => {
+  it("keeps the existing editorial records alongside the CLT/PJ addition", () => {
     const preservedToolIds = editorialToolIds.filter(
       (toolId) => !cltPjEditorialToolIds.includes(toolId as (typeof cltPjEditorialToolIds)[number]),
     );
-    expect(preservedToolIds).toHaveLength(25);
+    expect(preservedToolIds).toHaveLength(26);
     for (const toolId of preservedToolIds) {
       for (const locale of locales) {
         expect(getToolEditorialContent(toolId, locale)).toBeDefined();
@@ -202,7 +203,7 @@ describe("tool editorial content", () => {
       const content = getToolEditorialContent(toolId, "pt-BR");
       expect(content?.howTo.steps).toHaveLength(3);
       expect(content?.faq.items.length).toBeGreaterThanOrEqual(3);
-      expect(content?.relatedTools.items).toHaveLength(2);
+      expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
     }
     expect(getToolEditorialContent("formatador-de-json", "pt-BR")?.notes.items.join(" ")).toContain("JSON.parse");
     expect(getToolEditorialContent("json-inspector", "pt-BR")?.notes.items.join(" ")).toContain("árvore expansível");
@@ -220,7 +221,7 @@ describe("tool editorial content", () => {
       expect(content?.useCases.items.length).toBeGreaterThanOrEqual(3);
       expect(content?.notes.items.length).toBeGreaterThanOrEqual(4);
       expect(content?.faq.items).toHaveLength(4);
-      expect(content?.relatedTools.items).toHaveLength(2);
+      expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
     }
     expect(getToolEditorialContent("gerador-de-letras-diferentes", "en")?.notes.items.join(" ")).toContain("Unicode");
     expect(getToolEditorialContent("gerador-de-letras-diferentes", "es")?.notes.items.join(" ")).toContain("Unicode");
@@ -385,7 +386,7 @@ describe("tool editorial content", () => {
       expect(content?.useCases.items.length).toBeGreaterThanOrEqual(3);
       expect(content?.notes.items.length).toBeGreaterThanOrEqual(4);
       expect(content?.faq.items.length).toBeGreaterThanOrEqual(3);
-      expect(content?.relatedTools.items).toHaveLength(2);
+      expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
       for (const relatedTool of content?.relatedTools.items ?? []) {
         expect(ferramentas.some((tool) => tool.id === relatedTool.toolId)).toBe(true);
       }

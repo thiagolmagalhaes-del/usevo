@@ -1,0 +1,109 @@
+---
+import type { Locale } from "../../data/locales";
+
+const { locale = "pt-BR" } = Astro.props as { locale?: Locale };
+const copy = {
+  "pt-BR": { title: "Dividir PDF", intro: "Extraia páginas ou separe um PDF sem enviar o arquivo para um servidor.", select: "Selecionar PDF", selected: "Arquivo selecionado", mode: "Modo", extract: "Extrair páginas", ranges: "Dividir por intervalos", all: "Separar todas as páginas", pages: "Páginas e intervalos", example: "Exemplo: 1-3, 5, 7-9", process: "Dividir PDF", downloadPdf: "Baixar PDF", downloadZip: "Baixar ZIP", clear: "Limpar", processing: "Processando...", privacy: "O processamento acontece somente neste navegador.", noFile: "Selecione um PDF para continuar.", notPdf: "Selecione um arquivo PDF.", sourceTooLarge: "O arquivo deve ter no máximo 25 MB.", invalidPdf: "Não foi possível ler este PDF. Ele pode estar inválido ou corrompido.", protectedPdf: "PDFs protegidos por senha não são compatíveis com esta ferramenta.", invalidRange: "Informe páginas e intervalos válidos.", outOfBounds: "Uma das páginas informadas não existe neste PDF.", overlap: "Os intervalos não podem se sobrepor neste modo.", tooManyPages: "A seleção excede o limite de páginas deste modo.", tooManyFiles: "A divisão personalizada permite no máximo 50 arquivos.", resultTooLarge: "O resultado excede 100 MB e foi descartado.", memory: "Não há memória suficiente para concluir o processamento.", unexpected: "Ocorreu uma falha inesperada. Tente novamente com outro PDF.", ready: "Resultado pronto para download.", fileInfo: "{name} · {size} · {pages} páginas" },
+  en: { title: "Split PDF", intro: "Extract pages or split a PDF without sending the file to a server.", select: "Select PDF", selected: "Selected file", mode: "Mode", extract: "Extract pages", ranges: "Split by ranges", all: "Split every page", pages: "Pages and ranges", example: "Example: 1-3, 5, 7-9", process: "Split PDF", downloadPdf: "Download PDF", downloadZip: "Download ZIP", clear: "Clear", processing: "Processing...", privacy: "Processing happens only in this browser.", noFile: "Select a PDF to continue.", notPdf: "Select a PDF file.", sourceTooLarge: "The file must be 25 MB or smaller.", invalidPdf: "This PDF could not be read. It may be invalid or corrupted.", protectedPdf: "Password-protected PDFs are not supported by this tool.", invalidRange: "Enter valid pages and ranges.", outOfBounds: "One of the requested pages does not exist in this PDF.", overlap: "Ranges cannot overlap in this mode.", tooManyPages: "The selection exceeds this mode's page limit.", tooManyFiles: "Custom splitting supports up to 50 files.", resultTooLarge: "The result exceeds 100 MB and was discarded.", memory: "There is not enough memory to finish processing.", unexpected: "An unexpected error occurred. Try another PDF.", ready: "Your result is ready to download.", fileInfo: "{name} · {size} · {pages} pages" },
+  es: { title: "Dividir PDF", intro: "Extrae páginas o divide un PDF sin enviar el archivo a un servidor.", select: "Seleccionar PDF", selected: "Archivo seleccionado", mode: "Modo", extract: "Extraer páginas", ranges: "Dividir por intervalos", all: "Separar todas las páginas", pages: "Páginas e intervalos", example: "Ejemplo: 1-3, 5, 7-9", process: "Dividir PDF", downloadPdf: "Descargar PDF", downloadZip: "Descargar ZIP", clear: "Limpiar", processing: "Procesando...", privacy: "El procesamiento ocurre solo en este navegador.", noFile: "Selecciona un PDF para continuar.", notPdf: "Selecciona un archivo PDF.", sourceTooLarge: "El archivo debe tener como máximo 25 MB.", invalidPdf: "No se pudo leer este PDF. Puede ser inválido o estar dañado.", protectedPdf: "Los PDF protegidos con contraseña no son compatibles con esta herramienta.", invalidRange: "Introduce páginas e intervalos válidos.", outOfBounds: "Una de las páginas indicadas no existe en este PDF.", overlap: "Los intervalos no pueden superponerse en este modo.", tooManyPages: "La selección supera el límite de páginas de este modo.", tooManyFiles: "La división personalizada permite hasta 50 archivos.", resultTooLarge: "El resultado supera 100 MB y se descartó.", memory: "No hay memoria suficiente para terminar el procesamiento.", unexpected: "Ocurrió un error inesperado. Prueba con otro PDF.", ready: "El resultado está listo para descargar.", fileInfo: "{name} · {size} · {pages} páginas" },
+}[locale];
+---
+
+<section class="pdf-splitter tool-card" aria-labelledby="pdfSplitterTitle" data-copy={JSON.stringify(copy)}>
+  <h1 id="pdfSplitterTitle">{copy.title}</h1>
+  <p>{copy.intro}</p>
+  <label class="drop" for="pdfSplitInput"><strong>{copy.select}</strong><span>{copy.privacy}</span></label>
+  <input id="pdfSplitInput" type="file" accept="application/pdf" aria-label={copy.select} />
+  <p id="pdfSplitFile" class="file-info" hidden aria-live="polite"></p>
+  <fieldset>
+    <legend>{copy.mode}</legend>
+    <label><input type="radio" name="pdfSplitMode" value="extract" checked /> {copy.extract}</label>
+    <label><input type="radio" name="pdfSplitMode" value="ranges" /> {copy.ranges}</label>
+    <label><input type="radio" name="pdfSplitMode" value="all" /> {copy.all}</label>
+  </fieldset>
+  <div id="pdfSplitRanges">
+    <label for="pdfSplitRangeInput">{copy.pages}</label>
+    <input id="pdfSplitRangeInput" type="text" inputmode="text" autocomplete="off" placeholder="1-3, 5, 7-9" aria-describedby="pdfSplitExample" />
+    <small id="pdfSplitExample">{copy.example}</small>
+  </div>
+  <p id="pdfSplitError" class="tool-error" role="alert" hidden></p>
+  <p id="pdfSplitSuccess" class="tool-success" aria-live="polite" hidden></p>
+  <div class="actions">
+    <button id="pdfSplitProcess" type="button">{copy.process}</button>
+    <a id="pdfSplitDownload" class="button" hidden></a>
+    <button id="pdfSplitClear" type="button">{copy.clear}</button>
+  </div>
+</section>
+
+<script>
+  import { getIndividualPdfPageRanges, parsePdfPageRanges, PdfPageRangeError } from "../../lib/pdf-page-ranges";
+  import { assertAggregateSize, createPdfFiles, createPdfZip, getPdfPageCount, PdfSplitLimitError, PDF_SPLIT_LIMITS, validatePdfSplitLimits } from "../../lib/pdf-splitter";
+
+  type Copy = Record<string, string>;
+  const root = document.querySelector<HTMLElement>(".pdf-splitter");
+  if (root) {
+    const copy = JSON.parse(root.dataset.copy ?? "{}") as Copy;
+    const input = root.querySelector<HTMLInputElement>("#pdfSplitInput")!;
+    const rangeInput = root.querySelector<HTMLInputElement>("#pdfSplitRangeInput")!;
+    const ranges = root.querySelector<HTMLElement>("#pdfSplitRanges")!;
+    const fileInfo = root.querySelector<HTMLElement>("#pdfSplitFile")!;
+    const error = root.querySelector<HTMLElement>("#pdfSplitError")!;
+    const success = root.querySelector<HTMLElement>("#pdfSplitSuccess")!;
+    const processButton = root.querySelector<HTMLButtonElement>("#pdfSplitProcess")!;
+    const clearButton = root.querySelector<HTMLButtonElement>("#pdfSplitClear")!;
+    const download = root.querySelector<HTMLAnchorElement>("#pdfSplitDownload")!;
+    const modeInputs = [...root.querySelectorAll<HTMLInputElement>('input[name="pdfSplitMode"]')];
+    let source: ArrayBuffer | undefined;
+    let file: File | undefined;
+    let pageCount = 0;
+    let resultUrl: string | undefined;
+
+    const clearResult = () => { if (resultUrl) URL.revokeObjectURL(resultUrl); resultUrl = undefined; download.hidden = true; download.removeAttribute("href"); };
+    const setError = (message = "") => { error.textContent = message; error.hidden = !message; success.hidden = true; };
+    const setBusy = (busy: boolean) => { [input, rangeInput, processButton, clearButton, ...modeInputs].forEach((control) => control.disabled = busy); processButton.textContent = busy ? copy.processing : copy.process; };
+    const selectedMode = () => (modeInputs.find((item) => item.checked)?.value ?? "extract") as "extract" | "ranges" | "all";
+    const updateMode = () => { ranges.hidden = selectedMode() === "all"; };
+    const formatSize = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(bytes >= 10 * 1024 * 1024 ? 0 : 1)} MB`;
+    const messageFor = (caught: unknown) => {
+      if (caught instanceof PdfPageRangeError) return copy[caught.code === "out-of-bounds" ? "outOfBounds" : caught.code === "overlap" ? "overlap" : "invalidRange"];
+      if (caught instanceof PdfSplitLimitError) return copy[caught.code === "source-too-large" ? "sourceTooLarge" : caught.code === "too-many-files" ? "tooManyFiles" : caught.code === "result-too-large" ? "resultTooLarge" : "tooManyPages"];
+      const message = caught instanceof Error ? caught.message.toLowerCase() : "";
+      if (message.includes("encrypted") || message.includes("password")) return copy.protectedPdf;
+      if (message.includes("memory") || message.includes("allocation")) return copy.memory;
+      return copy.unexpected;
+    };
+    const loadFile = async (next?: File) => {
+      clearResult(); setError(); source = undefined; pageCount = 0; file = next;
+      if (!next) { fileInfo.hidden = true; return; }
+      if (next.type !== "application/pdf" && !next.name.toLowerCase().endsWith(".pdf")) { setError(copy.notPdf); return; }
+      if (next.size > PDF_SPLIT_LIMITS.sourceBytes) { setError(copy.sourceTooLarge); return; }
+      try { source = await next.arrayBuffer(); pageCount = await getPdfPageCount(source); fileInfo.textContent = copy.fileInfo.replace("{name}", next.name).replace("{size}", formatSize(next.size)).replace("{pages}", String(pageCount)); fileInfo.hidden = false; }
+      catch (caught) { setError(messageFor(caught)); fileInfo.hidden = true; }
+    };
+    input.addEventListener("change", () => void loadFile(input.files?.[0]));
+    modeInputs.forEach((item) => item.addEventListener("change", updateMode));
+    processButton.addEventListener("click", async () => {
+      if (!source || !file) { setError(copy.noFile); return; }
+      setBusy(true); setError(); clearResult();
+      try {
+        const mode = selectedMode();
+        const groups = mode === "all" ? getIndividualPdfPageRanges(pageCount) : parsePdfPageRanges(rangeInput.value, pageCount, mode);
+        validatePdfSplitLimits({ sourceBytes: file.size, pageCount, mode, groups });
+        const files = await createPdfFiles(source, groups, "split-pdf");
+        const isSingle = mode === "extract";
+        const bytes = isSingle ? (assertAggregateSize(files), files[0]!.bytes) : await createPdfZip(files);
+        resultUrl = URL.createObjectURL(new Blob([bytes], { type: isSingle ? "application/pdf" : "application/zip" }));
+        download.href = resultUrl; download.download = isSingle ? "extracted-pages.pdf" : "split-pdf.zip"; download.textContent = isSingle ? copy.downloadPdf : copy.downloadZip; download.hidden = false; success.textContent = copy.ready; success.hidden = false;
+      } catch (caught) { setError(messageFor(caught)); }
+      finally { setBusy(false); }
+    });
+    clearButton.addEventListener("click", () => { clearResult(); setError(); source = undefined; file = undefined; pageCount = 0; input.value = ""; rangeInput.value = ""; fileInfo.hidden = true; success.hidden = true; });
+    window.addEventListener("pagehide", clearResult);
+    window.addEventListener("beforeunload", clearResult);
+    updateMode();
+  }
+</script>
+
+<style>
+  .pdf-splitter { display:grid; gap:1rem; } .drop { display:grid; gap:.35rem; padding:1.5rem; border:2px dashed var(--color-border, #94a3b8); border-radius:.75rem; cursor:pointer; text-align:center; } .drop span, small { color:var(--color-text-muted, #64748b); } #pdfSplitInput { position:absolute; inline-size:1px; block-size:1px; opacity:0; } fieldset { display:grid; gap:.65rem; border:0; padding:0; } fieldset label { display:flex; gap:.5rem; align-items:center; } #pdfSplitRanges { display:grid; gap:.45rem; } #pdfSplitRangeInput { padding:.75rem; border:1px solid var(--color-border, #94a3b8); border-radius:.5rem; } .actions { display:flex; flex-wrap:wrap; gap:.75rem; } .button, button { padding:.75rem 1rem; border-radius:.5rem; } .tool-error { color:#b91c1c; } .tool-success { color:#15803d; } .file-info { font-weight:600; }
+</style>

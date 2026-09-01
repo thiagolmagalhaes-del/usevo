@@ -561,6 +561,22 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Dividir PDF",
+    "Extraia páginas ou separe um PDF diretamente no navegador.",
+    "Arquivos",
+    "PDF",
+    "/ferramentas/dividir-pdf",
+    buildTranslations(
+      "Dividir PDF",
+      "Extraia páginas ou separe um PDF diretamente no navegador.",
+      "Split PDF",
+      "Extract pages or split a PDF directly in your browser.",
+      "Dividir PDF",
+      "Extrae páginas o divide un PDF directamente en tu navegador.",
+    ),
+    { "pt-BR": "dividir-pdf", en: "split-pdf", es: "dividir-pdf" },
+  ),
+  createFerramenta(
     "Comprimir Imagem",
     "Reduza o tamanho de imagens JPG, PNG e WebP diretamente no navegador.",
     "Arquivos",
