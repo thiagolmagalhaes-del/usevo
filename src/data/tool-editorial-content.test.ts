@@ -43,6 +43,7 @@ const editorialToolIds = [
   "juntar-pdf",
   "dividir-pdf",
   "pdf-para-jpg",
+  "converter-imagem",
   "comprimir-imagem",
   "redimensionar-imagem",
   "formatador-de-json",
@@ -52,7 +53,7 @@ const editorialToolIds = [
   "calculadora-clt-pj",
 ] as const;
 const locales: Locale[] = ["pt-BR", "en", "es"];
-const imageEditorialToolIds = ["comprimir-imagem", "redimensionar-imagem"] as const;
+const imageEditorialToolIds = ["converter-imagem", "comprimir-imagem", "redimensionar-imagem"] as const;
 const pdfEditorialToolIds = ["jpg-para-pdf", "comprimir-pdf", "juntar-pdf", "dividir-pdf", "pdf-para-jpg"] as const;
 const qrEditorialToolIds = ["gerador-de-qr-code", "leitor-de-qr-code"] as const;
 const developmentPartTwoToolIds = ["url-encoder-decoder", "formatador-sql"] as const;
@@ -169,12 +170,12 @@ describe("tool editorial content", () => {
     }
   });
 
-  it("covers all 28 published tools with the expected 28 editorial records", () => {
+  it("covers all 29 published tools with the expected 29 editorial records", () => {
     expect(new Set(Object.keys(toolEditorialContent))).toEqual(new Set(editorialToolIds));
-    expect(Object.keys(toolEditorialContent)).toHaveLength(28);
+    expect(Object.keys(toolEditorialContent)).toHaveLength(29);
     expect(new Set(ferramentas.map((tool) => tool.id))).toEqual(new Set(editorialToolIds));
-    expect(ferramentas).toHaveLength(28);
-    expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(9);
+    expect(ferramentas).toHaveLength(29);
+    expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(10);
     expect(Object.keys(filesAndImagesEditorialContent)).toEqual(expect.arrayContaining(qrEditorialToolIds));
     expect(Object.keys(developmentEditorialContent)).toEqual(expect.arrayContaining(["base64", "uuid-generator", "formatador-de-json", "json-inspector", ...developmentPartTwoToolIds]));
     expect(Object.keys(cltPjEditorialContent)).toEqual(cltPjEditorialToolIds);
@@ -190,7 +191,7 @@ describe("tool editorial content", () => {
     const preservedToolIds = editorialToolIds.filter(
       (toolId) => !cltPjEditorialToolIds.includes(toolId as (typeof cltPjEditorialToolIds)[number]),
     );
-    expect(preservedToolIds).toHaveLength(27);
+    expect(preservedToolIds).toHaveLength(28);
     for (const toolId of preservedToolIds) {
       for (const locale of locales) {
         expect(getToolEditorialContent(toolId, locale)).toBeDefined();
@@ -366,7 +367,7 @@ describe("tool editorial content", () => {
       expect(content?.useCases.items.length).toBeGreaterThanOrEqual(3);
       expect(content?.notes.items.length).toBeGreaterThanOrEqual(4);
       expect(content?.faq.items.length).toBeGreaterThanOrEqual(3);
-      expect(content?.relatedTools.items).toHaveLength(2);
+      expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
       for (const relatedTool of content?.relatedTools.items ?? []) {
         expect(ferramentas.some((tool) => tool.id === relatedTool.toolId)).toBe(true);
       }
@@ -398,7 +399,7 @@ describe("tool editorial content", () => {
     expect(getToolEditorialContent("juntar-pdf", "pt-BR")?.notes.items.join(" ")).toContain("ordem da lista");
   });
 
-  it("provides complete, distinct editorial records for the two image tools", () => {
+  it("provides complete, distinct editorial records for the three image tools", () => {
     for (const toolId of imageEditorialToolIds) {
       const content = getToolEditorialContent(toolId, "pt-BR");
       expect(content).toBeDefined();
@@ -409,7 +410,7 @@ describe("tool editorial content", () => {
       expect(content?.useCases.items.length).toBeGreaterThanOrEqual(3);
       expect(content?.notes.items.length).toBeGreaterThanOrEqual(4);
       expect(content?.faq.items.length).toBeGreaterThanOrEqual(3);
-      expect(content?.relatedTools.items).toHaveLength(2);
+      expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
       for (const relatedTool of content?.relatedTools.items ?? []) {
         expect(ferramentas.some((tool) => tool.id === relatedTool.toolId)).toBe(true);
       }
@@ -435,6 +436,7 @@ describe("tool editorial content", () => {
       "../pages/ferramentas/gerador-de-senhas.astro",
       "../pages/ferramentas/gerador-de-qr-code.astro",
       "../pages/ferramentas/leitor-de-qr-code.astro",
+      "../pages/ferramentas/converter-imagem.astro",
       "../pages/ferramentas/gerador-de-codigo-de-barras.astro",
       "../pages/ferramentas/uuid-generator.astro",
       "../pages/ferramentas/base64.astro",

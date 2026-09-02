@@ -102,8 +102,8 @@ describe("international route architecture", () => {
     });
   });
 
-  it("keeps all localized tool links and alternates canonical for the 28 published tools", () => {
-    expect(ferramentas).toHaveLength(28);
+  it("keeps all localized tool links and alternates canonical for the 29 published tools", () => {
+    expect(ferramentas).toHaveLength(29);
 
     for (const tool of ferramentas) {
       for (const locale of ["pt-BR", "en", "es"] as const) {

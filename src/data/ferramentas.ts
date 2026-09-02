@@ -577,6 +577,7 @@ export const ferramentas: Ferramenta[] = [
     { "pt-BR": "dividir-pdf", en: "split-pdf", es: "dividir-pdf" },
   ),
   createFerramenta("PDF para JPG", "Converta páginas de PDF em imagens JPG no navegador.", "Arquivos", "JPG", "/ferramentas/pdf-para-jpg", buildTranslations("PDF para JPG", "Converta páginas de PDF em imagens JPG no navegador.", "PDF to JPG", "Convert PDF pages to JPG images in your browser.", "PDF a JPG", "Convierte páginas PDF a imágenes JPG en tu navegador."), { "pt-BR": "pdf-para-jpg", en: "pdf-to-jpg", es: "pdf-a-jpg" }),
+  createFerramenta("Conversor de Imagens", "Converta imagens JPG, PNG e WebP diretamente no navegador.", "Arquivos", "IMG", "/ferramentas/converter-imagem", buildTranslations("Conversor de Imagens", "Converta imagens JPG, PNG e WebP diretamente no navegador.", "Image Converter", "Convert JPG, PNG, and WebP images directly in your browser.", "Convertidor de imágenes", "Convierte imágenes JPG, PNG y WebP directamente en tu navegador."), { "pt-BR": "converter-imagem", en: "image-converter", es: "convertir-imagen" }),
   createFerramenta(
     "Comprimir Imagem",
     "Reduza o tamanho de imagens JPG, PNG e WebP diretamente no navegador.",
