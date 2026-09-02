@@ -42,6 +42,7 @@ const editorialToolIds = [
   "comprimir-pdf",
   "juntar-pdf",
   "dividir-pdf",
+  "pdf-para-jpg",
   "comprimir-imagem",
   "redimensionar-imagem",
   "formatador-de-json",
@@ -52,7 +53,7 @@ const editorialToolIds = [
 ] as const;
 const locales: Locale[] = ["pt-BR", "en", "es"];
 const imageEditorialToolIds = ["comprimir-imagem", "redimensionar-imagem"] as const;
-const pdfEditorialToolIds = ["jpg-para-pdf", "comprimir-pdf", "juntar-pdf", "dividir-pdf"] as const;
+const pdfEditorialToolIds = ["jpg-para-pdf", "comprimir-pdf", "juntar-pdf", "dividir-pdf", "pdf-para-jpg"] as const;
 const qrEditorialToolIds = ["gerador-de-qr-code", "leitor-de-qr-code"] as const;
 const developmentPartTwoToolIds = ["url-encoder-decoder", "formatador-sql"] as const;
 const cltPjEditorialToolIds = ["calculadora-clt-pj"] as const;
@@ -168,12 +169,12 @@ describe("tool editorial content", () => {
     }
   });
 
-  it("covers all 27 published tools with the expected 27 editorial records", () => {
+  it("covers all 28 published tools with the expected 28 editorial records", () => {
     expect(new Set(Object.keys(toolEditorialContent))).toEqual(new Set(editorialToolIds));
-    expect(Object.keys(toolEditorialContent)).toHaveLength(27);
+    expect(Object.keys(toolEditorialContent)).toHaveLength(28);
     expect(new Set(ferramentas.map((tool) => tool.id))).toEqual(new Set(editorialToolIds));
-    expect(ferramentas).toHaveLength(27);
-    expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(8);
+    expect(ferramentas).toHaveLength(28);
+    expect(Object.keys(filesAndImagesEditorialContent)).toHaveLength(9);
     expect(Object.keys(filesAndImagesEditorialContent)).toEqual(expect.arrayContaining(qrEditorialToolIds));
     expect(Object.keys(developmentEditorialContent)).toEqual(expect.arrayContaining(["base64", "uuid-generator", "formatador-de-json", "json-inspector", ...developmentPartTwoToolIds]));
     expect(Object.keys(cltPjEditorialContent)).toEqual(cltPjEditorialToolIds);
@@ -189,7 +190,7 @@ describe("tool editorial content", () => {
     const preservedToolIds = editorialToolIds.filter(
       (toolId) => !cltPjEditorialToolIds.includes(toolId as (typeof cltPjEditorialToolIds)[number]),
     );
-    expect(preservedToolIds).toHaveLength(26);
+    expect(preservedToolIds).toHaveLength(27);
     for (const toolId of preservedToolIds) {
       for (const locale of locales) {
         expect(getToolEditorialContent(toolId, locale)).toBeDefined();
