@@ -211,22 +211,50 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      margin-top: 20px;
     }
 
     .download-actions a,
     .download-actions button {
-      flex: 1;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex: 1 1 220px;
+      font-size: 16px;
+      font-weight: 700;
+      justify-content: center;
+      line-height: 1.25;
       margin-top: 0;
+      min-height: 48px;
+      min-width: 0;
+      padding: 12px 16px;
       text-align: center;
       text-decoration: none;
     }
 
     .download-actions a {
-      background: #166534;
+      background: #1677e8;
+      color: #ffffff;
+    }
+
+    .download-actions a:hover {
+      background: #1268cc;
     }
 
     .download-actions .secondary {
       background: #475467;
+      color: #ffffff;
+    }
+
+    .download-actions .secondary:hover {
+      background: #344054;
+    }
+
+    .download-actions a:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 2px;
     }
 
     .download-hint {
@@ -243,6 +271,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
       .card {
         padding: 20px;
+      }
+
+      .download-actions {
+        flex-direction: column;
+      }
+
+      .download-actions a,
+      .download-actions button {
+        flex-basis: auto;
+        width: 100%;
       }
     }
   </style>
@@ -310,7 +348,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       </div>
 
       <div id="downloadActions" class="download-actions" hidden>
-        <a id="downloadPdf" href="#" download="usevo-jpg-para-pdf.pdf">{ui.downloadPdf}</a>
+        <button id="downloadPdf" type="button">{ui.downloadPdf}</button>
         <a id="openPdf" class="secondary" href="#" target="_blank" rel="noopener noreferrer">{ui.openPdf}</a>
       </div>
       <p id="downloadHint" class="download-hint">{ui.downloadBlocked}</p>
@@ -320,6 +358,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
   <script>
     import { jsPDF } from "jspdf";
+    import { normalizeImageForPdf } from "../../lib/jpeg-orientation";
+    import { browserPdfDownloadEnvironment, downloadPdf } from "../../lib/pdf-download";
 
     const fileInput = document.getElementById("fileInput");
     const preview = document.getElementById("preview");
@@ -345,10 +385,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     };
 
     let selectedFile = null;
+    let selectedImage = null;
+    let currentPdfBlob = null;
     let currentPdfUrl = "";
     let isProcessing = false;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    let selectionVersion = 0;
+    const pdfFilename = "usevo-jpg-para-pdf.pdf";
 
     if (
       fileInput &&
@@ -360,6 +402,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     ) {
       fileInput.addEventListener("change", handleFileSelection);
       convertBtn.addEventListener("click", convertToPdf);
+      downloadPdf.addEventListener("click", downloadPdfFile);
       removeBtn.addEventListener("click", clearSelection);
       retryBtn.addEventListener("click", () => fileInput.click());
     }
@@ -369,16 +412,27 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     function clearPdf() {
       if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
       currentPdfUrl = "";
-      downloadPdf.removeAttribute("href");
+      currentPdfBlob = null;
       openPdf.removeAttribute("href");
       downloadActions.hidden = true;
       downloadHint.hidden = true;
       success.hidden = true;
     }
 
+    async function downloadPdfFile() {
+      if (!currentPdfBlob) return;
+      const result = await downloadPdf(currentPdfBlob, pdfFilename, browserPdfDownloadEnvironment());
+      if (result.strategy === "share-error") {
+        error.textContent = messages.conversionError;
+        error.style.display = "block";
+      }
+    }
+
     function clearSelection() {
       if (isProcessing) return;
       selectedFile = null;
+      selectedImage = null;
+      selectionVersion += 1;
       fileInput.value = "";
       preview.removeAttribute("src");
       preview.style.display = "none";
@@ -390,10 +444,12 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       error.style.display = "none";
     }
 
-    function handleFileSelection() {
+    async function handleFileSelection() {
       const file = fileInput.files?.[0];
+      const version = ++selectionVersion;
 
       selectedFile = null;
+      selectedImage = null;
       clearPdf();
       convertBtn.disabled = true;
       preview.style.display = "none";
@@ -419,39 +475,27 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         return;
       }
 
-      selectedFile = file;
-
       fileName.textContent = file.name;
       fileName.textContent = `${messages.selectedImage}: ${file.name}`;
       fileName.style.display = "block";
       removeBtn.hidden = false;
 
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        const result = event.target?.result;
-
-        if (typeof result !== "string") {
-          error.textContent = messages.readImageError;
-          error.style.display = "block";
-          selectedFile = null;
-          convertBtn.disabled = true;
-          return;
-        }
-
-        preview.src = result;
+      try {
+        const normalized = await normalizeImageForPdf(file);
+        if (version !== selectionVersion) return;
+        selectedFile = file;
+        selectedImage = normalized;
+        preview.src = normalized.dataUrl;
         preview.style.display = "block";
         convertBtn.disabled = false;
-      };
-
-      reader.onerror = () => {
+      } catch {
+        if (version !== selectionVersion) return;
         error.textContent = messages.readImageError;
         error.style.display = "block";
         selectedFile = null;
+        selectedImage = null;
         convertBtn.disabled = true;
-      };
-
-      reader.readAsDataURL(file);
+      }
     }
 
     async function convertToPdf() {
@@ -470,96 +514,38 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       processing.hidden = false;
       clearPdf();
 
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        const imageData = event.target?.result;
-
-        if (typeof imageData !== "string") {
-          showConversionError();
-          return;
-        }
-
-        const image = new Image();
-
-        image.onload = () => {
-          try {
-            const orientation =
-              image.width > image.height
-                ? "landscape"
-                : "portrait";
-
-            const pdf = new jsPDF({
-              orientation,
-              unit: "px",
-              format: [image.width, image.height]
-            });
-
-            const imageFormat =
-              selectedFile.type === "image/png" ||
-              /\.png$/i.test(selectedFile.name)
-                ? "PNG"
-                : "JPEG";
-
-            pdf.addImage(
-              imageData,
-              imageFormat,
-              0,
-              0,
-              image.width,
-              image.height
-            );
-
-            const pdfBytes = pdf.output("arraybuffer");
-            const header = new TextDecoder().decode(new Uint8Array(pdfBytes).subarray(0, 5));
-            if (!pdfBytes.byteLength || header !== "%PDF-") throw new Error("Invalid PDF output");
-            const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
-            currentPdfUrl = URL.createObjectURL(pdfBlob);
-            downloadPdf.href = currentPdfUrl;
-            downloadPdf.download = "usevo-jpg-para-pdf.pdf";
-            openPdf.href = currentPdfUrl;
-            downloadActions.hidden = false;
-            success.textContent = messages.pdfReady;
-            success.hidden = false;
-            downloadHint.textContent = messages.downloadBlocked;
-            downloadHint.hidden = !isIOS;
-
-            if (!isIOS) {
-              const automaticLink = document.createElement("a");
-              automaticLink.href = currentPdfUrl;
-              automaticLink.download = "usevo-jpg-para-pdf.pdf";
-              automaticLink.style.display = "none";
-              document.body.appendChild(automaticLink);
-              automaticLink.click();
-              automaticLink.remove();
-            }
-            processing.hidden = true;
-            isProcessing = false;
-            fileInput.disabled = false;
-            removeBtn.disabled = false;
-            convertBtn.disabled = false;
-          } catch (conversionError) {
-            console.error(
-              "JPG to PDF conversion error:",
-              conversionError
-            );
-
-            showConversionError();
-          }
-        };
-
-        image.onerror = () => {
-          showConversionError();
-        };
-
-        image.src = imageData;
-      };
-
-      reader.onerror = () => {
+      if (!selectedImage) {
         showConversionError();
-      };
+        return;
+      }
 
-      reader.readAsDataURL(selectedFile);
+      try {
+        const { dataUrl, dimensions } = selectedImage;
+        const orientation = dimensions.width > dimensions.height ? "landscape" : "portrait";
+        const pdf = new jsPDF({ orientation, unit: "px", format: [dimensions.width, dimensions.height] });
+        const imageFormat = selectedFile.type === "image/png" || /\.png$/i.test(selectedFile.name) ? "PNG" : "JPEG";
+        pdf.addImage(dataUrl, imageFormat, 0, 0, dimensions.width, dimensions.height);
+        const pdfBytes = pdf.output("arraybuffer");
+        const header = new TextDecoder().decode(new Uint8Array(pdfBytes).subarray(0, 5));
+        if (!pdfBytes.byteLength || header !== "%PDF-") throw new Error("Invalid PDF output");
+        const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+        currentPdfBlob = pdfBlob;
+        currentPdfUrl = URL.createObjectURL(pdfBlob);
+        openPdf.href = currentPdfUrl;
+        downloadActions.hidden = false;
+        success.textContent = messages.pdfReady;
+        success.hidden = false;
+        downloadHint.textContent = messages.downloadBlocked;
+        downloadHint.hidden = false;
+        processing.hidden = true;
+        isProcessing = false;
+        fileInput.disabled = false;
+        removeBtn.disabled = false;
+        convertBtn.disabled = false;
+      } catch (conversionError) {
+        console.error("JPG to PDF conversion error:", conversionError);
+        showConversionError();
+      }
     }
 
     function showConversionError() {
