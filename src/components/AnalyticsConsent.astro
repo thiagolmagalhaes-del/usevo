@@ -109,6 +109,7 @@ const copy = getTranslations(locale).analyticsConsent;
     z-index: 999;
     right: 16px;
     bottom: 16px;
+    border: 1px solid #cbd5e1;
     padding: 10px 14px;
     background: #ffffff;
     color: #172033;
@@ -131,8 +132,12 @@ const copy = getTranslations(locale).analyticsConsent;
     }
 
     .analytics-settings {
-      right: 12px;
-      bottom: 12px;
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(12px, env(safe-area-inset-bottom));
+      max-width: calc(100vw - 24px);
+      min-height: 44px;
+      padding: 8px 12px;
+      font-size: 14px;
     }
   }
 </style>

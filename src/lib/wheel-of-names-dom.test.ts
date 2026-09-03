@@ -21,6 +21,11 @@ describe("wheel of names UI contract", () => {
     expect(component).not.toContain('role="dialog"');
     expect(component).toContain("winnerSnapshot");
     expect(component).toContain("isWinnerSnapshotCurrent");
+    expect(component).toContain("removeAria");
+    expect(component).toContain("setRemoveAction(selectedWinner)");
+    expect(component).toContain("-webkit-line-clamp:2");
+    expect(component).toContain("winner-action--danger");
+    expect(component).toContain("winner-action--neutral");
     expect(component).not.toMatch(/\bfetch\s*\(/);
     expect(component).not.toContain("localStorage");
     expect(component).not.toContain("sessionStorage");
