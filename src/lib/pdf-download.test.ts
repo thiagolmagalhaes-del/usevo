@@ -42,8 +42,22 @@ describe("PDF download strategy", () => {
     expect(cancelled.anchor.click).not.toHaveBeenCalled();
     const failed = createEnvironment({ navigator: { share: vi.fn(() => Promise.reject(new Error("share failed"))), canShare: vi.fn(() => true) } as unknown as Navigator });
     const result = await downloadPdf(blob, filename, failed.environment);
-    expect(result).toMatchObject({ strategy: "share-error", error: "Error" });
+    expect(result).toMatchObject({ strategy: "share-error", error: "Error: share failed" });
     expect(failed.anchor.click).not.toHaveBeenCalled();
+  });
+
+  it("records share activity and never creates an anchor in diagnostic mode", async () => {
+    const { environment, anchor } = createEnvironment({ navigator: { canShare: vi.fn(() => false) } as unknown as Navigator });
+    const onStatus = vi.fn();
+    expect((await downloadPdf(blob, filename, environment, { diagnostic: true, onStatus })).strategy).toBe("diagnostic-no-fallback");
+    expect(onStatus).toHaveBeenCalledWith("Estratégia: diagnóstico sem fallback de download.");
+    expect(anchor.click).not.toHaveBeenCalled();
+
+    const shared = createEnvironment();
+    await downloadPdf(blob, filename, shared.environment, { diagnostic: true, onStatus });
+    expect(onStatus).toHaveBeenCalledWith("navigator.share() iniciado.");
+    expect(onStatus).toHaveBeenCalledWith("navigator.share() concluído.");
+    expect(shared.anchor.click).not.toHaveBeenCalled();
   });
 
   it("reports the actual capability state before a user taps download", () => {

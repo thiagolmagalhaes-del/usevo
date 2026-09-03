@@ -23,19 +23,21 @@ describe("JPG to PDF post-conversion actions", () => {
 
   it("delegates download capability checks and execution to the PDF download module", () => {
     expect(page).toContain("downloadPdf.addEventListener(\"click\", downloadPdfFile);");
-    expect(page).toContain('import { browserPdfDownloadEnvironment, downloadPdf } from "../../lib/pdf-download";');
-    expect(page).toContain("const result = await downloadPdf(currentPdfBlob, pdfFilename, browserPdfDownloadEnvironment());");
+    expect(page).toContain('import { browserPdfDownloadEnvironment, downloadPdf, inspectPdfDownload } from "../../lib/pdf-download";');
+    expect(page).toContain("const result = await downloadPdf(currentPdfBlob, pdfFilename, browserPdfDownloadEnvironment(), {");
     expect(page).toContain('if (result.strategy === "share-error")');
   });
 
-  it("keeps opening separate from downloading and leaves no temporary diagnostics", () => {
+  it("keeps opening separate from downloading and enables diagnostics only with its explicit query parameter", () => {
     expect(page).not.toContain("window.open(");
     expect(page).not.toContain("downloadPdf.href = currentPdfUrl;");
     expect(page).not.toContain("application/octet-stream");
     expect(page).not.toContain("isAppleTouchDevice");
-    expect(page).not.toContain("download-diagnostics");
-    expect(page).not.toContain("downloadDiagnostics");
-    expect(page).not.toContain("Diagnóstico temporário");
+    expect(page).toContain('get("download-diagnostics") === "1"');
+    expect(page).toContain('id="downloadDiagnostics" class="download-diagnostics" role="status" aria-live="polite" hidden');
+    expect(page).toContain("Clique recebido.");
+    expect(page).toContain("diagnostic: downloadDiagnosticsMode");
+    expect(page).toContain("navigator.canShare({ files: [pdfFile] })");
   });
 
   it("normalizes pixels before both preview and PDF generation", () => {
