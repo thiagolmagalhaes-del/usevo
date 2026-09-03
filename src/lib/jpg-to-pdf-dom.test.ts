@@ -22,10 +22,10 @@ describe("JPG to PDF post-conversion actions", () => {
   });
 
   it("delegates download capability checks and execution to the PDF download module", () => {
-    expect(page).toContain("downloadPdf.addEventListener(\"click\", downloadPdfFile);");
+    expect(page).toContain("downloadPdfButton.addEventListener(\"click\", downloadPdfFile);");
     expect(page).toContain('import { browserPdfDownloadEnvironment, downloadPdf, inspectPdfDownload } from "../../lib/pdf-download";');
-    expect(page).toContain("const result = await downloadPdf(currentPdfBlob, pdfFilename, browserPdfDownloadEnvironment(), {");
-    expect(page).toContain('if (result.strategy === "share-error")');
+    expect(page).toContain("void downloadPdf(currentPdfBlob, pdfFilename, browserPdfDownloadEnvironment());");
+    expect(page).toContain("const sharePromise = navigator.share({ files: [preparedDownload.file] });");
   });
 
   it("keeps opening separate from downloading and enables diagnostics only with its explicit query parameter", () => {
@@ -36,8 +36,19 @@ describe("JPG to PDF post-conversion actions", () => {
     expect(page).toContain('get("download-diagnostics") === "1"');
     expect(page).toContain('id="downloadDiagnostics" class="download-diagnostics" role="status" aria-live="polite" hidden');
     expect(page).toContain("Clique recebido.");
-    expect(page).toContain("diagnostic: downloadDiagnosticsMode");
+    expect(page).toContain("if (downloadDiagnosticsMode) return;");
     expect(page).toContain("navigator.canShare({ files: [pdfFile] })");
+  });
+
+  it("invokes share before any diagnostic rendering or asynchronous work in the click handler", () => {
+    const handler = page.slice(page.indexOf("function downloadPdfFile()"), page.indexOf("function clearSelection()"));
+    const shareCall = handler.indexOf("const sharePromise = navigator.share({ files: [preparedDownload.file] });");
+    const firstDiagnosticRender = handler.indexOf("appendDownloadDiagnostic(");
+    expect(shareCall).toBeGreaterThan(-1);
+    expect(firstDiagnosticRender).toBeGreaterThan(shareCall);
+    expect(handler.slice(0, shareCall)).not.toContain("await");
+    expect(handler.slice(0, shareCall)).not.toContain("setTimeout");
+    expect(handler.slice(0, shareCall)).not.toContain("requestAnimationFrame");
   });
 
   it("normalizes pixels before both preview and PDF generation", () => {
