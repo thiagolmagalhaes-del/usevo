@@ -1,4 +1,4 @@
-export type PdfDownloadStrategy = "pending" | "share" | "share-cancelled" | "share-error" | "download" | "diagnostic-no-fallback";
+export type PdfDownloadStrategy = "pending" | "share" | "share-cancelled" | "share-error" | "download";
 
 export type PdfDownloadDiagnostics = {
   fileApi: boolean;
@@ -8,11 +8,6 @@ export type PdfDownloadDiagnostics = {
   canShareError?: string;
   strategy: PdfDownloadStrategy;
   error?: string;
-};
-
-export type PdfDownloadOptions = {
-  diagnostic?: boolean;
-  onStatus?: (message: string) => void;
 };
 
 type FileConstructor = new (parts: BlobPart[], name: string, options?: FilePropertyBag) => File;
@@ -63,24 +58,17 @@ const triggerTraditionalPdfDownload = (blob: Blob, filename: string, environment
 const errorName = (error: unknown) => typeof error === "object" && error && "name" in error && typeof error.name === "string" ? error.name : String(error);
 const errorMessage = (error: unknown) => typeof error === "object" && error && "message" in error && typeof error.message === "string" ? error.message : String(error);
 
-export const downloadPdf = async (blob: Blob, filename: string, environment: PdfDownloadEnvironment, options: PdfDownloadOptions = {}): Promise<PdfDownloadDiagnostics> => {
+export const downloadPdf = async (blob: Blob, filename: string, environment: PdfDownloadEnvironment): Promise<PdfDownloadDiagnostics> => {
   const { file, diagnostics } = inspectPdfDownload(blob, filename, environment);
   if (file && diagnostics.shareApi && diagnostics.canShareFiles) {
     try {
-      options.onStatus?.("navigator.share() iniciado.");
       await environment.navigator.share!({ files: [file] });
-      options.onStatus?.("navigator.share() concluído.");
       return { ...diagnostics, strategy: "share" };
     } catch (error) {
       const details = `${errorName(error)}: ${errorMessage(error)}`;
-      options.onStatus?.(`navigator.share() falhou: ${details}`);
       if (errorName(error) === "AbortError") return { ...diagnostics, strategy: "share-cancelled" };
       return { ...diagnostics, strategy: "share-error", error: details };
     }
-  }
-  if (options.diagnostic) {
-    options.onStatus?.("Estratégia: diagnóstico sem fallback de download.");
-    return { ...diagnostics, strategy: "diagnostic-no-fallback" };
   }
   triggerTraditionalPdfDownload(blob, filename, environment);
   return { ...diagnostics, strategy: "download" };

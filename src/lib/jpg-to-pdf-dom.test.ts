@@ -28,27 +28,27 @@ describe("JPG to PDF post-conversion actions", () => {
     expect(page).toContain("const sharePromise = navigator.share({ files: [preparedDownload.file] });");
   });
 
-  it("keeps opening separate from downloading and enables diagnostics only with its explicit query parameter", () => {
+  it("keeps opening separate from downloading without temporary diagnostics", () => {
     expect(page).not.toContain("window.open(");
     expect(page).not.toContain("downloadPdf.href = currentPdfUrl;");
     expect(page).not.toContain("application/octet-stream");
     expect(page).not.toContain("isAppleTouchDevice");
-    expect(page).toContain('get("download-diagnostics") === "1"');
-    expect(page).toContain('id="downloadDiagnostics" class="download-diagnostics" role="status" aria-live="polite" hidden');
-    expect(page).toContain("Clique recebido.");
-    expect(page).toContain("if (downloadDiagnosticsMode) return;");
-    expect(page).toContain("navigator.canShare({ files: [pdfFile] })");
+    expect(page).not.toContain("download-diagnostics");
+    expect(page).not.toContain("downloadDiagnostics");
+    expect(page).not.toContain("Diagnóstico temporário");
+    expect(page).not.toContain("navigator.userAgent");
   });
 
-  it("invokes share before any diagnostic rendering or asynchronous work in the click handler", () => {
+  it("prepares file sharing before the tap and invokes share without asynchronous work beforehand", () => {
     const handler = page.slice(page.indexOf("function downloadPdfFile()"), page.indexOf("function clearSelection()"));
     const shareCall = handler.indexOf("const sharePromise = navigator.share({ files: [preparedDownload.file] });");
-    const firstDiagnosticRender = handler.indexOf("appendDownloadDiagnostic(");
+    const firstPromiseHandler = handler.indexOf("sharePromise.then(");
     expect(shareCall).toBeGreaterThan(-1);
-    expect(firstDiagnosticRender).toBeGreaterThan(shareCall);
+    expect(firstPromiseHandler).toBeGreaterThan(shareCall);
     expect(handler.slice(0, shareCall)).not.toContain("await");
     expect(handler.slice(0, shareCall)).not.toContain("setTimeout");
     expect(handler.slice(0, shareCall)).not.toContain("requestAnimationFrame");
+    expect(page).toContain("currentPdfDownload = inspectPdfDownload(pdfBlob, pdfFilename, browserPdfDownloadEnvironment());");
   });
 
   it("normalizes pixels before both preview and PDF generation", () => {

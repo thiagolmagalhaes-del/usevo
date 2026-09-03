@@ -264,19 +264,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       text-align: center;
     }
 
-    .download-diagnostics {
-      margin: 12px 0 0;
-      padding: 12px;
-      border: 1px solid #d0d5dd;
-      border-radius: 8px;
-      background: #f8fafc;
-      color: #344054;
-      font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      overflow-wrap: anywhere;
-      text-align: left;
-      white-space: pre-wrap;
-    }
-
     @media (max-width: 700px) {
       h1 {
         font-size: 36px;
@@ -365,7 +352,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         <a id="openPdf" class="secondary" href="#" target="_blank" rel="noopener noreferrer">{ui.openPdf}</a>
       </div>
       <p id="downloadHint" class="download-hint">{ui.downloadBlocked}</p>
-      <output id="downloadDiagnostics" class="download-diagnostics" role="status" aria-live="polite" hidden></output>
       <button id="retryBtn" type="button" class="secondary" hidden>{ui.retry}</button>
     </div>
   </main>
@@ -387,7 +373,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     const downloadPdfButton = document.getElementById("downloadPdf");
     const openPdf = document.getElementById("openPdf");
     const downloadHint = document.getElementById("downloadHint");
-    const downloadDiagnostics = document.getElementById("downloadDiagnostics");
     const retryBtn = document.getElementById("retryBtn");
     const card = document.getElementById("jpgPdfCard");
     const messages = {
@@ -407,7 +392,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     let isProcessing = false;
     let selectionVersion = 0;
     const pdfFilename = "usevo-jpg-para-pdf.pdf";
-    const downloadDiagnosticsMode = new URLSearchParams(window.location.search).get("download-diagnostics") === "1";
 
     if (
       fileInput &&
@@ -434,44 +418,14 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       openPdf.removeAttribute("href");
       downloadActions.hidden = true;
       downloadHint.hidden = true;
-      downloadDiagnostics.hidden = true;
-      downloadDiagnostics.textContent = "";
       success.hidden = true;
-    }
-
-    function appendDownloadDiagnostic(message) {
-      if (!downloadDiagnosticsMode) return;
-      downloadDiagnostics.textContent = `${downloadDiagnostics.textContent ? `${downloadDiagnostics.textContent}\n` : ""}${message}`;
-      downloadDiagnostics.hidden = false;
-    }
-
-    function showDownloadDiagnostics(blob, preparedDownload) {
-      if (!downloadDiagnosticsMode) return;
-      const { file, diagnostics } = preparedDownload;
-      const canShareResult = diagnostics.canShareError || String(diagnostics.canShareFiles);
-      downloadDiagnostics.textContent = [
-        "Diagnóstico temporário de download ativo.",
-        `window.isSecureContext: ${window.isSecureContext}`,
-        `typeof File: ${typeof File}`,
-        `typeof navigator.share: ${typeof navigator.share}`,
-        `typeof navigator.canShare: ${typeof navigator.canShare}`,
-        `navigator.canShare({ files: [pdfFile] }): ${canShareResult}`,
-        `Blob: type=${blob.type}; size=${blob.size}`,
-        `File: type=${file?.type ?? "não disponível"}; name=${file?.name ?? "não disponível"}; size=${file?.size ?? "não disponível"}`,
-        `userAgent (somente diagnóstico): ${navigator.userAgent}`,
-        "Estratégia: aguardando clique.",
-      ].join("\n");
-      downloadDiagnostics.hidden = false;
     }
 
     function reportShareError(shareError) {
       const name = typeof shareError === "object" && shareError && "name" in shareError ? shareError.name : String(shareError);
-      const message = typeof shareError === "object" && shareError && "message" in shareError ? shareError.message : String(shareError);
       if (name === "AbortError") {
-        appendDownloadDiagnostic(`navigator.share() cancelado: ${name}: ${message}`);
         return;
       }
-      appendDownloadDiagnostic(`navigator.share() falhou: ${name}: ${message}`);
       error.textContent = messages.conversionError;
       error.style.display = "block";
     }
@@ -482,22 +436,14 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         const preparedDownload = currentPdfDownload;
         if (preparedDownload?.file && preparedDownload.diagnostics.shareApi && preparedDownload.diagnostics.canShareFiles) {
           const sharePromise = navigator.share({ files: [preparedDownload.file] });
-          appendDownloadDiagnostic("Entrada no handler. Clique recebido.");
-          appendDownloadDiagnostic("Tentativa síncrona de navigator.share() executada.");
-          appendDownloadDiagnostic("Promise de navigator.share() criada.");
-          appendDownloadDiagnostic("Estratégia escolhida: share.");
           sharePromise.then(
-            () => appendDownloadDiagnostic("navigator.share() concluído."),
+            () => {},
             reportShareError,
           );
           return;
         }
-        appendDownloadDiagnostic("Entrada no handler. Clique recebido.");
-        appendDownloadDiagnostic("Estratégia escolhida: diagnóstico sem fallback de download.");
-        if (downloadDiagnosticsMode) return;
         void downloadPdf(currentPdfBlob, pdfFilename, browserPdfDownloadEnvironment());
       } catch (shareError) {
-        appendDownloadDiagnostic("Entrada no handler. Clique recebido.");
         reportShareError(shareError);
       }
     }
@@ -612,7 +558,6 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         success.hidden = false;
         downloadHint.textContent = messages.downloadBlocked;
         downloadHint.hidden = false;
-        showDownloadDiagnostics(pdfBlob, currentPdfDownload);
         processing.hidden = true;
         isProcessing = false;
         fileInput.disabled = false;

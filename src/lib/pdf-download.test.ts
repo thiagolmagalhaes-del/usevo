@@ -46,20 +46,6 @@ describe("PDF download strategy", () => {
     expect(failed.anchor.click).not.toHaveBeenCalled();
   });
 
-  it("records share activity and never creates an anchor in diagnostic mode", async () => {
-    const { environment, anchor } = createEnvironment({ navigator: { canShare: vi.fn(() => false) } as unknown as Navigator });
-    const onStatus = vi.fn();
-    expect((await downloadPdf(blob, filename, environment, { diagnostic: true, onStatus })).strategy).toBe("diagnostic-no-fallback");
-    expect(onStatus).toHaveBeenCalledWith("Estratégia: diagnóstico sem fallback de download.");
-    expect(anchor.click).not.toHaveBeenCalled();
-
-    const shared = createEnvironment();
-    await downloadPdf(blob, filename, shared.environment, { diagnostic: true, onStatus });
-    expect(onStatus).toHaveBeenCalledWith("navigator.share() iniciado.");
-    expect(onStatus).toHaveBeenCalledWith("navigator.share() concluído.");
-    expect(shared.anchor.click).not.toHaveBeenCalled();
-  });
-
   it("reports the actual capability state before a user taps download", () => {
     const { environment } = createEnvironment({ navigator: { canShare: vi.fn(() => false) } as unknown as Navigator });
     expect(inspectPdfDownload(blob, filename, environment).diagnostics).toMatchObject({ fileApi: true, shareApi: false, canShareApi: true, canShareFiles: false, strategy: "pending" });
