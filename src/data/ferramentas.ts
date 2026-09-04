@@ -273,6 +273,38 @@ export const ferramentas: Ferramenta[] = [
     },
   ),
   createFerramenta(
+    "Conversor de Maiúsculas e Minúsculas",
+    "Converta letras para maiúsculas, minúsculas e outros formatos sem enviar seu texto.",
+    "Texto",
+    "Aa",
+    "/ferramentas/conversor-maiusculas-minusculas",
+    {
+      "pt-BR": {
+        title: "Conversor de Maiúsculas e Minúsculas",
+        description: "Converta maiúsculas, minúsculas e outros formatos localmente, preservando espaços e quebras de linha.",
+        seoTitle: "Conversor de Maiúsculas e Minúsculas Online | USEVO",
+        seoDescription: "Converta texto em maiúsculas, minúsculas, frases, iniciais ou caixa invertida localmente, preservando espaços e quebras de linha.",
+      },
+      en: {
+        title: "Case Converter",
+        description: "Convert uppercase, lowercase, sentence case, capitalized words, and inverted case locally while preserving spaces and line breaks.",
+        seoTitle: "Free Case Converter – Uppercase & Lowercase | USEVO",
+        seoDescription: "Convert text to uppercase, lowercase, sentence case, capitalized words, or inverted case locally while preserving spaces and line breaks.",
+      },
+      es: {
+        title: "Convertidor de Mayúsculas y Minúsculas",
+        description: "Convierte mayúsculas, minúsculas, frases, iniciales y caja invertida localmente, conservando espacios y saltos de línea.",
+        seoTitle: "Convertidor de Mayúsculas y Minúsculas Online | USEVO",
+        seoDescription: "Convierte texto a mayúsculas, minúsculas, frases, iniciales o caja invertida localmente, conservando espacios y saltos de línea.",
+      },
+    },
+    {
+      "pt-BR": "conversor-maiusculas-minusculas",
+      en: "case-converter",
+      es: "convertidor-mayusculas-minusculas",
+    },
+  ),
+  createFerramenta(
     "Gerador de Letras Diferentes",
     "Transforme texto em letras diferentes para copiar e colar, usando caracteres Unicode.",
     "Texto",

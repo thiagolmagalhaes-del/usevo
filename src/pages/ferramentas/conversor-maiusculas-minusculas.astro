@@ -1,0 +1,180 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ToolEditorialContent from "../../components/tools/ToolEditorialContent.astro";
+import { getFerramentaByPath, getFerramentaTranslation } from "../../data/ferramentas";
+import { getEditorialRelatedTools, getToolEditorialContent } from "../../data/tool-editorial-content";
+import { getSiteAlternates } from "../../data/locale-routes";
+import { getToolUi } from "../../data/i18n";
+import { resolveLocaleFromPath, type Locale } from "../../data/locales";
+
+const { locale: localeProp } = Astro.props as { locale?: Locale };
+const locale = resolveLocaleFromPath(Astro.url.pathname, localeProp);
+const toolUi = getToolUi(locale);
+const ui = toolUi.tools["conversor-maiusculas-minusculas"];
+const ferramenta = getFerramentaByPath("/ferramentas/conversor-maiusculas-minusculas");
+const toolMeta = getFerramentaTranslation(ferramenta, locale);
+const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
+const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
+const alternateUrls = getSiteAlternates(Astro.url.pathname);
+const modes = [
+  ["uppercase", ui.uppercase],
+  ["lowercase", ui.lowercase],
+  ["sentence", ui.sentence],
+  ["capitalize", ui.capitalize],
+  ["invert", ui.invert],
+];
+---
+
+<Layout title={toolMeta.seoTitle} description={toolMeta.seoDescription} canonical={new URL(Astro.url.pathname, "https://usevo.tools").href} alternateUrls={alternateUrls} locale={locale}>
+  <main class="container">
+    <div class="category">{ui.category}</div>
+    <h1>{ui.title}</h1>
+    <p class="subtitle">{ui.description}</p>
+
+    <section class="tool" aria-label={ui.title}>
+      <div class="text-grid">
+        <div class="field">
+          <label for="caseOriginal">{ui.originalLabel}</label>
+          <textarea id="caseOriginal" placeholder={ui.originalPlaceholder}></textarea>
+        </div>
+        <div class="field">
+          <label for="caseResult">{ui.resultLabel}</label>
+          <textarea id="caseResult" readonly placeholder={ui.resultPlaceholder}></textarea>
+        </div>
+      </div>
+
+      <fieldset class="modes">
+        <legend>{ui.modesLabel}</legend>
+        <div class="mode-grid">
+          {modes.map(([id, label]) => (
+            <button class="mode-button" type="button" data-mode={id} aria-pressed="false">{label}</button>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="stats" aria-label={locale === "pt-BR" ? "Métricas do texto original" : locale === "es" ? "Métricas del texto original" : "Original text metrics"}>
+        <div class="stat"><span id="caseWords" class="number">0</span><span class="stat-label">{ui.words}</span></div>
+        <div class="stat"><span id="caseCharacters" class="number">0</span><span class="stat-label">{ui.charactersWithSpaces}</span></div>
+      </div>
+
+      <div class="actions">
+        <button id="caseCopy" class="primary" type="button" disabled>{ui.copyResult}</button>
+        <button id="caseClear" class="secondary" type="button">{toolUi.common.clear}</button>
+      </div>
+      <p id="caseStatus" class="sr-only" aria-live="polite"></p>
+    </section>
+
+    <ToolEditorialContent content={editorialContent} relatedTools={editorialRelatedTools} />
+  </main>
+
+  <script id="caseConverterCopy" type="application/json" set:html={JSON.stringify({ ...ui, locale, modes: modes.map(([id]) => id) })}></script>
+  <script>
+    import { convertCase } from "../../lib/case-converter";
+    import { getWordCounterMetrics } from "../../lib/word-counter";
+
+    const config = JSON.parse(document.getElementById("caseConverterCopy")?.textContent ?? "{}");
+    const original = document.getElementById("caseOriginal");
+    const result = document.getElementById("caseResult");
+    const words = document.getElementById("caseWords");
+    const characters = document.getElementById("caseCharacters");
+    const copyButton = document.getElementById("caseCopy");
+    const clearButton = document.getElementById("caseClear");
+    const status = document.getElementById("caseStatus");
+    const modeButtons = Array.from(document.querySelectorAll("[data-mode]"));
+    let selectedMode;
+
+    const announce = (message) => { status.textContent = message; };
+
+    const updateMetrics = () => {
+      const metrics = getWordCounterMetrics(original.value);
+      words.textContent = metrics.words.toLocaleString(config.numberLocale);
+      characters.textContent = metrics.charactersWithSpaces.toLocaleString(config.numberLocale);
+    };
+
+    const updateResult = () => {
+      result.value = selectedMode && original.value
+        ? convertCase(original.value, selectedMode, config.locale)
+        : "";
+      copyButton.disabled = !result.value;
+    };
+
+    const selectMode = (mode) => {
+      selectedMode = mode;
+      modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.mode === mode)));
+      updateResult();
+    };
+
+    const copyWithFallback = (value) => {
+      const fallback = document.createElement("textarea");
+      fallback.value = value;
+      fallback.setAttribute("aria-hidden", "true");
+      fallback.style.cssText = "left:-9999px;position:fixed;top:0";
+      document.body.append(fallback);
+      fallback.select();
+      const copied = document.execCommand("copy");
+      fallback.remove();
+      return copied;
+    };
+
+    original.addEventListener("input", () => {
+      updateMetrics();
+      updateResult();
+    });
+
+    modeButtons.forEach((button) => button.addEventListener("click", () => selectMode(button.dataset.mode)));
+
+    copyButton.addEventListener("click", async () => {
+      const value = result.value;
+      if (!value) return;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(value);
+          announce(config.copied);
+          return;
+        }
+      } catch {
+        // Fall back to a temporary textarea for browsers without clipboard permission.
+      }
+      announce(copyWithFallback(value) ? config.copied : config.copyFailed);
+    });
+
+    clearButton.addEventListener("click", () => {
+      original.value = "";
+      result.value = "";
+      updateMetrics();
+      copyButton.disabled = true;
+      original.focus();
+      announce(config.cleared);
+    });
+  </script>
+</Layout>
+
+<style>
+  .container { max-width: 900px; margin: 0 auto; padding: 70px 28px 100px; }
+  .category { color: #2457d6; font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  h1 { margin: 0; font-size: 46px; letter-spacing: -1.5px; line-height: 1.1; }
+  .subtitle { color: #667085; font-size: 18px; margin: 14px 0 38px; }
+  .tool { background: #fff; border: 1px solid #e5e7eb; border-radius: 18px; box-shadow: 0 8px 30px rgba(16, 24, 40, .05); padding: 24px; }
+  .text-grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .field { display: grid; gap: 8px; min-width: 0; }
+  label, legend { color: #172033; font-size: 15px; font-weight: 700; }
+  textarea { border: 1px solid #cbd5e1; border-radius: 12px; color: #172033; font: inherit; line-height: 1.5; min-height: 190px; padding: 14px; resize: vertical; width: 100%; }
+  textarea[readonly] { background: #f8fafc; }
+  textarea:focus-visible, button:focus-visible { outline: 3px solid #f4a261; outline-offset: 3px; }
+  .modes { border: 0; margin: 22px 0 0; padding: 0; }
+  .mode-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; }
+  button { border-radius: 10px; cursor: pointer; font: inherit; font-weight: 700; min-height: 46px; padding: 10px 14px; }
+  .mode-button { background: #fff; border: 1px solid #b9c4d5; color: #172033; overflow-wrap: anywhere; }
+  .mode-button[aria-pressed="true"] { background: #e7edff; border-color: #315bea; color: #193b92; }
+  .stats { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 22px; }
+  .stat { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; min-width: 0; padding: 16px; text-align: center; }
+  .number { display: block; font-size: 25px; font-weight: 800; overflow-wrap: anywhere; }
+  .stat-label { color: #667085; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+  .actions { display: flex; gap: 12px; margin-top: 22px; }
+  .primary { background: #1769e0; border: 1px solid #1769e0; color: #fff; flex: 1; }
+  .secondary { background: #fff; border: 1px solid #b9c4d5; color: #344054; }
+  button:disabled { cursor: not-allowed; opacity: .55; }
+  .sr-only { clip: rect(0, 0, 0, 0); height: 1px; margin: -1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
+  @media (max-width: 700px) { .container { padding: 45px 18px 70px; } h1 { font-size: 36px; } .text-grid { grid-template-columns: 1fr; } .actions { flex-direction: column; } .actions button { width: 100%; } }
+  @media (max-width: 360px) { .mode-grid { grid-template-columns: 1fr; } }
+</style>
