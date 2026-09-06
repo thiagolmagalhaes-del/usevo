@@ -250,19 +250,19 @@ export const ferramentas: Ferramenta[] = [
       "pt-BR": {
         title: "Contador de Palavras",
         description: "Conte palavras, caracteres, frases, parágrafos, linhas e tempo de leitura.",
-        seoTitle: "Contador de Palavras Online Grátis – Palavras e Caracteres | USEVO",
+        seoTitle: "Contador de Palavras Online Grátis – Palavras e Caracteres",
         seoDescription: "Conte palavras, caracteres com e sem espaços, frases, parágrafos, linhas e tempo de leitura instantaneamente.",
       },
       en: {
         title: "Word Counter",
         description: "Count words, characters, sentences, paragraphs, lines, and reading time.",
-        seoTitle: "Free Online Word Counter – Words & Characters | USEVO",
+        seoTitle: "Free Online Word Counter – Words & Characters",
         seoDescription: "Count words, characters with and without spaces, sentences, paragraphs, lines, and reading time instantly online.",
       },
       es: {
         title: "Contador de palabras",
         description: "Cuenta palabras, caracteres, frases, párrafos, líneas y tiempo de lectura.",
-        seoTitle: "Contador de palabras online gratis – Palabras y caracteres | USEVO",
+        seoTitle: "Contador de palabras online gratis – Palabras y caracteres",
         seoDescription: "Cuenta palabras, caracteres con y sin espacios, frases, párrafos, líneas y tiempo de lectura al instante.",
       },
     },

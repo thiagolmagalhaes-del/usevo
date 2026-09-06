@@ -21,7 +21,7 @@ describe("word counter DOM and localized SEO contract", () => {
 
   it("keeps localized page metadata, alternates, and related tools", () => {
     const tool = getFerramentaByPath("/ferramentas/contador-de-palavras")!;
-    expect(getFerramentaTranslation(tool, "en")).toMatchObject({ seoTitle: "Free Online Word Counter – Words & Characters | USEVO" });
+    expect(getFerramentaTranslation(tool, "en")).toMatchObject({ seoTitle: "Free Online Word Counter – Words & Characters" });
     expect(getFerramentaTranslation(tool, "pt-BR").seoDescription).toContain("sem espaços");
     expect(getFerramentaTranslation(tool, "es").seoDescription).toContain("sin espacios");
 
