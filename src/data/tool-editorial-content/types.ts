@@ -16,6 +16,7 @@ export type ToolEditorialContent = {
   example: { title: string; description: string; calculation: string; result: string };
   useCases: { title: string; items: string[] };
   notes: { title: string; items: string[] };
+  privacy?: { title: string; paragraphs: string[] };
   faq: { title: string; items: Array<{ question: string; answer: string }> };
   relatedTools: { title: string; items: EditorialRelatedTool[] };
 };

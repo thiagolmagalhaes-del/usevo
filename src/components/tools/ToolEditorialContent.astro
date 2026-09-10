@@ -42,6 +42,13 @@ const { content, relatedTools = [] } = Astro.props;
       </ul>
     </section>
 
+    {content.privacy && (
+      <section class="editorial-section" aria-labelledby="editorial-privacy">
+        <h2 id="editorial-privacy">{content.privacy.title}</h2>
+        {content.privacy.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </section>
+    )}
+
     <section class="editorial-section" aria-labelledby="editorial-faq">
       <h2 id="editorial-faq">{content.faq.title}</h2>
       <div class="faq-list">

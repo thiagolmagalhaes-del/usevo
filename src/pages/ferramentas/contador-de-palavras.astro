@@ -18,6 +18,10 @@ const editorialContent = getToolEditorialContent(ferramenta?.id, locale);
 const editorialRelatedTools = getEditorialRelatedTools(editorialContent, locale);
 const title = toolMeta.seoTitle;
 const description = toolMeta.seoDescription;
+const pageHeading = locale === "en" ? "Word Counter – Count Words, Characters & Reading Time" : ui.title;
+const pageIntroduction = locale === "en"
+  ? "Paste or type your text to get an instant word count, character count, sentence count, paragraph count, and reading time. Your text is processed locally in your browser."
+  : ui.description;
 const canonicalUrl = new URL(Astro.url.pathname, "https://usevo.tools").href;
 const alternateUrls = getSiteAlternates(Astro.url.pathname);
 ---
@@ -212,10 +216,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
   <main class="container">
     <div class="category">{ui.category}</div>
 
-    <h1>{ui.title}</h1>
+    <h1>{pageHeading}</h1>
 
     <p class="subtitle">
-      {ui.description}
+      {pageIntroduction}
     </p>
 
     <section class="tool">

@@ -256,8 +256,8 @@ export const ferramentas: Ferramenta[] = [
       en: {
         title: "Word Counter",
         description: "Count words, characters, sentences, paragraphs, lines, and reading time.",
-        seoTitle: "Free Online Word Counter – Words & Characters",
-        seoDescription: "Count words, characters with and without spaces, sentences, paragraphs, lines, and reading time instantly online.",
+        seoTitle: "Free Word Counter Online – Words, Characters & Reading Time",
+        seoDescription: "Count words, characters, sentences, paragraphs and reading time instantly. Your text stays in your browser — free, private and easy to use.",
       },
       es: {
         title: "Contador de palabras",

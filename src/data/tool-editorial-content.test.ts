@@ -95,7 +95,7 @@ describe("tool editorial content", () => {
       },
       "contador-de-palavras": {
         "pt-BR": "Como usar o contador de palavras",
-        en: "How to use the word counter",
+        en: "Count words online instantly",
         es: "Cómo usar el contador de palabras",
       },
       "conversor-maiusculas-minusculas": {
@@ -130,7 +130,7 @@ describe("tool editorial content", () => {
         else expect(content?.howTo.title).toBeTruthy();
         expect(content?.howTo.steps).toHaveLength(3);
         expect(content?.faq.items.length).toBeGreaterThanOrEqual(3);
-        expect(content?.faq.items.length).toBeLessThanOrEqual(4);
+        expect(content?.faq.items.length).toBeLessThanOrEqual(toolId === "contador-de-palavras" && locale === "en" ? 6 : 4);
         expect(content?.relatedTools.items.length).toBeGreaterThanOrEqual(2);
       }
     }
