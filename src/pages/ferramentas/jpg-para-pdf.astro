@@ -135,8 +135,16 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       font-size: 14px;
     }
 
-    input[type="file"] {
-      display: none;
+    .visually-hidden-file-input {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
     }
 
     [hidden] {
@@ -158,6 +166,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       margin-top: 15px;
       font-size: 14px;
       color: #475467;
+      overflow-wrap: anywhere;
     }
 
     button {
@@ -252,8 +261,10 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       background: #344054;
     }
 
+    .visually-hidden-file-input:focus-visible + .upload-area,
+    button:focus-visible,
     .download-actions a:focus-visible {
-      outline: 3px solid #93c5fd;
+      outline: 3px solid #172033;
       outline-offset: 2px;
     }
 
@@ -304,11 +315,18 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       data-download-blocked={ui.downloadBlocked}
       data-read-image-error={ui.readImageError}
     >
+      <input
+        id="fileInput"
+        class="visually-hidden-file-input"
+        type="file"
+        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+      />
+
       <label for="fileInput" class="upload-area">
         <div class="upload-icon">📄</div>
 
         <div class="upload-title">
-          {ui.dropImages}
+          {ui.selectImage}
         </div>
 
         <div class="upload-text">
@@ -316,13 +334,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         </div>
       </label>
 
-      <input
-        id="fileInput"
-        type="file"
-        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-      />
-
-      <div id="fileName" class="file-name"></div>
+      <div id="fileName" class="file-name" role="status"></div>
 
       <button id="removeBtn" type="button" class="secondary" hidden>{ui.removeImage}</button>
 
@@ -335,15 +347,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         {ui.convertToPdf}
       </button>
 
-      <div id="processing" class="success" hidden>{ui.processing}</div>
+      <div id="processing" class="success" role="status" hidden>{ui.processing}</div>
 
-      <div
-        id="error"
-        class="error"
+      <div id="error" class="error" role="alert"
         data-invalid-image-error={ui.invalidImageError}
       ></div>
 
-      <div id="success" class="success" hidden>
+      <div id="success" class="success" role="status" hidden>
         {ui.pdfReady}
       </div>
 
@@ -351,7 +361,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         <button id="downloadPdf" type="button">{ui.downloadPdf}</button>
         <a id="openPdf" class="secondary" href="#" target="_blank" rel="noopener noreferrer">{ui.openPdf}</a>
       </div>
-      <p id="downloadHint" class="download-hint">{ui.downloadBlocked}</p>
+      <p id="downloadHint" class="download-hint" hidden>{ui.downloadBlocked}</p>
       <button id="retryBtn" type="button" class="secondary" hidden>{ui.retry}</button>
     </div>
   </main>

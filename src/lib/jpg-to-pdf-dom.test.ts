@@ -12,7 +12,7 @@ describe("JPG to PDF post-conversion actions", () => {
     expect(page).toContain("justify-content: center;");
     expect(page).toContain("min-height: 48px;");
     expect(page).toContain("color: #ffffff;");
-    expect(page).toContain("outline: 3px solid #93c5fd;");
+    expect(page).toContain("outline: 3px solid #172033;");
     expect(page).toContain("flex-direction: column;");
   });
 
@@ -56,5 +56,21 @@ describe("JPG to PDF post-conversion actions", () => {
     expect(page).toContain("const normalized = await normalizeImageForPdf(file);");
     expect(page).toContain("preview.src = normalized.dataUrl;");
     expect(page).toContain("pdf.addImage(dataUrl, imageFormat, 0, 0, dimensions.width, dimensions.height);");
+  });
+
+  it("keeps the upload flow keyboard-accessible and announces dynamic feedback", () => {
+    const visuallyHiddenInputStyles = page.match(/\.visually-hidden-file-input\s*\{([\s\S]*?)\}/)?.[1] ?? "";
+
+    expect(page).toContain('class="visually-hidden-file-input"');
+    expect(page).toContain('.visually-hidden-file-input:focus-visible + .upload-area');
+    expect(visuallyHiddenInputStyles).not.toContain("display: none");
+    expect(visuallyHiddenInputStyles).not.toContain("visibility: hidden");
+    expect(page).toContain('{ui.selectImage}');
+    expect(page).not.toContain('{ui.dropImages}');
+    expect(page).toContain('<div id="fileName" class="file-name" role="status"></div>');
+    expect(page).toContain('<div id="processing" class="success" role="status" hidden>');
+    expect(page).toContain('<div id="error" class="error" role="alert"');
+    expect(page).toContain('<div id="success" class="success" role="status" hidden>');
+    expect(page).toContain('<p id="downloadHint" class="download-hint" hidden>');
   });
 });
