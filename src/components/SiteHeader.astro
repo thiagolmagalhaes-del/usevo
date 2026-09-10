@@ -81,6 +81,12 @@ const navItems = [
     color: #315bea;
   }
 
+  nav a:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
   .language-switcher {
     display: inline-flex;
     align-items: center;
@@ -144,28 +150,42 @@ const navItems = [
 
     nav {
       width: 100%;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: flex-start;
       gap: 8px;
       min-width: 0;
     }
 
-    nav a:not(.nav-button):not(.language-option) {
-      display: none;
+    nav > a:not(.nav-button):not(.language-option) {
+      display: inline-flex;
+      flex: 1 1 calc(50% - 4px);
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #d9dee8;
+      border-radius: 8px;
     }
 
     nav .language-switcher .language-option {
       display: inline-flex;
     }
 
-    .nav-button {
-      min-height: 38px;
-      padding: 10px;
+    nav .nav-button {
+      display: inline-flex;
+      flex: 1 1 0;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 12px;
       font-size: 13px;
       white-space: nowrap;
     }
 
-    .language-switcher {
+    nav .language-switcher {
       flex: 0 0 auto;
+      min-height: 44px;
       margin-left: 0;
     }
   }

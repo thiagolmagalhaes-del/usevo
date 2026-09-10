@@ -11,10 +11,20 @@ const alternateUrls = getSiteAlternates("/en/tools/");
 ---
 
 <Layout title={t.allTools} description="Explore all USEVO TOOLS in English." locale="en" canonical={canonical} alternateUrls={alternateUrls}>
+  <style>
+    .page-intro {
+      max-width: 720px;
+      margin: 0 auto;
+      color: #667085;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+  </style>
   <main>
     <section style="padding: 60px 0 40px; text-align:center;">
       <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;">
         <h1 style="margin:0 auto 15px;font-size:42px;letter-spacing:-1px;font-weight:800;">{t.allTools}</h1>
+        <p class="page-intro">Browse tools for files, images, text, calculations, development, security, and everyday utilities. Each card identifies its category so you can find related tools when one task leads to the next.</p>
       </div>
     </section>
     <section style="padding:40px 0 100px;">

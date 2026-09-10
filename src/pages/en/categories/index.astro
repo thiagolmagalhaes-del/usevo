@@ -14,6 +14,16 @@ for (const ferramenta of ferramentas) {
 const canonical = "https://usevo.tools/en/categories/";
 const alternateUrls = getSiteAlternates("/en/categories/");
 const getToolHref = (ferramenta: (typeof ferramentas)[number]) => getToolLocaleRoute(ferramenta, "en");
+const categoryDescriptions: Record<string, string> = {
+  arquivos: "Work with PDFs, images, and file conversions.",
+  calculadoras: "Calculate percentages, dates, ages, and everyday values.",
+  conversores: "Convert units used in everyday measurements.",
+  desenvolvimento: "Format, inspect, encode, and generate development data.",
+  financas: "Compare financial scenarios and convert currencies using current exchange-rate data.",
+  seguranca: "Generate strong passwords for accounts and services.",
+  texto: "Count, compare, and transform written text.",
+  utilidades: "Create or read QR codes, barcodes, and random selections.",
+};
 ---
 
 <Layout title={t.categories} description="Browse USEVO tools by category." locale="en" canonical={canonical} alternateUrls={alternateUrls}>
@@ -21,11 +31,13 @@ const getToolHref = (ferramenta: (typeof ferramentas)[number]) => getToolLocaleR
     .container { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
     .page-header { padding: 60px 0 40px; text-align: center; }
     .page-header h1 { margin: 0 auto 15px; font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+    .page-intro { max-width: 720px; margin: 0 auto; color: #667085; font-size: 17px; line-height: 1.6; }
     .categories-section { padding: 40px 0 100px; }
     .section-heading { margin: 0 0 28px; font-size: 28px; letter-spacing: -1px; }
     .categories-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
     .category-card { padding: 32px; border: 1px solid #e7e9ee; border-radius: 16px; background: #fff; }
     .category-card h3 { margin: 0 0 8px; font-size: 22px; }
+    .category-description { min-height: 3.2em; margin: 0 0 20px; color: #667085; line-height: 1.6; }
     .tools-list { margin: 0; padding: 0; list-style: none; }
     .tools-list li + li { margin-top: 12px; }
     .tools-list a { display: block; padding: 12px; border-radius: 8px; background: #f8fafc; color: #315bea; font-size: 14px; font-weight: 600; }
@@ -36,6 +48,7 @@ const getToolHref = (ferramenta: (typeof ferramentas)[number]) => getToolLocaleR
     <section class="page-header">
       <div class="container">
         <h1>{t.categories}</h1>
+        <p class="page-intro">Categories group tools by the job they help you complete. Choose Files for PDFs and images, Text for writing utilities, or Development for formatting, data, and encoding tasks.</p>
       </div>
     </section>
     <section class="categories-section" aria-labelledby="categories-list-title">
@@ -45,6 +58,7 @@ const getToolHref = (ferramenta: (typeof ferramentas)[number]) => getToolLocaleR
           {Array.from(categorias.entries()).map(([categoria, itens]) => (
             <article class="category-card">
               <h3>{getCategoryTranslation(categoria, "en")}</h3>
+              <p class="category-description">{categoryDescriptions[categoria]}</p>
               <ul class="tools-list">
               {itens.map((ferramenta) => (
                 <li><a href={getToolHref(ferramenta)}>{ferramenta.translations.en?.title ?? ferramenta.nome}</a></li>

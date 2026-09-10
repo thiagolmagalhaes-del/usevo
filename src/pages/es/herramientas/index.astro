@@ -11,10 +11,20 @@ const alternateUrls = getSiteAlternates("/es/herramientas/");
 ---
 
 <Layout title={t.allTools} description="Explora todas las herramientas de USEVO TOOLS en español." locale="es" canonical={canonical} alternateUrls={alternateUrls}>
+  <style>
+    .page-intro {
+      max-width: 720px;
+      margin: 0 auto;
+      color: #667085;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+  </style>
   <main>
     <section style="padding: 60px 0 40px; text-align:center;">
       <div style="width:min(1180px, calc(100% - 40px)); margin:0 auto;">
         <h1 style="margin:0 auto 15px;font-size:42px;letter-spacing:-1px;font-weight:800;">{t.allTools}</h1>
+        <p class="page-intro">Explora herramientas para archivos, imágenes, texto, cálculos, desarrollo, seguridad y tareas cotidianas. Cada tarjeta indica su categoría para que puedas encontrar herramientas relacionadas cuando una tarea lleva a la siguiente.</p>
       </div>
     </section>
     <section style="padding:40px 0 100px;">

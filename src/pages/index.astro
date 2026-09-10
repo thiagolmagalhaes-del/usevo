@@ -118,6 +118,14 @@ const alternateUrls = getSiteAlternates("/");
         line-height: 1.6;
       }
 
+      .hero-context {
+        max-width: 650px;
+        margin: -14px auto 28px;
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
       .search {
         max-width: 620px;
         margin: 0 auto;
@@ -217,12 +225,24 @@ const alternateUrls = getSiteAlternates("/");
         }
 
         .hero {
-          padding: 70px 0 55px;
+          padding: 48px 0 36px;
+        }
+
+        .eyebrow {
+          margin-bottom: 14px;
         }
 
         h1 {
           font-size: 48px;
           letter-spacing: -2px;
+        }
+
+        .hero-text {
+          margin: 20px auto 16px;
+        }
+
+        .hero-context {
+          margin: 0 auto 20px;
         }
 
         .search {
@@ -250,10 +270,14 @@ const alternateUrls = getSiteAlternates("/");
             <span>Less hassle.</span>
           </h1>
 
-          <p class="hero-text">
-            USEVO TOOLS brings together simple, fast, and useful tools to turn
-            everyday tasks into just a few clicks.
-          </p>
+        <p class="hero-text">
+          USEVO TOOLS brings together practical tools for files, images, text,
+          calculations, development tasks, and everyday conversions.
+        </p>
+        <p class="hero-context">
+          Text, image, and file tools can process data directly in your browser.
+          Some tasks, such as currency conversion, use external services when current data is needed.
+        </p>
 
           <form class="search" id="searchForm">
             <input
@@ -272,7 +296,7 @@ const alternateUrls = getSiteAlternates("/");
         <div class="container">
           <div class="section-heading">
             <h2>{t.popularTools}</h2>
-            <p>Pick a tool and get your task done quickly.</p>
+            <p>Browse file and image tools, text utilities, calculators, development helpers, and security tools.</p>
           </div>
 
           <ToolGrid items={ferramentas} locale="en" />
