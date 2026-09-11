@@ -1,0 +1,126 @@
+---
+import ToolCard from "./ToolCard.astro";
+import { featuredToolsCopy, getFeaturedTools } from "../../data/featured-tools";
+import type { Locale } from "../../data/locales";
+
+const { locale } = Astro.props as { locale: Locale };
+const copy = featuredToolsCopy[locale];
+const items = getFeaturedTools();
+---
+
+<section class="featured-tools" id="tools" aria-labelledby="featured-tools-title">
+  <div class="featured-tools__container">
+    <h2 id="featured-tools-title">{copy.title}</h2>
+    <div class="featured-tools__grid">
+      {items.map((tool) => <ToolCard ferramenta={tool} locale={locale} />)}
+    </div>
+    <a class="featured-tools__cta" href={copy.href}>{copy.cta}</a>
+  </div>
+</section>
+
+<style>
+  .featured-tools {
+    padding: 30px 0 100px;
+  }
+
+  .featured-tools__container {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+  }
+
+  h2 {
+    margin: 0 0 28px;
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+
+  .featured-tools__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .featured-tools__grid :global(.tool-card) {
+    min-height: 0;
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .featured-tools__grid :global(.tool-icon) {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+    font-size: 18px;
+  }
+
+  .featured-tools__grid :global(.category) {
+    margin-bottom: 5px;
+  }
+
+  .featured-tools__grid :global(.tool-card h3) {
+    margin-bottom: 6px;
+  }
+
+  .featured-tools__cta {
+    display: table;
+    margin: 28px auto 0;
+    padding: 14px 22px;
+    border-radius: 9px;
+    background: #172033;
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .featured-tools__cta:hover {
+    background: #315bea;
+  }
+
+  @media (max-width: 900px) {
+    .featured-tools__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 650px) {
+    .featured-tools {
+      padding: 24px 0 56px;
+    }
+
+    .featured-tools__container {
+      width: min(100% - 28px, 1180px);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .featured-tools__grid {
+      gap: 12px;
+    }
+
+    .featured-tools__grid :global(.tool-card) {
+      padding: 14px;
+    }
+
+    .featured-tools__grid :global(.tool-card h3) {
+      font-size: 16px;
+    }
+
+    .featured-tools__grid :global(.tool-card p) {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .featured-tools__cta {
+      margin-top: 24px;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .featured-tools__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

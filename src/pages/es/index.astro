@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import ToolGrid from "../../components/tool/ToolGrid.astro";
-import { ferramentas } from "../../data/ferramentas";
+import FeaturedTools from "../../components/tool/FeaturedTools.astro";
 import { getTranslations } from "../../data/i18n";
 import { getSiteAlternates } from "../../data/locale-routes";
 
@@ -20,10 +19,6 @@ const alternateUrls = getSiteAlternates("/es/");
       </div>
     </section>
 
-    <section style="padding:30px 0 100px;">
-      <div style="width: min(1180px, calc(100% - 40px)); margin: 0 auto;">
-        <ToolGrid items={ferramentas} locale="es" />
-      </div>
-    </section>
+    <FeaturedTools locale="es" />
   </main>
 </Layout>

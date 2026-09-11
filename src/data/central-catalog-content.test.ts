@@ -19,7 +19,7 @@ describe("central catalog editorial context", () => {
     const page = await source(pages.home);
 
     expect(page).toContain('class="hero-context"');
-    expect(page).toContain("ToolGrid");
+    expect(page).toContain("FeaturedTools");
     expect(page).toContain('id="searchForm"');
   });
 
