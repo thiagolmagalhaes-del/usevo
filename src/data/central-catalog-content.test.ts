@@ -7,6 +7,7 @@ const pages = {
   spanishTools: new URL("../pages/es/herramientas/index.astro", import.meta.url),
   englishCategories: new URL("../pages/en/categories/index.astro", import.meta.url),
   spanishCategories: new URL("../pages/es/categorias/index.astro", import.meta.url),
+  catalogBrowser: new URL("../components/tool/CatalogBrowser.astro", import.meta.url),
 };
 
 async function source(page: URL) {
@@ -23,15 +24,17 @@ describe("central catalog editorial context", () => {
   });
 
   it("adds localized context to the English and Spanish tool listings", async () => {
-    const [english, spanish] = await Promise.all([
+    const [english, spanish, browser] = await Promise.all([
       source(pages.englishTools),
       source(pages.spanishTools),
+      source(pages.catalogBrowser),
     ]);
 
     for (const page of [english, spanish]) {
-      expect(page).toContain('class="page-intro"');
-      expect(page).toContain("ToolGrid");
+      expect(page).toContain("CatalogBrowser");
     }
+    expect(browser).toContain('class="page-intro"');
+    expect(browser).toContain("ToolGrid");
   });
 
   it("adds localized descriptions to category cards", async () => {

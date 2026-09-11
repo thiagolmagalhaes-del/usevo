@@ -8,6 +8,7 @@ const t = getTranslations(locale);
 const localizedRoutes = localeRouteConfig[locale];
 const languageRoutes = getLocaleNavigationRoutes(Astro.url.pathname);
 const languageLabel = locale === "en" ? "Language" : "Idioma";
+const mobileExploreLabel = locale === "en" ? "Explore" : "Explorar";
 const navItems = [
   { label: t.tools, href: localizedRoutes.tools },
   { label: t.categories, href: localizedRoutes.categories },
@@ -22,7 +23,7 @@ const navItems = [
       {navItems.map((item) => (
         <a href={item.href}>{item.label}</a>
       ))}
-      <a href={localizedRoutes.tools} class="nav-button">{t.exploreTools}</a>
+      <a href={localizedRoutes.tools} class="nav-button"><span class="nav-button__full">{t.exploreTools}</span><span class="nav-button__mobile">{mobileExploreLabel}</span></a>
       <span class="language-switcher" role="group" aria-label={languageLabel}>
         {([['pt-BR', 'PT'], ['en', 'EN'], ['es', 'ES']] as const).map(([option, label]) => (
           <a
@@ -132,6 +133,8 @@ const navItems = [
     color: #ffffff;
   }
 
+  .nav-button__mobile { display: none; }
+
   @media (max-width: 650px) {
     .container {
       width: min(100% - 28px, 1180px);
@@ -155,6 +158,14 @@ const navItems = [
       justify-content: flex-start;
       gap: 8px;
       min-width: 0;
+    }
+
+    nav > a:first-child:not(.nav-button):not(.language-option) {
+      flex: 0 0 100%;
+    }
+
+    nav > a:nth-child(2):not(.nav-button):not(.language-option) {
+      flex: 1 1 0;
     }
 
     nav > a:not(.nav-button):not(.language-option) {
@@ -184,9 +195,13 @@ const navItems = [
     }
 
     nav .language-switcher {
-      flex: 0 0 auto;
+      flex: 0 0 100%;
       min-height: 44px;
       margin-left: 0;
+      justify-content: flex-start;
     }
+
+    .nav-button__full { display: none; }
+    .nav-button__mobile { display: inline; }
   }
 </style>

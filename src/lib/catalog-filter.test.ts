@@ -44,10 +44,10 @@ describe("matchesCatalogItem", () => {
   });
 
   it("keeps hidden cards out of the rendered catalog and supports Enter results navigation", () => {
-    const page = readFileSync(new URL("../pages/en/tools/index.astro", import.meta.url), "utf8");
+    const page = readFileSync(new URL("../components/tool/CatalogBrowser.astro", import.meta.url), "utf8");
 
     expect(page).toContain('.tool-card[hidden]');
     expect(page).toContain('search?.addEventListener("keydown"');
-    expect(page).toContain('firstVisibleCard?.focus({ preventScroll: true })');
+    expect(page).toContain('firstVisibleCard?.focus({preventScroll:true})');
   });
 });
