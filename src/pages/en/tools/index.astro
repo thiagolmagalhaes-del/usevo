@@ -31,6 +31,7 @@ const categoryFilters = Array.from(new Set(ferramentas.map((ferramenta) => ferra
     .catalog-results { min-height: 1.5em; margin: 14px 0 0; color: #667085; font-size: 14px; }
     .catalog-browser :global(.tools-grid) { gap: 14px; }
     .catalog-browser :global(.tool-card) { min-width: 0; overflow-wrap: anywhere; }
+    .catalog-browser :global(.tool-card[hidden]) { display: none; }
 
     @media (max-width: 650px) {
       .page-shell { width: min(100% - 28px, 1180px); }
@@ -96,12 +97,14 @@ const categoryFilters = Array.from(new Set(ferramentas.map((ferramenta) => ferra
       const search = catalog.querySelector<HTMLInputElement>("#toolSearch");
       const results = catalog.querySelector<HTMLElement>("#toolResults");
       const cards = Array.from(catalog.querySelectorAll<HTMLElement>(".tool-card"));
+      const grid = catalog.querySelector<HTMLElement>(".tools-grid");
       const filters = Array.from(catalog.querySelectorAll<HTMLButtonElement>("[data-category-filter]"));
       let selectedCategory = "all";
 
       const updateCatalog = () => {
         const query = search?.value ?? "";
         let visibleCount = 0;
+        const visibleCards: HTMLElement[] = [];
 
         cards.forEach((card) => {
           const visible = matchesCatalogItem(
@@ -112,6 +115,7 @@ const categoryFilters = Array.from(new Set(ferramentas.map((ferramenta) => ferra
 
           card.hidden = !visible;
           visibleCount += Number(visible);
+          if (visible) visibleCards.push(card);
         });
 
         if (results) {
@@ -119,9 +123,26 @@ const categoryFilters = Array.from(new Set(ferramentas.map((ferramenta) => ferra
             ? `${visibleCount} tools available.`
             : `${visibleCount} ${visibleCount === 1 ? "tool" : "tools"} found.`;
         }
+
+        return visibleCards;
       };
 
       search?.addEventListener("input", updateCatalog);
+      search?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+
+        event.preventDefault();
+        const visibleCards = updateCatalog();
+        grid?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        if (visibleCards.length === 1 && visibleCards[0] instanceof HTMLAnchorElement) {
+          window.location.assign(visibleCards[0].href);
+          return;
+        }
+
+        const firstVisibleCard = visibleCards[0];
+        firstVisibleCard?.focus({ preventScroll: true });
+      });
 
       filters.forEach((filter) => {
         filter.addEventListener("click", () => {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { ferramentas } from "../data/ferramentas";
 import { getCategoryTranslation } from "../data/i18n";
 import { matchesCatalogItem } from "./catalog-filter";
@@ -40,5 +41,13 @@ describe("matchesCatalogItem", () => {
     for (const category of categories) {
       expect(items.some((item) => matchesCatalogItem(item, "", category))).toBe(true);
     }
+  });
+
+  it("keeps hidden cards out of the rendered catalog and supports Enter results navigation", () => {
+    const page = readFileSync(new URL("../pages/en/tools/index.astro", import.meta.url), "utf8");
+
+    expect(page).toContain('.tool-card[hidden]');
+    expect(page).toContain('search?.addEventListener("keydown"');
+    expect(page).toContain('firstVisibleCard?.focus({ preventScroll: true })');
   });
 });
