@@ -319,7 +319,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         id="fileInput"
         class="visually-hidden-file-input"
         type="file"
-        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+        multiple
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
       />
 
       <label for="fileInput" class="upload-area">
@@ -394,8 +395,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       readImageError: card.dataset.readImageError,
     };
 
-    let selectedFile = null;
-    let selectedImage = null;
+    let selectedFiles = [];
+    let selectedImages = [];
     let currentPdfBlob = null;
     let currentPdfDownload = null;
     let currentPdfUrl = "";
@@ -460,8 +461,8 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
 
     function clearSelection() {
       if (isProcessing) return;
-      selectedFile = null;
-      selectedImage = null;
+      selectedFiles = [];
+      selectedImages = [];
       selectionVersion += 1;
       fileInput.value = "";
       preview.removeAttribute("src");
@@ -475,11 +476,11 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
     }
 
     async function handleFileSelection() {
-      const file = fileInput.files?.[0];
+      const files = Array.from(fileInput.files || []);
       const version = ++selectionVersion;
 
-      selectedFile = null;
-      selectedImage = null;
+      selectedFiles = [];
+      selectedImages = [];
       clearPdf();
       convertBtn.disabled = true;
       preview.style.display = "none";
@@ -487,16 +488,13 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       error.style.display = "none";
       success.style.display = "none";
 
-      if (!file) {
+      if (!files.length) {
         return;
       }
 
-      const isSupported =
-        file.type === "image/jpeg" ||
-        file.type === "image/png" ||
-        /\.(jpe?g|png)$/i.test(file.name);
+      const isSupported = (file) => file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/webp" || /\.(jpe?g|png|webp)$/i.test(file.name);
 
-      if (!isSupported) {
+      if (files.some((file) => !isSupported(file))) {
         error.textContent =
           error.dataset.invalidImageError ||
           "Please select a JPG, JPEG, or PNG image.";
@@ -505,31 +503,31 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
         return;
       }
 
-      fileName.textContent = file.name;
-      fileName.textContent = `${messages.selectedImage}: ${file.name}`;
+      fileName.textContent = `${files.length} ${messages.selectedImage}: ${files.map((file) => file.name).join(", ")}`;
       fileName.style.display = "block";
       removeBtn.hidden = false;
 
       try {
-        const normalized = await normalizeImageForPdf(file);
+        const normalized = await Promise.all(files.map((file) => normalizeImageForPdf(file)));
         if (version !== selectionVersion) return;
-        selectedFile = file;
-        selectedImage = normalized;
-        preview.src = normalized.dataUrl;
+        selectedFiles = files;
+        selectedImages = normalized;
+        preview.src = normalized[0].dataUrl;
         preview.style.display = "block";
         convertBtn.disabled = false;
-      } catch {
+      } catch (readError) {
         if (version !== selectionVersion) return;
-        error.textContent = messages.readImageError;
+        const failed = files.find((file) => !selectedFiles.includes(file));
+        error.textContent = `${messages.readImageError} ${failed ? `(${failed.name})` : ""}`;
         error.style.display = "block";
-        selectedFile = null;
-        selectedImage = null;
+        selectedFiles = [];
+        selectedImages = [];
         convertBtn.disabled = true;
       }
     }
 
     async function convertToPdf() {
-      if (!selectedFile || isProcessing) {
+      if (!selectedFiles.length || isProcessing) {
         return;
       }
 
@@ -544,17 +542,15 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       processing.hidden = false;
       clearPdf();
 
-      if (!selectedImage) {
+      if (!selectedImages.length) {
         showConversionError();
         return;
       }
 
       try {
-        const { dataUrl, dimensions } = selectedImage;
-        const orientation = dimensions.width > dimensions.height ? "landscape" : "portrait";
-        const pdf = new jsPDF({ orientation, unit: "px", format: [dimensions.width, dimensions.height] });
-        const imageFormat = selectedFile.type === "image/png" || /\.png$/i.test(selectedFile.name) ? "PNG" : "JPEG";
-        pdf.addImage(dataUrl, imageFormat, 0, 0, dimensions.width, dimensions.height);
+        const first = selectedImages[0];
+        const pdf = new jsPDF({ orientation: first.dimensions.width > first.dimensions.height ? "landscape" : "portrait", unit: "px", format: [first.dimensions.width, first.dimensions.height] });
+        selectedImages.forEach((image, index) => { if (index) pdf.addPage([image.dimensions.width, image.dimensions.height], image.dimensions.width > image.dimensions.height ? "landscape" : "portrait"); const file = selectedFiles[index]; pdf.addImage(image.dataUrl, file.type === "image/png" || /\.png$/i.test(file.name) ? "PNG" : "JPEG", 0, 0, image.dimensions.width, image.dimensions.height); });
         const pdfBytes = pdf.output("arraybuffer");
         const header = new TextDecoder().decode(new Uint8Array(pdfBytes).subarray(0, 5));
         if (!pdfBytes.byteLength || header !== "%PDF-") throw new Error("Invalid PDF output");
@@ -588,7 +584,7 @@ const alternateUrls = getSiteAlternates(Astro.url.pathname);
       isProcessing = false;
       fileInput.disabled = false;
       removeBtn.disabled = false;
-      convertBtn.disabled = !selectedFile;
+      convertBtn.disabled = !selectedFiles.length;
     }
   </script>
   <div style="padding: 0 28px 80px; max-width: 900px; margin: 0 auto">

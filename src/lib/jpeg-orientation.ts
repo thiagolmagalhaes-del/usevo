@@ -102,13 +102,8 @@ const loadImage = (dataUrl: string) => new Promise<HTMLImageElement>((resolve, r
 
 type DecodedImage = { source: CanvasImageSource; width: number; height: number; close?: () => void };
 
-const decodeImage = async (file: Blob, dataUrl: string): Promise<DecodedImage> => {
-  if ("createImageBitmap" in globalThis) {
-    try {
-      const bitmap = await createImageBitmap(file, { imageOrientation: "none" });
-      return { source: bitmap, width: bitmap.width, height: bitmap.height, close: () => bitmap.close() };
-    } catch { /* Safari fallback below. */ }
-  }
+const decodeImage = async (_file: Blob, dataUrl: string): Promise<DecodedImage> => {
+  // FileReader + HTMLImageElement is the most reliable decoder on iOS Safari.
   const image = await loadImage(dataUrl);
   return { source: image, width: image.naturalWidth, height: image.naturalHeight };
 };

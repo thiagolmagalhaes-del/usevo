@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { IMAGE_CONVERTER_LIMITS, ImageConverterError, assertOutputFormat, assertResultSize, detectImageFormat, formatExtension, formatMimeType, getConvertedFileName, getHeaderDimensions, getOutputFormats, validateDimensions, validateInputFile } from "./image-converter";
+import { IMAGE_CONVERTER_LIMITS, ImageConverterError, assertOutputFormat, assertResultSize, detectImageFormat, formatExtension, formatMimeType, getConvertedFileName, getHeaderDimensions, getOutputFormats, isWebpBytes, validateDimensions, validateInputFile } from "./image-converter";
 
 const jpeg = new Uint8Array([0xff,0xd8,0xff,0xc0,0x00,0x11,0x08,0x00,0x02,0x00,0x03,0x03,0x01,0x11,0x00,0x02,0x11,0x00,0x03,0x11,0x00,0xff,0xd9]);
 const png = new Uint8Array([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a,0,0,0,13,0x49,0x48,0x44,0x52,0,0,0,3,0,0,0,2]);
@@ -29,5 +29,10 @@ describe("image converter helpers", () => {
   });
   it("uses correct output MIME, extension, and predictable name", () => {
     expect(formatMimeType("jpeg")).toBe("image/jpeg"); expect(formatExtension("jpeg")).toBe("jpg"); expect(getConvertedFileName("holiday.photo.jpeg", "webp")).toBe("holiday.photo-convertido.webp");
+  });
+  it("accepts only real RIFF WebP output bytes", () => {
+    expect(isWebpBytes(webp)).toBe(true);
+    expect(isWebpBytes(new Uint8Array([...webp.slice(0, 8), 0x50, 0x4e, 0x47, 0x20]))).toBe(false);
+    expect(isWebpBytes(new Uint8Array([0x52, 0x49, 0x46, 0x46]))).toBe(false);
   });
 });

@@ -12,9 +12,9 @@ describe("image converter UI contract", () => {
     expect(markup).toContain('accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"');
     expect(markup).toContain('aria-live="polite"'); expect(markup).toContain('role="alert"'); expect(markup).toContain('id="imageConverterDownload"'); expect(markup).toContain('id="imageConverterBackground" class="color-input" type="color" value="#ffffff" aria-describedby="imageConverterBackgroundHelp imageConverterBackgroundValue"'); expect(markup).toContain('<output id="imageConverterBackgroundValue" class="color-value" aria-live="polite">#FFFFFF</output>'); expect(markup).toContain('id="imageConverterBackgroundHelp" class="background-help"');
   });
-  it("keeps quality and runtime WebP detection in the browser client", async () => {
+  it("keeps quality, validates real WebP bytes, and loads the WASM encoder only during WebP conversion", async () => {
     const source = await readFile(client, "utf8");
-    expect(source).toContain('target === "png"'); expect(source).toContain('supportsWebpExport'); expect(source).toContain('blob.type !== mime'); expect(source).toContain('URL.revokeObjectURL'); expect(source).toContain('imageOrientation: "from-image"');
+    expect(source).toContain('target === "png"'); expect(source).toContain('supportsWebpExport'); expect(source).toContain('await import("@jsquash/webp")'); expect(source).toContain('isWebpBytes'); expect(source).toContain('new Blob([encoded]'); expect(source).toContain('URL.revokeObjectURL'); expect(source).toContain('imageOrientation: "from-image"');
   });
   it("clears every partial panel, preview URL, and metadata before reporting a rejected file", async () => {
     const source = await readFile(client, "utf8");

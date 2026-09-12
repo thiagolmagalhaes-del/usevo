@@ -10,6 +10,12 @@ export default defineConfig({
   build: {
     format: "file",
   },
+  vite: {
+    optimizeDeps: {
+      // jSquash resolves its WebAssembly binaries via import.meta.url.
+      exclude: ["@jsquash/webp"],
+    },
+  },
   integrations: [
     sitemap({
       filter: (page) => {

@@ -53,9 +53,18 @@ describe("JPG to PDF post-conversion actions", () => {
 
   it("normalizes pixels before both preview and PDF generation", () => {
     expect(page).toContain('import { normalizeImageForPdf } from "../../lib/jpeg-orientation";');
-    expect(page).toContain("const normalized = await normalizeImageForPdf(file);");
-    expect(page).toContain("preview.src = normalized.dataUrl;");
-    expect(page).toContain("pdf.addImage(dataUrl, imageFormat, 0, 0, dimensions.width, dimensions.height);");
+    expect(page).toContain("const normalized = await Promise.all(files.map((file) => normalizeImageForPdf(file)));");
+    expect(page).toContain("preview.src = normalized[0].dataUrl;");
+    expect(page).toContain("selectedImages.forEach");
+    expect(page).toContain("pdf.addPage");
+  });
+
+  it("queues every selected image in input order for a multi-page PDF", () => {
+    expect(page).toContain("multiple");
+    expect(page).toContain(".webp");
+    expect(page).toContain("const files = Array.from(fileInput.files || []);");
+    expect(page).toContain("selectedFiles = files;");
+    expect(page).toContain("files.map((file) => file.name).join");
   });
 
   it("keeps the upload flow keyboard-accessible and announces dynamic feedback", () => {

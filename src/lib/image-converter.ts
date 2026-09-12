@@ -16,9 +16,9 @@ export class ImageConverterError extends Error {
 
 const isJpeg = (bytes: Uint8Array) => bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
 const isPng = (bytes: Uint8Array) => bytes.length >= 8 && [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a].every((value, index) => bytes[index] === value);
-const isWebp = (bytes: Uint8Array) => bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" && String.fromCharCode(...bytes.slice(8, 12)) === "WEBP";
+export const isWebpBytes = (bytes: Uint8Array) => bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" && String.fromCharCode(...bytes.slice(8, 12)) === "WEBP";
 
-export const detectImageFormat = (bytes: Uint8Array): ImageConverterFormat | undefined => isJpeg(bytes) ? "jpeg" : isPng(bytes) ? "png" : isWebp(bytes) ? "webp" : undefined;
+export const detectImageFormat = (bytes: Uint8Array): ImageConverterFormat | undefined => isJpeg(bytes) ? "jpeg" : isPng(bytes) ? "png" : isWebpBytes(bytes) ? "webp" : undefined;
 
 export const formatMimeType = (format: ImageConverterFormat) => format === "jpeg" ? "image/jpeg" : `image/${format}`;
 export const formatExtension = (format: ImageConverterFormat) => format === "jpeg" ? "jpg" : format;
@@ -62,7 +62,7 @@ const pngDimensions = (bytes: Uint8Array): ImageConverterDimensions => {
 };
 
 const webpDimensions = (bytes: Uint8Array): ImageConverterDimensions => {
-  if (!isWebp(bytes) || bytes.length < 20) throw new ImageConverterError("invalid-file");
+  if (!isWebpBytes(bytes) || bytes.length < 20) throw new ImageConverterError("invalid-file");
   const declaredSize = readU32LE(bytes, 4);
   if (declaredSize < 4 || declaredSize + 8 > bytes.length) throw new ImageConverterError("invalid-file");
   const chunk = String.fromCharCode(...bytes.slice(12, 16));
