@@ -64,4 +64,4 @@ npm run build
 
 ## Deployment
 
-The project is deployed to GitHub Pages. Every push to `main` runs `npm ci`, `npm test`, and `npm run build` before the generated `dist/` artifact is deployed.
+The project is deployed to GitHub Pages. Every push to `main` runs `npm ci`, `npm test`, and `npm run build` before the generated `dist/` artifact is deployed. 
