@@ -1,4 +1,5 @@
 ---
+import CategoryEditorialGuides from "../../../components/CategoryEditorialGuides.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { ferramentas } from "../../../data/ferramentas";
 import { getTranslations, getCategoryTranslation } from "../../../data/i18n";
@@ -67,6 +68,7 @@ const categoryDescriptions: Record<string, string> = {
             </article>
           ))}
         </div>
+        <CategoryEditorialGuides locale="es" />
       </div>
     </section>
   </main>

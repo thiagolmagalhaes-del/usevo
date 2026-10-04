@@ -1,4 +1,5 @@
 ---
+import CategoryEditorialGuides from "../components/CategoryEditorialGuides.astro";
 import Layout from "../layouts/Layout.astro";
 import { ferramentas, getFerramentaTranslation } from "../data/ferramentas";
 import { getTranslations, getCategoryTranslation } from "../data/i18n";
@@ -295,6 +296,8 @@ const categoriasOrdenadas = Object.keys(categorias).sort();
               </article>
             ))}
           </div>
+
+          <CategoryEditorialGuides locale="pt-BR" />
 
           <div class="view-all-link">
             <a href="/ferramentas">{t.allTools}</a>

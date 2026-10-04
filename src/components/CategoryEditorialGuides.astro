@@ -1,0 +1,48 @@
+---
+import { CATEGORY_KEYS, categoryEditorialContent } from "../data/category-editorial-content";
+import { ferramentas, getFerramentaTranslation } from "../data/ferramentas";
+import { getToolLocaleRoute } from "../data/locale-routes";
+import type { Locale } from "../data/locales";
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const labels = {
+  "pt-BR": { heading: "Como escolher e usar as ferramentas de cada categoria", tools: "Ferramentas desta categoria" },
+  en: { heading: "How to choose and use tools in each category", tools: "Tools in this category" },
+  es: { heading: "Cómo elegir y usar las herramientas de cada categoría", tools: "Herramientas de esta categoría" },
+}[locale];
+---
+
+<section class="editorial-guides" aria-labelledby="category-guides-title">
+  <h2 id="category-guides-title">{labels.heading}</h2>
+  {CATEGORY_KEYS.map((category) => {
+    const guide = categoryEditorialContent[category][locale];
+    return (
+      <article id={`guide-${category}`} class="category-guide" data-category-guide={category}>
+        <h3>{guide.title}</h3>
+        <p>{guide.introduction}</p>
+        <ol>{guide.tips.map((tip) => <li>{tip}</li>)}</ol>
+        <nav aria-label={`${labels.tools}: ${guide.title}`}>
+          <ul>{ferramentas.filter((tool) => tool.categoryKey === category).map((tool) => (
+            <li><a href={getToolLocaleRoute(tool, locale)}>{getFerramentaTranslation(tool, locale).title}</a></li>
+          ))}</ul>
+        </nav>
+      </article>
+    );
+  })}
+</section>
+
+<style>
+  .editorial-guides { padding-top: 56px; color: #172033; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.3; margin: 0 0 28px; }
+  .category-guide { padding: 28px 0; border-top: 1px solid #e7e9ee; scroll-margin-top: 100px; }
+  h3 { margin: 0 0 16px; font-size: 1.4rem; line-height: 1.35; }
+  p, ol { max-width: 80ch; line-height: 1.75; }
+  p { margin: 0 0 16px; }
+  ol { padding-left: 24px; margin: 0 0 20px; }
+  ol li + li { margin-top: 12px; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 10px 20px; list-style: none; padding: 0; margin: 0; }
+  a { color: #274bc7; text-decoration: underline; text-underline-offset: 3px; }
+  a:hover { color: #172033; }
+  a:focus-visible { outline: 2px solid #274bc7; outline-offset: 4px; border-radius: 2px; }
+</style>
