@@ -36,3 +36,32 @@ Run all commands from the repository root:
 ```bash
 npm ci
 npm run dev
+```
+
+| Command | Purpose |
+| --- | --- |
+| `npm ci` | Install the locked project dependencies. |
+| `npm run dev` | Start the Astro development server. |
+| `npm test` | Run the Vitest test suite. |
+| `npm run build` | Generate the production site in `dist/`. |
+| `npm run preview` | Preview the production build locally. |
+| `npm run astro -- <command>` | Run Astro CLI commands. |
+
+Before opening a pull request, run:
+
+```bash
+npm test
+npm run build
+```
+
+## Contributing
+
+1. Create a branch from `main`.
+2. Install dependencies with `npm ci`.
+3. Make the change and keep localized catalog data synchronized when the change affects a tool or route.
+4. Run `npm test` and `npm run build`.
+5. Open a pull request describing the user-facing change and its validation.
+
+## Deployment
+
+The project is deployed to GitHub Pages. Every push to `main` runs `npm ci`, `npm test`, and `npm run build` before the generated `dist/` artifact is deployed.
