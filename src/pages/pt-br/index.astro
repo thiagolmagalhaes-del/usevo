@@ -1,4 +1,5 @@
 ---
+import GuideDiscovery from "../../components/guides/GuideDiscovery.astro";
 import Layout from "../../layouts/Layout.astro";
 import FeaturedTools from "../../components/tool/FeaturedTools.astro";
 import { getTranslations } from "../../data/i18n";
@@ -54,6 +55,7 @@ const alternateUrls = getSiteAlternates("/pt-br/");
     </section>
 
     <FeaturedTools locale="pt-BR" />
+    <GuideDiscovery locale="pt-BR" />
   </main>
 
   <script>

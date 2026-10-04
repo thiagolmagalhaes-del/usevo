@@ -1,0 +1,19 @@
+---
+import { guideContent } from "../../data/guide-content";
+import { GUIDE_KEYS, guideRoutes, type GuideKey } from "../../data/guide-routes";
+import type { Locale } from "../../data/locales";
+interface Props { locale: Locale; keys?: readonly GuideKey[] }
+const { locale, keys = GUIDE_KEYS } = Astro.props;
+---
+<ul class="guide-list">
+  {keys.map((key) => (
+    <li><a href={guideRoutes[key][locale]}>{guideContent[key][locale].title}</a><p>{guideContent[key][locale].summary}</p></li>
+  ))}
+</ul>
+<style>
+  .guide-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 20px; }
+  li { border: 1px solid #dbe1ec; border-radius: 12px; padding: 22px; min-width: 0; }
+  a { color: #234cbd; font-size: 1.15rem; font-weight: 700; line-height: 1.5; text-decoration: underline; text-underline-offset: 3px; }
+  a:focus-visible { outline: 3px solid #315bea; outline-offset: 4px; }
+  p { margin: 12px 0 0; color: #526174; line-height: 1.65; }
+</style>

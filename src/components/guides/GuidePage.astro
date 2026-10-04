@@ -1,0 +1,57 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GuideList from "./GuideList.astro";
+import RelatedTools from "./RelatedTools.astro";
+import { guideContent, guideCopy } from "../../data/guide-content";
+import { guideRoutes, type GuideKey } from "../../data/guide-routes";
+import { getGuideArticle, getGuideBreadcrumb } from "../../data/guide-metadata";
+import { getSiteAlternates, toSiteUrl } from "../../data/locale-routes";
+import type { Locale } from "../../data/locales";
+interface Props { locale: Locale; guideKey: GuideKey }
+const { locale, guideKey } = Astro.props;
+const guide = guideContent[guideKey][locale];
+const copy = guideCopy[locale];
+const route = guideRoutes[guideKey][locale];
+---
+<Layout title={guide.title} description={guide.summary} locale={locale} canonical={toSiteUrl(route)} alternateUrls={getSiteAlternates(route)} structuredData={getGuideArticle(guideKey, locale)} breadcrumb={getGuideBreadcrumb(locale, guideKey)}>
+  <main class="guide-shell">
+    <article data-practical-guide={guideKey}>
+      <header><h1>{guide.title}</h1>{guide.introduction.map((paragraph) => <p>{paragraph}</p>)}</header>
+      <nav class="contents" aria-label={guide.title}>
+        <ul>{[
+          ["workflow", copy.workflow], ["examples", copy.examples], ["limitations", copy.mistakes],
+          ["related-tools", copy.tools], ["faq", copy.faq],
+        ].map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}</ul>
+      </nav>
+      <section aria-labelledby="workflow"><h2 id="workflow">{copy.workflow}</h2>
+        {guide.steps.map((step) => <section><h3>{step.title}</h3>{step.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
+      </section>
+      <section aria-labelledby="examples"><h2 id="examples">{copy.examples}</h2>
+        {guide.examples.map((example) => <section class="example"><h3>{example.title}</h3><dl><dt>{copy.input}</dt><dd>{example.input}</dd><dt>{copy.result}</dt><dd>{example.result}</dd></dl><p>{example.explanation}</p></section>)}
+      </section>
+      <section aria-labelledby="limitations"><h2 id="limitations">{copy.mistakes}</h2><ul>{guide.mistakes.map((mistake) => <li>{mistake}</li>)}</ul></section>
+      <section aria-labelledby="related-tools"><h2 id="related-tools">{copy.tools}</h2><RelatedTools locale={locale} tools={guide.tools} /></section>
+      <section aria-labelledby="faq"><h2 id="faq">{copy.faq}</h2>{guide.faq.map((item) => <section><h3>{item.question}</h3><p>{item.answer}</p></section>)}</section>
+    </article>
+    <aside aria-labelledby="related-guides"><h2 id="related-guides">{copy.related}</h2><GuideList locale={locale} keys={guide.relatedGuides} /></aside>
+  </main>
+</Layout>
+<style>
+  .guide-shell { width: min(860px, calc(100% - 40px)); margin: 0 auto; padding: 36px 0 72px; overflow-wrap: anywhere; }
+  h1 { font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1.2; margin: 0 0 24px; }
+  h2 { font-size: 1.6rem; line-height: 1.35; margin: 0 0 22px; scroll-margin-top: 100px; }
+  h3 { font-size: 1.15rem; line-height: 1.5; margin: 24px 0 12px; }
+  p, li, dd { line-height: 1.8; }
+  p { margin: 0 0 16px; }
+  article > section, aside { margin-top: 44px; }
+  ul { padding-left: 24px; }
+  li + li { margin-top: 12px; }
+  .contents { background: #f4f7fb; border-radius: 12px; padding: 20px; margin-top: 28px; }
+  .contents ul { margin: 0; }
+  a { color: #234cbd; text-decoration: underline; text-underline-offset: 3px; }
+  a:focus-visible { outline: 3px solid #315bea; outline-offset: 4px; }
+  .example { border-left: 3px solid #315bea; padding-left: 20px; }
+  dt { font-weight: 700; margin-top: 12px; }
+  dd { margin: 4px 0 0; }
+  @media (max-width: 650px) { .guide-shell { width: calc(100% - 28px); padding-top: 24px; } }
+</style>

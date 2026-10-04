@@ -1,0 +1,18 @@
+---
+import { guideCopy } from "../../data/guide-content";
+import { guideIndexRoutes } from "../../data/guide-routes";
+import type { Locale } from "../../data/locales";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const copy = guideCopy[locale];
+---
+<section class="guide-discovery" aria-label={copy.name}>
+  <p>{copy.prompt}</p><a href={guideIndexRoutes[locale]}>{copy.link}</a>
+</section>
+<style>
+  .guide-discovery { width: min(1180px, calc(100% - 40px)); box-sizing: border-box; margin: 28px auto 44px; padding: 24px; border: 1px solid #dbe1ec; border-radius: 12px; background: #f4f7fb; }
+  p { margin: 0 0 12px; color: #344054; line-height: 1.65; }
+  a { display: inline-block; color: #234cbd; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; line-height: 1.5; }
+  a:focus-visible { outline: 3px solid #315bea; outline-offset: 4px; }
+  @media (max-width: 650px) { .guide-discovery { width: calc(100% - 28px); padding: 18px; } }
+</style>

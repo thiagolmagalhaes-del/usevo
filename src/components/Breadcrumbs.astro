@@ -1,7 +1,7 @@
 ---
-import type { ToolBreadcrumb } from "../data/locale-routes";
+import type { ToolBreadcrumbItem } from "../data/locale-routes";
 
-const { breadcrumb } = Astro.props as { breadcrumb: ToolBreadcrumb };
+const { breadcrumb } = Astro.props as { breadcrumb: { label: string; items: readonly ToolBreadcrumbItem[] } };
 ---
 
 <nav class="breadcrumbs" aria-label={breadcrumb.label}>

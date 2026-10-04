@@ -1,0 +1,25 @@
+---
+import type { GuideContent } from "../../data/guide-content";
+import { ferramentas, getFerramentaTranslation } from "../../data/ferramentas";
+import { getToolLocaleRoute } from "../../data/locale-routes";
+import type { Locale } from "../../data/locales";
+interface Props { locale: Locale; tools: GuideContent["tools"] }
+const { locale, tools } = Astro.props;
+const related = tools.map((choice) => {
+  const tool = ferramentas.find((item) => item.id === choice.toolId);
+  if (!tool) throw new Error(`Unknown guide tool: ${choice.toolId}`);
+  const href = getToolLocaleRoute(tool, locale);
+  if (!href) throw new Error(`Missing guide tool route: ${choice.toolId}/${locale}`);
+  return { ...choice, href, label: getFerramentaTranslation(tool, locale).title };
+});
+---
+<ul class="related-tools">
+  {related.map((tool) => <li><a href={tool.href}>{tool.label}</a><p>{tool.purpose}</p></li>)}
+</ul>
+<style>
+  ul { padding-left: 24px; margin: 0; }
+  li + li { margin-top: 18px; }
+  a { color: #234cbd; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+  a:focus-visible { outline: 3px solid #315bea; outline-offset: 4px; }
+  p { margin: 6px 0 0; line-height: 1.7; }
+</style>

@@ -11,14 +11,20 @@ export type WebsiteJsonLd = {
 export type BreadcrumbListJsonLd = {
   "@context": "https://schema.org";
   "@type": "BreadcrumbList";
-  itemListElement: readonly [
-    { "@type": "ListItem"; position: 1; name: string; item: string },
-    { "@type": "ListItem"; position: 2; name: string; item: string },
-    { "@type": "ListItem"; position: 3; name: string },
-  ];
+  itemListElement: readonly { "@type": "ListItem"; position: number; name: string; item?: string }[];
 };
 
-export type StructuredData = WebsiteJsonLd | BreadcrumbListJsonLd;
+export type ArticleJsonLd = {
+  "@context": "https://schema.org";
+  "@type": "Article";
+  "@id": string;
+  headline: string;
+  description: string;
+  inLanguage: string;
+  mainEntityOfPage: string;
+};
+
+export type StructuredData = WebsiteJsonLd | BreadcrumbListJsonLd | ArticleJsonLd;
 
 type BreadcrumbItem = { name: string; href?: string; url?: string };
 
@@ -33,19 +39,19 @@ export const websiteJsonLd: WebsiteJsonLd = {
 };
 
 export const createBreadcrumbListJsonLd = (
-  items: readonly [BreadcrumbItem, BreadcrumbItem, BreadcrumbItem],
+  items: readonly BreadcrumbItem[],
 ): BreadcrumbListJsonLd => {
-  const [home, tools, current] = items;
-  if (!home.url || !tools.url) throw new Error("Breadcrumb URLs are required for home and tools.");
+  if (items.length < 2 || items.slice(0, -1).some((item) => !item.url)) {
+    throw new Error("Breadcrumb URLs are required for ancestor pages.");
+  }
 
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: home.name, item: home.url },
-      { "@type": "ListItem", position: 2, name: tools.name, item: tools.url },
-      { "@type": "ListItem", position: 3, name: current.name },
-    ],
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem", position: index + 1, name: item.name,
+      ...(index < items.length - 1 ? { item: item.url } : {}),
+    })),
   };
 };
 

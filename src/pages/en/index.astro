@@ -1,4 +1,5 @@
 ---
+import GuideDiscovery from "../../components/guides/GuideDiscovery.astro";
 import Layout from "../../layouts/Layout.astro";
 import ToolGrid from "../../components/tool/ToolGrid.astro";
 import { ferramentas } from "../../data/ferramentas";
@@ -25,5 +26,6 @@ const alternateUrls = getSiteAlternates("/");
         <ToolGrid items={ferramentas} locale="en" />
       </div>
     </section>
+    <GuideDiscovery locale="en" />
   </main>
 </Layout>

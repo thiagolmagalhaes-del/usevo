@@ -1,0 +1,22 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GuideList from "./GuideList.astro";
+import { guideCopy } from "../../data/guide-content";
+import { guideIndexRoutes } from "../../data/guide-routes";
+import { getGuideBreadcrumb } from "../../data/guide-metadata";
+import { getSiteAlternates, toSiteUrl } from "../../data/locale-routes";
+import type { Locale } from "../../data/locales";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const copy = guideCopy[locale];
+const route = guideIndexRoutes[locale];
+---
+<Layout title={copy.title} description={copy.intro} locale={locale} canonical={toSiteUrl(route)} alternateUrls={getSiteAlternates(route)} breadcrumb={getGuideBreadcrumb(locale)}>
+  <main class="guide-index"><h1>{copy.title}</h1><p>{copy.intro}</p><GuideList locale={locale} /></main>
+</Layout>
+<style>
+  .guide-index { width: min(860px, calc(100% - 40px)); padding: 40px 0 80px; margin: 0 auto; overflow-wrap: anywhere; }
+  h1 { font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1.25; margin: 0 0 20px; }
+  p { line-height: 1.75; margin: 0 0 28px; color: #526174; }
+  @media (max-width: 650px) { .guide-index { width: calc(100% - 28px); } }
+</style>
