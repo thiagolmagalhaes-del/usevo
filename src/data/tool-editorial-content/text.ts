@@ -55,31 +55,217 @@ export const textEditorialContent: ToolEditorialContentCatalog = {
     },
   },
   "gerador-de-letras-diferentes": {
-    "pt-BR": {
-      howTo: { title: "Como usar o gerador de letras diferentes", steps: ["Digite ou cole uma frase no campo de texto.", "Veja as letras bonitas e outras variações Unicode atualizarem instantaneamente.", "Use Copiar na variação desejada e cole o resultado onde precisar."] },
-      example: { title: "Exemplo: letras personalizadas para um perfil", description: "Digite `Meu perfil 2026` e escolha uma variação como negrito, circulado ou largura completa.", calculation: "Meu perfil 2026 → 𝐌𝐞𝐮 𝐩𝐞𝐫𝐟𝐢𝐥 𝟐𝟎𝟐𝟔", result: "Você copia a linha inteira em um clique. Espaços, números, acentos e caracteres sem equivalente continuam preservados quando não há transformação segura." },
-      useCases: { title: "Quando usar letras diferentes", items: ["Preparar uma bio, legenda ou nome de destaque para redes sociais.", "Criar letras para copiar em mensagens, títulos curtos e perfis.", "Testar fontes para copiar e colar sem instalar arquivos de fonte.", "Comparar estilos antes de usar letras personalizadas em uma publicação."] },
-      notes: { title: "Compatibilidade e privacidade", items: ["Os resultados são caracteres Unicode estilizados, não arquivos de fonte. A aparência depende do aplicativo, dispositivo e fonte disponível.", "Alguns estilos têm cobertura limitada para letras acentuadas, símbolos, minúsculas ou números. Caracteres sem mapeamento confiável permanecem como foram digitados.", "Copie e confira o resultado no destino antes de publicar: certos aplicativos podem mostrar quadrados, substituir caracteres ou limitar a pesquisa e a acessibilidade.", "O texto é transformado no navegador. A ferramenta não envia nem armazena o que você digita."] },
-      faq: { title: "Perguntas frequentes", items: [{ question: "Isso cria uma fonte de verdade?", answer: "Não. A ferramenta troca letras compatíveis por caracteres Unicode parecidos. Não há download nem instalação de fonte." }, { question: "Posso usar as letras em redes sociais?", answer: "Em muitos casos, sim, usando copiar e colar. Confira a aparência no aplicativo e evite depender delas para informações importantes." }, { question: "Por que alguns acentos ou símbolos não mudam?", answer: "Nem todo caractere tem um equivalente Unicode estilizado seguro. A ferramenta preserva o original quando não há mapeamento adequado." }, { question: "Meu texto fica salvo?", answer: "Não. A transformação acontece localmente no navegador e o texto não é enviado pela ferramenta." }] },
-      relatedTools: { title: "Ferramentas relacionadas", items: [{ toolId: "contador-de-palavras", label: "Contador de Palavras", description: "Conte palavras, caracteres, frases e linhas antes de publicar o texto." }, { toolId: "comparador-de-texto", label: "Comparador de Texto", description: "Compare duas versões do texto antes e depois de estilizar." }] },
+  "pt-BR": {
+    "howTo": {
+      "title": "Como usar o gerador de letras diferentes",
+      "steps": [
+        "Digite um trecho curto para comparar as 19 variações que aparecem enquanto você edita. Os estilos usam substituição de caracteres Unicode, marcas combinantes ou mudança de caixa; não instalam uma fonte nem alteram a tipografia do aplicativo de destino.",
+        "Escolha uma linha e use seu botão Copiar. Ele copia a variação inteira, não o nome do estilo. Se a cópia automática falhar, selecione o resultado e copie manualmente; confira o conteúdo colado antes de publicar.",
+        "Teste o trecho no aplicativo e no dispositivo em que será lido, inclusive com a tecnologia assistiva que seu público usa. Guarde também a versão comum para pesquisa e leitura; Limpar texto remove a entrada e as variações da página."
+      ]
     },
-    en: {
-      howTo: { title: "How to use the font generator", steps: ["Type or paste a phrase into the text field.", "See fancy text and other Unicode variations update instantly.", "Select Copy on the variation you want, then paste it where needed."] },
-      example: { title: "Example: fancy text for a profile", description: "Enter `My profile 2026` and choose a style such as Bold, Circled, or Fullwidth.", calculation: "My profile 2026 → 𝐌𝐲 𝐩𝐫𝐨𝐟𝐢𝐥𝐞 𝟐𝟎𝟐𝟔", result: "You can copy the full line with one click. Spaces, numbers, accents, and characters without a safe equivalent remain preserved." },
-      useCases: { title: "Ways to use fancy text", items: ["Prepare a bio, caption, or display name for social media.", "Create fonts to copy and paste into messages, short headings, and profiles.", "Try a font changer without installing any font files.", "Compare styles before using custom-looking text in a post."] },
-      notes: { title: "Compatibility and privacy", items: ["The results are styled Unicode characters, not font files. Their appearance depends on the app, device, and available typeface.", "Some styles have limited coverage for accented letters, symbols, lowercase characters, or digits. Characters without a reliable mapping stay unchanged.", "Copy and check the result in its destination before publishing: some apps can show boxes, replace characters, or limit search and accessibility.", "Text is transformed in your browser. The tool does not send or store what you type."] },
-      faq: { title: "Frequently asked questions", items: [{ question: "Does this create a real font?", answer: "No. The tool replaces supported letters with similar Unicode characters. It does not download or install a font." }, { question: "Can I use these fonts copy and paste on social media?", answer: "Often yes. Paste the result into the app and check its appearance; do not rely on styled characters for essential information." }, { question: "Why do some accents or symbols stay unchanged?", answer: "Not every character has a safe styled Unicode equivalent. The original character is kept when no suitable mapping exists." }, { question: "Is my text saved?", answer: "No. The transformation happens locally in the browser, and the tool does not send your text." }] },
-      relatedTools: { title: "Related tools", items: [{ toolId: "contador-de-palavras", label: "Word Counter", description: "Count words, characters, sentences, and lines before publishing text." }, { toolId: "comparador-de-texto", label: "Text Comparator", description: "Compare text before and after styling it." }] },
+    "example": {
+      "title": "O que muda em letras, acentos e números",
+      "description": "Compare Ab9 no estilo Negrito e Olá, 42! 🧰 no mesmo estilo. O mapeamento de negrito inclui letras latinas sem acento e dígitos, mas não converte o á desse exemplo.",
+      "calculation": "Ab9 → 𝐀𝐛𝟗; Olá, 42! 🧰 → 𝐎𝐥á, 𝟒𝟐! 🧰",
+      "result": "O á, a pontuação, os espaços e o emoji ficam intactos nesse estilo. Já Sublinhado acrescenta marcas combinantes às letras e números: A B vira A̲ B̲. O efeito depende do estilo; não espere a mesma cobertura para todos os caracteres."
     },
-    es: {
-      howTo: { title: "Cómo usar el generador de letras bonitas", steps: ["Escribe o pega una frase en el campo de texto.", "Mira cómo las letras bonitas y otras variaciones Unicode se actualizan al instante.", "Selecciona Copiar en la variación que prefieras y pégala donde la necesites."] },
-      example: { title: "Ejemplo: letras para un perfil", description: "Introduce `Mi perfil 2026` y elige un estilo como negrita, con círculo o ancho completo.", calculation: "Mi perfil 2026 → 𝐌𝐢 𝐩𝐞𝐫𝐟𝐢𝐥 𝟐𝟎𝟐𝟔", result: "Puedes copiar la línea completa con un clic. Los espacios, números, acentos y caracteres sin equivalente seguro se conservan." },
-      useCases: { title: "Cuándo usar letras bonitas", items: ["Preparar una biografía, leyenda o nombre destacado para redes sociales.", "Crear letras para copiar y pegar en mensajes, títulos cortos y perfiles.", "Probar tipos de letras sin instalar archivos de fuentes.", "Comparar estilos antes de usar letras personalizadas en una publicación."] },
-      notes: { title: "Compatibilidad y privacidad", items: ["Los resultados son caracteres Unicode estilizados, no archivos de fuentes. La apariencia depende de la aplicación, el dispositivo y la tipografía disponible.", "Algunos estilos tienen cobertura limitada para acentos, símbolos, minúsculas o números. Los caracteres sin un mapeo fiable permanecen sin cambios.", "Copia y revisa el resultado en el destino antes de publicarlo: algunas aplicaciones pueden mostrar cuadros, sustituir caracteres o limitar la búsqueda y la accesibilidad.", "El texto se transforma en el navegador. La herramienta no envía ni almacena lo que escribes."] },
-      faq: { title: "Preguntas frecuentes", items: [{ question: "¿Esto crea una fuente real?", answer: "No. La herramienta sustituye letras compatibles por caracteres Unicode parecidos. No descarga ni instala una fuente." }, { question: "¿Puedo usar las letras en redes sociales?", answer: "En muchos casos, sí, al copiar y pegar. Revisa el aspecto en la aplicación y no dependas de ellas para información esencial." }, { question: "¿Por qué algunos acentos o símbolos no cambian?", answer: "No todos los caracteres tienen un equivalente Unicode estilizado fiable. Se conserva el original cuando no existe un mapeo adecuado." }, { question: "¿Se guarda mi texto?", answer: "No. La transformación ocurre localmente en el navegador y la herramienta no envía tu texto." }] },
-      relatedTools: { title: "Herramientas relacionadas", items: [{ toolId: "contador-de-palavras", label: "Contador de palabras", description: "Cuenta palabras, caracteres, frases y líneas antes de publicar el texto." }, { toolId: "comparador-de-texto", label: "Comparador de texto", description: "Compara el texto antes y después de estilizarlo." }] },
+    "useCases": {
+      "title": "Escolha um trecho decorativo, não um identificador",
+      "items": [
+        "Teste um título curto de convite ou um nome de exibição não essencial, mantendo data, endereço e instruções em texto comum. Assim a decoração não vira o único meio de transmitir a informação.",
+        "Compare uma palavra nos estilos Circulado, Largura completa e Negrito para ver o que o aplicativo preserva depois de colar. Não há garantia de funcionamento em toda rede social ou dispositivo.",
+        "Para mudar apenas maiúsculas e minúsculas em um texto de trabalho, prefira o conversor de caixa. Não use caracteres decorativos em e-mail, URL, senha, nome de usuário de acesso, código ou identificador de produto."
+      ]
     },
+    "notes": {
+      "title": "Caracteres diferentes têm consequências diferentes",
+      "items": [
+        "Unicode estilizado não é uma fonte baixável. O mesmo resultado pode aparecer com outro desenho, como quadrados ou com caracteres substituídos conforme as fontes e o suporte da plataforma.",
+        "A cobertura varia por estilo: Em quadrado transforma A–Z maiúsculos, enquanto Negrito também transforma a–z e dígitos. Acentos e caracteres sem mapeamento podem continuar comuns; estilos combinantes acrescentam marcas em vez de substituir a letra.",
+        "Pesquisa e comparação podem tratar 𝐀 como um caractere diferente de A. Não suponha que busca por palavra, filtro, validação de campo ou contagem de caracteres verá o resultado como texto comum.",
+        "Leitores de tela podem anunciar símbolos matemáticos, marcas ou sequências de modo inesperado. Não use a decoração para conteúdo essencial, campos críticos ou instruções; ofereça a informação em caracteres comuns.",
+        "O botão Copiar depende das permissões e dos recursos do navegador; a página tenta uma alternativa de cópia, mas ela pode falhar. Uma mensagem de cópia não substitui conferir o texto no destino. Não há instalação de fonte, exportação de imagem nem conversão garantida de volta ao original."
+      ]
+    },
+    "faq": {
+      "title": "Perguntas frequentes",
+      "items": [
+        {
+          "question": "Por que um acento fica comum no meio do negrito?",
+          "answer": "O estilo Negrito mapeia letras A–Z, a–z e dígitos, não todo o Unicode. Em Olá, o á permanece original. Outros estilos usam regras diferentes, por isso não há garantia de transformação uniforme para palavras acentuadas ou outros alfabetos."
+        },
+        {
+          "question": "O texto pode ser encontrado pela pesquisa normal?",
+          "answer": "Depende da normalização do destino. Letras matemáticas estilizadas são outros caracteres, mesmo quando parecem A ou B. Mantenha uma versão comum para termos importantes, nomes pesquisáveis e campos que precisam corresponder exatamente a um cadastro."
+        },
+        {
+          "question": "O que faço se Copiar não funcionar ou aparecerem quadrados?",
+          "answer": "Selecione a variação e tente copiar manualmente. Depois confira a colagem. Quadrados ou substituições podem indicar que o destino não tem suporte aos caracteres; escolha um estilo mais simples ou use texto comum, sem presumir compatibilidade universal."
+        },
+        {
+          "question": "Posso usar uma variação como senha, e-mail ou informação essencial?",
+          "answer": "Evite. Caracteres parecidos não são necessariamente iguais, e podem prejudicar validação, digitação, pesquisa e leitura assistiva. Use o gerador para decoração opcional; preserve caracteres comuns em credenciais, endereços, códigos e informações necessárias para completar uma tarefa."
+        }
+      ]
+    },
+    "relatedTools": {
+      "title": "Ferramentas relacionadas",
+      "items": [
+        {
+          "toolId": "conversor-maiusculas-minusculas",
+          "label": "Conversor de Maiúsculas e Minúsculas",
+          "description": "Ajuste a caixa de um texto comum quando o objetivo não for trocar letras por símbolos decorativos."
+        },
+        {
+          "toolId": "comparador-de-texto",
+          "label": "Comparador de Texto",
+          "description": "Confira as mudanças entre a versão comum e a estilizada antes de usar o trecho."
+        }
+      ]
+    }
   },
+  "en": {
+    "howTo": {
+      "title": "How to use the font generator",
+      "steps": [
+        "Enter a short passage to compare the 19 variations that appear as you edit. Styles use Unicode character substitution, combining marks, or case changes; they do not install a font or change the destination app's typeface.",
+        "Choose a row and select its Copy button. It copies the entire variation, not the style name. If automatic copying fails, select the output and copy it manually; check the pasted content before publishing.",
+        "Test the passage in the app and on the device where it will be read, including assistive technology used by your audience. Keep the ordinary-text version for search and reading; Clear text removes the input and its variations from the page."
+      ]
+    },
+    "example": {
+      "title": "What changes in letters, accents, and digits",
+      "description": "Compare Ab9 in Bold and Olá, 42! 🧰 in the same style. The bold mapping includes unaccented Latin letters and digits, but does not convert the á in this example.",
+      "calculation": "Ab9 → 𝐀𝐛𝟗; Olá, 42! 🧰 → 𝐎𝐥á, 𝟒𝟐! 🧰",
+      "result": "The á, punctuation, spaces, and emoji stay unchanged in this style. Underline instead adds combining marks to letters and digits: A B becomes A̲ B̲. Each style behaves differently; do not expect identical coverage for every character."
+    },
+    "useCases": {
+      "title": "Decorate a passage, not an identifier",
+      "items": [
+        "Try a short invitation heading or a nonessential display name, leaving the date, address, and instructions in ordinary text. Decoration should not become the only way to communicate the information.",
+        "Compare a word in Circled, Fullwidth, and Bold to see what the destination app preserves after pasting. No style is guaranteed to work across every social network or device.",
+        "For a work document that only needs uppercase or lowercase changes, choose Case Converter. Avoid decorative characters in email addresses, URLs, passwords, login usernames, code, or product identifiers."
+      ]
+    },
+    "notes": {
+      "title": "Different characters have different consequences",
+      "items": [
+        "Styled Unicode is not a downloadable font. The same output can have a different appearance, show boxes, or be replaced depending on the platform's fonts and character support.",
+        "Coverage varies: Squared transforms uppercase A–Z, while Bold also transforms a–z and digits. Accents and unmapped characters may stay ordinary; combining styles add marks instead of replacing the letter.",
+        "Search and comparison can treat 𝐀 as a different character from A. Do not assume keyword search, filters, field validation, or character counts interpret the result as ordinary text.",
+        "Screen readers may announce mathematical symbols, marks, or sequences unexpectedly. Do not use decoration for essential content, critical fields, or instructions; provide that information in ordinary characters.",
+        "Copy depends on browser permissions and capabilities; the page attempts a fallback, but it can also fail. A copy message does not replace checking the destination. There is no font installation, image export, or guaranteed conversion back to the original."
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "question": "Why does an accent stay ordinary inside bold text?",
+          "answer": "Bold maps A–Z, a–z, and digits, not all of Unicode. In Olá, á stays original. Other styles have different rules, so accented words and other writing systems are not guaranteed a uniform transformation."
+        },
+        {
+          "question": "Will normal search find the styled text?",
+          "answer": "That depends on the destination's normalization. Styled mathematical letters are different characters even when they resemble A or B. Keep an ordinary version for important keywords, searchable names, and fields that must match a record exactly."
+        },
+        {
+          "question": "What if Copy fails or I see boxes after pasting?",
+          "answer": "Select the variation and try copying manually, then inspect the pasted text. Boxes or substitutions can mean the destination lacks character support; choose a simpler style or ordinary text instead of assuming universal compatibility."
+        },
+        {
+          "question": "Can I use a variation as a password, email address, or essential information?",
+          "answer": "Avoid it. Similar-looking characters are not necessarily equal and can impair validation, typing, search, and assistive reading. Use the generator for optional decoration; keep ordinary characters in credentials, addresses, codes, and information needed to complete a task."
+        }
+      ]
+    },
+    "relatedTools": {
+      "title": "Related tools",
+      "items": [
+        {
+          "toolId": "conversor-maiusculas-minusculas",
+          "label": "Case Converter",
+          "description": "Change ordinary letter case when you do not need to substitute decorative symbols."
+        },
+        {
+          "toolId": "comparador-de-texto",
+          "label": "Text Comparator",
+          "description": "Review changes between the ordinary and styled versions before using the passage."
+        }
+      ]
+    }
+  },
+  "es": {
+    "howTo": {
+      "title": "Cómo usar el generador de letras bonitas",
+      "steps": [
+        "Escribe un fragmento corto para comparar las 19 variaciones que aparecen al editar. Los estilos usan sustitución de caracteres Unicode, marcas combinantes o cambios de caja; no instalan una fuente ni cambian la tipografía de la aplicación de destino.",
+        "Elige una fila y pulsa su botón Copiar. Copia la variación completa, no el nombre del estilo. Si falla la copia automática, selecciona la salida y cópiala manualmente; comprueba el contenido pegado antes de publicarlo.",
+        "Prueba el fragmento en la aplicación y el dispositivo donde se leerá, incluida la tecnología de asistencia de tu público. Conserva la versión común para búsqueda y lectura; Limpiar texto elimina la entrada y las variaciones de la página."
+      ]
+    },
+    "example": {
+      "title": "Qué cambia en letras, acentos y dígitos",
+      "description": "Compara Ab9 en Negrita y Olá, 42! 🧰 en el mismo estilo. El mapeo incluye letras latinas sin acento y dígitos, pero no convierte el á de este ejemplo.",
+      "calculation": "Ab9 → 𝐀𝐛𝟗; Olá, 42! 🧰 → 𝐎𝐥á, 𝟒𝟐! 🧰",
+      "result": "El á, la puntuación, los espacios y el emoji quedan intactos en este estilo. Subrayado añade marcas combinantes a letras y dígitos: A B pasa a A̲ B̲. El efecto depende del estilo; no esperes la misma cobertura para todos los caracteres."
+    },
+    "useCases": {
+      "title": "Decora un fragmento, no un identificador",
+      "items": [
+        "Prueba un título corto de invitación o un nombre de presentación no esencial, dejando fecha, dirección e instrucciones en texto común. La decoración no debería ser la única forma de comunicar esa información.",
+        "Compara una palabra en Con círculo, Ancho completo y Negrita para ver qué conserva la aplicación al pegarla. Ningún estilo está garantizado en todas las redes sociales o dispositivos.",
+        "Para un documento de trabajo que solo necesita cambios de mayúsculas, elige el convertidor de caja. Evita caracteres decorativos en correo electrónico, URL, contraseña, usuario de acceso, código o identificador de producto."
+      ]
+    },
+    "notes": {
+      "title": "Caracteres distintos tienen consecuencias distintas",
+      "items": [
+        "Unicode estilizado no es una fuente descargable. La misma salida puede tener otro aspecto, mostrar cuadros o sufrir sustituciones según las fuentes y el soporte de la plataforma.",
+        "La cobertura varía: En cuadrado transforma A–Z mayúsculas, mientras Negrita también transforma a–z y dígitos. Acentos y caracteres sin mapeo pueden quedar comunes; los estilos combinantes añaden marcas en vez de sustituir la letra.",
+        "Búsqueda y comparación pueden tratar 𝐀 como un carácter distinto de A. No supongas que búsqueda de palabras, filtros, validación de campos o recuentos interpretan la salida como texto común.",
+        "Los lectores de pantalla pueden anunciar símbolos matemáticos, marcas o secuencias de forma inesperada. No uses la decoración para contenido esencial, campos críticos o instrucciones; ofrece esa información con caracteres comunes.",
+        "Copiar depende de permisos y recursos del navegador; la página intenta una alternativa que también puede fallar. Un mensaje de copia no sustituye comprobar el destino. No hay instalación de fuentes, exportación de imágenes ni conversión garantizada al original."
+      ]
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "items": [
+        {
+          "question": "¿Por qué un acento queda común dentro de la negrita?",
+          "answer": "Negrita mapea A–Z, a–z y dígitos, no todo Unicode. En Olá, á permanece original. Otros estilos tienen reglas distintas, por lo que no se garantiza una transformación uniforme para palabras acentuadas u otros alfabetos."
+        },
+        {
+          "question": "¿La búsqueda normal encontrará el texto estilizado?",
+          "answer": "Depende de la normalización del destino. Las letras matemáticas estilizadas son caracteres distintos aunque parezcan A o B. Conserva una versión común para términos importantes, nombres buscables y campos que deban coincidir exactamente con un registro."
+        },
+        {
+          "question": "¿Qué hago si Copiar falla o aparecen cuadros al pegar?",
+          "answer": "Selecciona la variación e intenta copiar manualmente; revisa después el texto pegado. Los cuadros o sustituciones pueden indicar falta de soporte en el destino. Elige un estilo más sencillo o texto común sin suponer compatibilidad universal."
+        },
+        {
+          "question": "¿Puedo usar una variación como contraseña, correo o información esencial?",
+          "answer": "Evítalo. Caracteres parecidos no son necesariamente iguales y pueden dificultar validación, escritura, búsqueda y lectura asistida. Usa el generador para decoración opcional; conserva caracteres comunes en credenciales, direcciones, códigos e información necesaria para completar tareas."
+        }
+      ]
+    },
+    "relatedTools": {
+      "title": "Herramientas relacionadas",
+      "items": [
+        {
+          "toolId": "conversor-maiusculas-minusculas",
+          "label": "Convertidor de Mayúsculas y Minúsculas",
+          "description": "Cambia la caja de letras comunes cuando no necesites sustituirlas por símbolos decorativos."
+        },
+        {
+          "toolId": "comparador-de-texto",
+          "label": "Comparador de texto",
+          "description": "Revisa los cambios entre las versiones común y estilizada antes de usar el fragmento."
+        }
+      ]
+    }
+  }
+},
 "comparador-de-texto": {
     "pt-BR": {
       howTo: { title: "Como usar o comparador de texto", steps: ["Cole a primeira versão no campo Texto original.", "Cole a segunda versão no campo Texto modificado.", "Selecione Comparar para ver as diferenças por linha; Limpar apaga os dois campos e o resultado."] },

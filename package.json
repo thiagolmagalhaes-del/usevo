@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/verify-guides.mjs",
+    "build": "astro build && node scripts/verify-guides.mjs && node scripts/verify-tool-editorial.mjs",
     "test": "vitest run",
     "preview": "astro preview",
     "astro": "astro"
